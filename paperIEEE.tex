@@ -1117,12 +1117,12 @@ and serialization continues. This is used both for the initial mapping data and
 for commit data.
 
 Caching retains instance data of objects in a cache, and reuses this data to
-accelarate mapping of objects. The instance cache is either filled by "snooping"
-on multicast transmissions or by an explicit preloading when the master objects
-are registered. The preloading ("send on register") sends instance data of
-recently registered master objects while the correspinding node is idle to all
-connected nodes. These nodes simply enter the received data to their
-cache. Preloading uses multicast when available.
+accelarate mapping of objects. The instance cache is either filled by
+``snooping'' on multicast transmissions or by an explicit preloading when the
+master objects are registered. The preloading (``send on register'') sends
+instance data of recently registered master objects while the correspinding node
+is idle to all connected nodes. These nodes simply enter the received data to
+their cache. Preloading uses multicast when available.
 
 Due to the master-slave model of data distribution, multicast can be used to
 optimize the transmission time of data. If the contributing nodes share a
@@ -1175,7 +1175,7 @@ delivering multi-GPU and distributed execution, is based on Equalizer and
 Collage, and has driven many of the aforementioned features.
 
 RTT Scale uses a master-slave execution mode, were a single running Deltagen
-instance can go into "Scale mode" at any time by launching an Equalizer
+instance can go into ``Scale mode'' at any time by launching an Equalizer
 configuration. Consequently, the whole internal representation needed for
 rendering is based on a Collage-based data distribution. The rendering clients
 are separate, smaller applications which will map their scenes during
@@ -1246,7 +1246,7 @@ data transmission.
   \includegraphics[height=.44\columnwidth]{images/beechnut}
   \caption{\label{fVolumes}Volumes used for object distribution benchmarks:
     spike frequencies of a three million neuron electrical simulation at
-    437x240x512 unsigned byte (51MB, left) and an MicroCT scan of a beechnut at
+    512x437x240 unsigned byte (51MB, left) and an MicroCT scan of a beechnut at
     1024x1024x1546 unsigned short (3GB, right) resolution}
 \end{figure}
 
@@ -1271,10 +1271,10 @@ measurements were performed on a single, isolated node.
 \end{figure}
 
 RLE compression has a very low overhead, but does not compress the data will
-since it only removes "blank space" in the data. The Snappy compression, used as
-default in Collage, achieves the same compression ratio as the LZ variants at a
-much higher speed. The ZStandard compressor has roughly the same speed as the LZ
-variants at the lowest compression level, but provides significantly better
+since it only removes ``blank space'' in the data. The Snappy compression, used
+as default in Collage, achieves the same compression ratio as the LZ variants at
+a much higher speed. The ZStandard compressor has roughly the same speed as the
+LZ variants at the lowest compression level, but provides significantly better
 compression. At higher compression levels it can improve the compression ratio
 slightly, but at a high cost for the compression speed.
 
@@ -1302,16 +1302,43 @@ can reduce the data much further, reducing the data to a few megabytes.
 
 \subsubsection{Model Distribution and Update}
 
-In this section we present results on how data distribution and synchronization
-performs in real-world applications. We extracted the existing data distribution
-code in a PLY and a volume renderer into a benchmark application to measure the
-time to initially map all the objects on the render client nodes, and to perform
-a commit-sync of the full data set after mapping has been established. All
-figures observe a noticable measurement jitter due to other services running on
-the cluster. The details of the benchmark algorithm can be found in the implementation~\cite{eqObjectBench}.
+In this section we present how data distribution and synchronization performs in
+real-world applications. We extracted the existing data distribution code in a
+PLY and a volume renderer into a benchmark application to measure the time to
+initially map all the objects on the render client nodes, and to perform a
+commit-sync of the full data set after mapping has been established. All figures
+observe a noticable measurement jitter due to other services running on the
+cluster. The details of the benchmark algorithm can be found in the
+implementation~\cite{eqObjectBench}. We used the same data sets as in the
+previous section. After $8$ processes, a nodes start to run two processes per
+node, which share the CPU and network interface.
 
-David 2mm
+Object mapping is measured using the following settings: \textbf{none}
+distributes the raw, uncompressed, and unbuffered data, \textbf{compression}
+uses the Snappy compresser to distribute unbuffered data, \textbf{buffered}
+reuses uncompressed, serialized data for mappings of other nodes, and
+\textbf{compression buffered} compresses this buffer. Unbuffered operations need
+to reserialize, and potentially recompress, the master object data for each
+slave node. Each slave instance needs to deserialize and decompress the data.
 
+During data synchronization, the master instance commits the object data to all
+mapped slave instances simultaneously. This is a ``push'' operation, whereas the
+mapping is a slave-triggered ``pull'' operation with additional synchronization
+points. Slave nodes queue this data and consume it during synchronization. We
+test the time to commit and sync the data using different compression engines.
+
+The David statue at 2mm resolution is organized in a kD-tree for rendering. Each
+node is a separate distributable object, which has two child node objects. A
+total of $1023$ objects is distributed and synchronized.
+
+\fig{fSpikesDist} has a significant compression ratio, which reflects in the
+results. Futhermore, only a single distributed object is used to transmit the
+volume information in one chunk. Compression for this data is benefitial for
+transmitting data over a 10Gb/s link (880 MB/s vs 660MB/s raw data
+transfer). Buffering has little benefit since the serialization of volume data
+is trivial. Buffered compression makes a huge difference, since the compression
+cost can be amortized over $n$ nodes, reaching raw data transmission rates of
+3.7 GB/s.
 
 \begin{figure*}[ht]\center
   \includegraphics[width=\textwidth]{images/spikesdist}
