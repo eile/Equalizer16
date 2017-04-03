@@ -368,9 +368,10 @@
 %\usepackage{tabularx}
 \usepackage{amsmath}
 %\usepackage{url}
-\usepackage{subfigure}
+\usepackage{caption,subcaption}
 \usepackage{multirow}
 \usepackage{paralist}
+\usepackage{listings}
 
 \usepackage{color}
 \definecolor{RED}{rgb}{1,0,0}
@@ -639,19 +640,28 @@ algorithms.
 \subsection{New Decomposition Modes}
 
 The initial version of Equalizer implemented sort-first (2D), sort-last (DB),
-stereo (EYE) and multilevel decompositions \cite{EMP:09}. In the following we present new
-decomposition modes and motivate their use case. \fig{fig:compounds} provides an
-overview of the new modes.
+stereo (EYE) and multilevel decompositions \cite{EMP:09}. In the following we
+present new decomposition modes and motivate their use case. \fig{fig:compounds}
+provides an overview of the new modes. We describe their configuration in
+same \textit{compound} framework introduced in \cite{EMP:09}
 
 \begin{figure*}[ht]\center
-  \subfigure[Time-Multiplex]{\label{fig:dplex}
-    \includegraphics[width=0.24\textwidth]{images/dplex}}\hfil
-  \subfigure[Tiles]{\label{fig:tile}
-    \includegraphics[width=0.24\textwidth]{images/tile}}\hfil
-  \subfigure[Pixel]{\label{fig:pixel}
-    \includegraphics[width=0.24\textwidth]{images/pixel}}\hfil
-  \subfigure[Subpixel]{\label{fig:subpixel}
-    \includegraphics[width=0.24\textwidth]{images/subpixel}}\hfil
+  \begin{subfigure}[b]{0.24\textwidth}
+    \includegraphics[width=\textwidth]{images/dplex}
+      \caption{\label{fig:dplex}Time-Multiplex}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.24\textwidth}
+    \includegraphics[width=\textwidth]{images/tile}
+      \caption{\label{fig:tile}Tiles}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.24\textwidth}
+    \includegraphics[width=\textwidth]{images/pixel}
+      \caption{\label{fig:pixel}Pixel}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.24\textwidth}
+    \includegraphics[width=\textwidth]{images/subpixel}
+      \caption{\label{fig:subpixel}Subpixel}
+  \end{subfigure}
   \caption{New Equalizer task decompositions for parallel rendering}
   \label{fig:compounds}
 \end{figure*}
@@ -659,19 +669,106 @@ overview of the new modes.
 
 \subsubsection{Time-Multiplex}
 
-Time-multiplexing (\fig{fig:dplex}), or DPlex, was implemented in \cite{BRE:05}
-for shared memory machines. It is however a better fit for distributed memory
-systems, since the separate memory space makes concurrent rendering of different
-frames easier to implement. While it increases the framerate linearly, it does
-not decrease the latency between user input and the corresponding
-output. Consequently, this decomposition mode is mostly useful for
-non-interactive movie generation. It is transparent to Equalizer applications,
-but does require the configuration latency to be equal or greater than the
-number of source channels. Furthermore, to work in a multi-threaded, multi-GPU
-configuration, the application needs to support running the rendering threads
-asynchronously, as outlined in \sref{SEC_threading}. The output frame rate of
-the destination channel is smoothened using a frame rate equalizer
+Time-multiplexing (\fig{fig:dplex}), also called AFR or DPlex, was first
+implemented in \cite{BRE:05} for shared memory machines. It is however a better
+fit for distributed memory systems, since the separate memory space makes
+concurrent rendering of different frames easier to implement. While it increases
+the framerate linearly, it does not decrease the latency between user input and
+the corresponding output. Consequently, this decomposition mode is mostly useful
+for non-interactive movie generation. It is transparent to Equalizer
+applications, but does require the configuration latency to be equal or greater
+than the number of source channels. Furthermore, to work in a multi-threaded,
+multi-GPU configuration, the application needs to support running the rendering
+threads asynchronously, as outlined in \sref{SEC_threading}. The output frame
+rate of the destination channel is smoothened using a frame rate equalizer
 (\sref{SEC_framerateEq}).
+
+\begin{figure*}[ht]\center
+  \begin{subfigure}[b]{0.24\textwidth}
+    {\tiny\begin{lstlisting}
+compound {
+  channel "destination"
+  framerate_equalizer {}
+  compound {
+    channel "source1"
+    phase 0 period 2
+    outputframe  { name "frame" }
+  }
+  compound {
+    channel "source2"
+    phase 1 period 2
+    outputframe  { name "frame" }
+  }
+  inputframe { name "frame" }
+}
+    \end{lstlisting}}
+    \caption{\label{eqc:dplex}Time-Multiplex}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.24\textwidth}
+    {\tiny\begin{lstlisting}
+compound {
+  channel "destination"
+  outputtiles {
+    name "queue"
+    size [ 64 64 ]
+  }
+  compound {
+    channel "destination"
+    inputtiles { name "queue" }
+  }
+  compound {
+    channel "source"
+    inputtiles { name "queue" }
+    outputframe {}
+  }
+  inputframe { name "frame.source" }
+}
+    \end{lstlisting}}
+    \caption{\label{eqc:tiles}Tiles}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.24\textwidth}
+    {\tiny\begin{lstlisting}
+compound {
+  channel "dest"
+  compound {
+    channel "dest"
+    pixel [ 0 0 2 1 ]
+    outputframe { type texture }
+  }
+  compound {
+    channel "source"
+    pixel [ 1 0 2 1 ]
+    outputframe{}
+  }
+  inputframe { name "frame.dest" }
+  inputframe { name "frame.source" }
+}
+    \end{lstlisting}}
+    \caption{\label{eqc:pixel}Pixel}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.24\textwidth}
+    {\tiny\begin{lstlisting}
+compound {
+  channel "dest"
+  compound {
+    channel "dest"
+    subpixel [ 0 2 ]
+    outputframe { type texture }
+  }
+  compound {
+    channel "source"
+    subpixel [ 1 2 ]
+    outputframe{}
+  }
+  inputframe { name "frame.dest" }
+  inputframe { name "frame.source" }
+}
+    \end{lstlisting}}
+    \caption{\label{eqc:subpixel}Subpixel}
+  \end{subfigure}
+  \caption{Compound configurations for \fig{fig:compounds}}
+  \label{eqc:compounds}
+\end{figure*}
 
 \subsubsection{Tiles and Chunks}\label{sec:tile}
 
@@ -717,14 +814,22 @@ to their nature, they are transparent to application developers, but might have
 application-accessible parameters to tune their behaviour.
 
 \begin{figure*}[ht]\center
-  \subfigure[Load-Balancing]{\label{fig:loadeq}
-    \includegraphics[width=0.24\textwidth]{images/loadeq}}\hfil
-  \subfigure[Cross-Segment Load-Balancing]{\label{fig:vieweq}
-    \includegraphics[width=0.24\textwidth]{images/vieweq}}\hfil
-  \subfigure[Dynamic Frame Resolution]{\label{fig:dfr}
-    \includegraphics[width=0.24\textwidth]{images/dfr}}\hfil
-  \subfigure[Monitoring]{\label{fig:monitor}
-    \includegraphics[width=0.24\textwidth]{images/monitoreq}}\hfil
+  \begin{subfigure}[b]{0.24\textwidth}
+    \includegraphics[width=\textwidth]{images/loadeq}
+      \caption{\label{fig:loadeq}Load-Balancing}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.24\textwidth}
+    \includegraphics[width=\textwidth]{images/vieweq}
+      \caption{\label{fig:vieweq}Cross-Segment Load-Balancing}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.24\textwidth}
+    \includegraphics[width=\textwidth]{images/dfr}
+      \caption{\label{fig:dfr}Dynamic Frame Resolution}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.24\textwidth}
+    \includegraphics[width=\textwidth]{images/monitoreq}
+      \caption{\label{fig:monitor}Monitoring}
+  \end{subfigure}
   \caption{Runtime modifications}
   \label{fig:equalizers}
 \end{figure*}
