@@ -1303,29 +1303,30 @@ represent higher spiking activity in the voxel.
 \subsubsection{Data Compression Engines}
 
 A critical piece for data distribution performance are the characteristics of
-the data compression algorithms. This microbenchmark compresses a set of binary
-files to precalculate the speed and compression ratio of the various
-engines. \fig{fCompressor} shows the compression and decompression speed in
-gigabyte per second as well as the size of the compressed data. The different
-ZSTD$x$ engines use the ZStandard compression library at level $x$. The
-measurements were performed on a single, isolated node.
+the data compression algorithm. Our microbenchmark compresses a set of binary
+files, precalculating the speed and compression ratio of the various engines.
+\fig{fCompressor} shows the compression and decompression speed in gigabyte per
+second as well as the size of the compressed data relative to the uncompressed
+data. The different ZSTD$x$ engines use the ZStandard compression library at
+compression level $x$. The measurements were performed on a single, isolated
+node.
 
 \begin{figure}[ht]\center
   \includegraphics[width=\columnwidth]{images/compressor}
   \caption{\label{fCompressor}Data compression for generic binary data}
 \end{figure}
 
-RLE compression has a very low overhead, but does not compress the data will
-since it only removes ``blank space'' in the data. The Snappy compression, used
-as default in \textsf{Collage}, achieves the same compression ratio as the LZ variants at
-a much higher speed. The ZStandard compressor has roughly the same speed as the
-LZ variants at the lowest compression level, but provides significantly better
-compression. At higher compression levels it can improve the compression ratio
-slightly, but at a high cost for the compression speed.
+RLE compression has a very low overhead, but does not compress the data, since
+it only removes ``blank space'' in the data. The Snappy compression, used as
+default in \textsf{Collage}, achieves the same compression ratio as the LZ
+variants at a much higher speed. The ZStandard compressor has roughly the same
+speed as the LZ variants at the lowest compression level, but provides
+significantly better compression. At higher compression levels it can improve
+the compression ratio slightly, but at a high cost for the compression speed.
 
-The compression ratio for the models used in the following benchmark deviate
-from this averaged distribution. \fig{fCompressorDetail} shows the compression
-ratios for the triangle and volume data.
+The compression ratio for the models used in the following section deviate from
+this averaged distribution. \fig{fCompressorDetail} shows the compression ratios
+for the triangle and volume data.
 
 \begin{figure*}[ht]\center
   \includegraphics[width=\textwidth]{images/compressorDetail}
@@ -1335,32 +1336,34 @@ ratios for the triangle and volume data.
 
 The ply data is little compressible, the default compressor achieves a 10\%
 reduction. This is due to a high entropy in the data and the dominant use of
-floating point representations. Overall the profile is similar to the generic
-benchmark, at a smaller compression rate.
+floating point values. Overall the profile is similar to the generic benchmark,
+at a smaller compression rate.
 
-The volume data on the other hand is sparsely populated and using integer (byte)
-representation, which is easier to compress. The naive RLE implementation
+The volume data on the other hand is sparsely populated and using integer (byte
+and short) values, which is easier to compress. The naive RLE implementation
 already achieves a good compression, showing that the smaller volume contains at
-most 28\% empty space and the bigger volume at most 90\%. Snappy and ZStandard
-can reduce the data much further, reducing the data to a few megabytes.
+most 28\% empty space and the bigger volume at most 43\%. Snappy and ZStandard
+can reduce the spike data much further, reducing the data to a few megabytes.
+Surprisingly, the beechnut data set does not yield significant higher
+compression with the modern Snappy and ZStandard libraries.
 
 
 \subsubsection{Model Distribution and Update}
 
 In this section we present how data distribution and synchronization performs in
 real-world applications. We extracted the existing data distribution code in a
-PLY and a volume renderer into a benchmark application to measure the time to
-initially map all the objects on the render client nodes, and to perform a
-commit-sync of the full data set after mapping has been established. All figures
-observe a noticable measurement jitter due to other services running on the
-cluster. The details of the benchmark algorithm can be found in the
-implementation~\cite{eqObjectBench}. We used the same data sets as in the
-previous section. After $8$ processes, a nodes start to run two processes per
-node, which share the CPU and network interface.
+PLY (eqPly) and a volume renderer (Livre) into a benchmark application to
+measure the time to initially map all the objects on the render client nodes,
+and to perform a commit-sync of the full data set after mapping has been
+established. All figures observe a noticable measurement jitter due to other
+services running on the cluster. The details of the benchmark algorithm can be
+found in the implementation~\cite{eqObjectBench}. We used the same data sets as
+in the previous section. After eight processes, a nodes start to run two
+processes per node, which share CPU, memory and network interface bandwidth.
 
 Object mapping is measured using the following settings: \textbf{none}
 distributes the raw, uncompressed, and unbuffered data, \textbf{compression}
-uses the Snappy compresser to distribute unbuffered data, \textbf{buffered}
+uses the Snappy compressor to distribute unbuffered data, \textbf{buffered}
 reuses uncompressed, serialized data for mappings of other nodes, and
 \textbf{compression buffered} compresses this buffer. Unbuffered operations need
 to reserialize, and potentially recompress, the master object data for each
@@ -1376,15 +1379,15 @@ The David statue at 2mm resolution is organized in a kD-tree for rendering. Each
 node is a separate distributable object, which has two child node objects. A
 total of $1023$ objects is distributed and synchronized.
 
-The spike volume data set shown has a significant compression ratio, which
-reflects in the results in \fig{fSpikesDist}. Futhermore, only a single
-distributed object is used to transmit the volume information in one chunk.
-Compression for this data is benefitial for transmitting data over a 10Gb/s link
-even for a single slave process only (970 MB/s vs 570 MB/s raw data transfer).
-Buffering has little benefit since the serialization of volume data is trivial.
-Buffered compression makes a huge difference, since the compression cost can be
-amortized over $n$ nodes, reaching raw data transmission rates of 3.7 GB/s with
-the default Snappy compressor and at best 4.4 GB/s with ZStandard at the lowest
+The volume data sets are each distributed in a single object, serializing the
+raw volume buffer. The spike volume data set has a significant compression
+ratio, which reflects in the results in \fig{fSpikesDist}. Compression for this
+data is benefitial for transmitting data over a 10~Gb/s link even for a single
+slave process only (970 MB/s vs 570 MB/s raw data transfer). Buffering has
+little benefit since the serialization of volume data is trivial. Buffered
+compression makes a huge difference, since the compression cost can be amortized
+over $n$ nodes, reaching raw data transmission rates of 3.7 GB/s with the
+default Snappy compressor and at best 4.4 GB/s with ZStandard at the lowest
 compression ratio.
 
 \begin{figure*}[ht]\center
@@ -1394,7 +1397,15 @@ compression ratio.
     \fig{fVolumes}, left}
 \end{figure*}
 
-\fig{fBeechnutDist}
+The distribution of the beechnut data set also behaves as expected
+(\fig{fBeechnutDist}). Due to the larger object size, uncompressed transmission
+is slightly faster compared to the spike data set at 700 MB/s, and compressed
+transmission does not improve the mapping performance, likely due to increased
+memory pressure caused by the large data size. The comparison of the various
+compression engines is consisten with the benchmarks in
+\fig{fCompressorDetail}; RLE, Snappy and the LZ variants are very close to each
+other, and ZSTD1 can provide better performance after four nodes due to the
+better compression ratio.
 
 \begin{figure*}[ht]\center
   \includegraphics[width=\textwidth]{images/beechnutdist}
@@ -1403,8 +1414,7 @@ compression ratio.
     \fig{fVolumes}, right}
 \end{figure*}
 
-
-Distribute large ply and raw model to 1..16 nodes using TCP, IB and RSP
+\FIXME{Missing: david on 10GE, spike comparisoon 10GE-IB-RSP}
 
 
 %----------------------------------------------------------------------
