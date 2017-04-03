@@ -1207,10 +1207,10 @@ application node.
 
 This section presents new experiments, complementing the results of previous
 publications~\cite{EP:07, EMP:09, MEP:10, EEP:11, EBAHMP:12, HBBES:13, deflect,
-  SPEP:16}. The first part analyses data distribution performance, in particular
-how the various optimizations in Collage effect complex operations in realistic
-scenarios. The second part summarizes rendering performance over all
-decomposition modes with a few representative workloads.
+  SPEP:16}. The first part summarizes rendering performance over all
+decomposition modes with a few representative workloads. The second part
+analyses data distribution performance, in particular how the various
+optimizations in Collage effect complex operations in realistic scenarios.
 
 \subsection{Decomposition Modes}
 
@@ -1220,9 +1220,23 @@ tiles, chunks, pixel, subpixel) (+DFR for Livre)
 
 \subsection{Object Distribution}
 
+The data distribution benchmarks have been performed on a cluster using
+dual processor Intel Xeon X5690 CPUs (3.47GHz), 24 GB main memory, 10GBit/s
+Ethernet and QDR Infiniband. Intel ICC 2017 has been used with CMake 3.2 release
+mode settings to compile the software stack.
+
 To benchmark the data distribution we used two datasets: The david statue at 2mm
 resolution (\fig{fDavid2mm}) and 3D volumes of a spike frequencies of an
 electrical simulation of three million neurons (\fig{fVolumes}).
+
+\begin{figure}[ht]\center
+  \includegraphics[width=.49\columnwidth]{images/david2mm}
+  \caption{\label{fDavid2mm}David statue at 2mm resolution (145MB)}
+\end{figure}
+
+The ply file is converted into a kd-Tree for fast view frustum culling and
+rendering, and the resulting data structure is serialized in binary form for
+data transmission.
 
 \begin{figure}[ht]\center
   \includegraphics[width=.49\columnwidth]{images/spikes512}\hfil
@@ -1246,7 +1260,8 @@ the data compression algorithms. This microbenchmark compresses a set of binary
 files to precalculate the speed and compression ratio of the various
 engines. \fig{fCompressor} shows the compression and decompression speed in
 gigabyte per second as well as the size of the compressed data. The different
-ZSTD$x$ engines use the ZStandard compression library at level $x$.
+ZSTD$x$ engines use the ZStandard compression library at level $x$. The
+measurements were performed on a single, isolated node.
 
 \begin{figure}[ht]\center
   \includegraphics[width=\columnwidth]{images/compressor}
@@ -1343,7 +1358,9 @@ also the lead developer of the Equalizer parallel rendering framework. He has
 worked in SGI's Advanced Graphics Division as the technical lead of OpenGL
 Multipipe SDK - a toolkit for scalable, parallel visualization software on
 shared memory supercomputers. He received his masters degree in Computer Science
-from EPFL in 2015, and his Engineering Diploma in Computer Science in 1998.
+from EPFL in 2015, and his Engineering Diploma in Computer Science in 1998. He
+is currently working towards a PhD in Computer Science at the Visualization and
+Multimedia Lab at the University of Zurich.
 \end{IEEEbiography}
 
 % if you will not have a photo at all:
