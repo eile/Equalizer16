@@ -1,0 +1,106 @@
+%
+% ``acmsiggraph'' LaTeX class.
+% - borrows *heavily* from Daniel Kartch's 'siggraph' class. 
+% - also uses pieces of 'apalike.sty' and 'authordate1-4.cls'
+% - modifications include adjustment of citation format to more closely
+%   align with new (for SIGGRAPH 2002 conference and beyond) reference
+%   and citation formatting requirements.
+% - version 0.1 2001/06/01 Stephen Spencer (spencer@acm.org)
+% - version 0.2 2001/10/15 Stephen Spencer
+% - version 0.3 2002/01/11 Stephen Spencer
+%   - disabled the cover page option.
+% - version 0.4 2002/01/23 Stephen Spencer
+% - version 0.5 2005/01/22 Stephen Spencer
+%   - removed the category markers
+%
+% ------------ identification --------------
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesClass{teaser}[2005/01/22 ACM SIGGRAPH]
+
+
+% ------------ main code --------------
+
+
+
+\newcommand{\acm@teaser}{}
+\newcommand{\teaser}[1]{\renewcommand{\acm@teaser}{#1}}
+
+\newlength{\titlespace}
+\setlength{\titlespace}{0.25in}
+
+\newlength{\teaserspace}
+\setlength{\teaserspace}{0.25in}
+
+    \renewcommand{\@maketitle}{%
+        %\begin{center}%
+        \setlength{\parindent}{0em}
+            {\LARGE\sffamily\bfseries\acm@sectionfont \@title \par}%
+            \vspace{1\baselineskip}%
+            {\large
+              \@author\par%
+            }
+            \ifx\acm@affiliation\acm@empty \else%
+                \vspace{0.5\baselineskip}%
+                \acm@affiliation\par%
+            \fi%
+            \vspace{\titlespace}%
+            \ifx\acm@teaser\acm@empty \else%
+                \begingroup%
+                    \def\@captype{figure}%
+                    \acm@teaser%
+                \endgroup\par%
+                \vspace{\teaserspace}%
+            \fi%
+        %\end{center} \par%
+    }
+
+\let\acm@origmaketitle\maketitle
+\let\acm@origand\and
+\renewcommand{\maketitle}{%
+    \let\acm@title\@title%
+    \let\acm@author\@author%
+    \acm@origmaketitle%
+    \thispagestyle{empty}%
+}
+
+\newtoks\acm@abs
+\newcommand{\keywordlist}{%
+    \vspace{0.5\baselineskip}%
+    \par\noindent \textbf{Keywords: } \acm@keywords%
+}
+\newenvironment{CRcatlist}{%
+    \vspace{0.5\baselineskip}%
+    \par\noindent \textbf{CR Categories: }%
+}{}
+
+\newcommand{\CRcat}[4]{%
+    #1 [#2]%
+    \ifx#3\acm@empty \else : #3\fi%
+    \ifx#4\acm@empty \else ---#4\fi%
+}
+
+\renewcommand{\footnoterule}{%
+    \kern-3pt
+    \hrule width 0.45\columnwidth
+    \kern 2.6pt}
+
+\newcommand{\acm@contactname}{}
+\newcommand{\contactname}[1]{\renewcommand{\acm@contactname}{#1}}
+
+\newcommand{\acm@contactaddress}{}
+\newcommand{\contactaddress}[1]{\renewcommand{\acm@contactaddress}{#1}}
+
+\newcommand{\acm@contactphone}{}
+\newcommand{\contactphone}[1]{\renewcommand{\acm@contactphone}{#1}}
+
+\newcommand{\acm@contactfax}{}
+\newcommand{\contactfax}[1]{\renewcommand{\acm@contactfax}{#1}}
+
+\newcommand{\acm@contactemail}{}
+\newcommand{\contactemail}[1]{\renewcommand{\acm@contactemail}{#1}}
+
+\newcommand{\acm@keywords}{}
+\newcommand{\keywords}[1]{\renewcommand{\acm@keywords}{#1}}
+
+% End of file 'acmsiggraph.cls'.
+
