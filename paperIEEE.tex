@@ -35,6 +35,7 @@
 %\usepackage{url}
 \usepackage{subfigure}
 \usepackage{multirow}
+\usepackage{paralist}
 
 %% If you are submitting a paper to a conference for review with a double
 %% blind reviewing process, please replace the value ``0'' below with your
@@ -298,6 +299,11 @@ reverse-engr impl
 \section{Virtual Reality}
 %------------------------------------------------------------------------------
 
+Virtual Reality
+
+\subsection{Head Tracking}
+
+
 \subsection{Dynamic Focus Distance}
 
 Focus what user is looking at
@@ -334,7 +340,8 @@ Equalizer applications, but does require the configuration latency to be equal
 or greater than the number of source channels. Furthermore, to work in a
 multi-threaded, multi-GPU configuration, the application needs to support
 running the rendering threads asynchronously, as outlined in
-\sref{SEC_threading}.
+\sref{SEC_threading}. The output frame rate of the destination channel is
+smoothened using a frame rate equalizer (\sref{SEC_framerateEq}).
 
 \subsubsection{Tiles and Chunks}
 
@@ -378,18 +385,50 @@ respective subtree at runtime to optimize one aspect of the decomposition.
 
 \subsubsection{Sort-First and Sort-Last Load Equalizer}
 
-reactive load equalization, describe tunables (damping, resistance, delta,
-granularity), sort-first respects input channel size
+Sort-first and sort-last load balancing is the most obvious optimization for
+these parallel rendering modes. Our load equalizer is fully transparent for
+application developers, that is, it uses a reactive approach based on past
+rendering times. This assumes a reasonable frame-to-frame coherency. Our
+implementation stores a 2D or 1D grid of the load, mapping the load of each
+channel. The load is stored in normalized 2D/1D coordinates using
+$\frac{time}{area}$ as the load, the contributing source channels are organized
+in a binary tree, and then the algorithm balances the two branches of each level
+by equalizing the integral over the area on each side.
 
-\subsubsection{Cross-Segment Load Equalizer}
+We have implemented various tunable parameters allowing application developers
+to optimize the load balancing based on the characteristics of their rendering
+algorithm:
+\begin{compactdesc}
+\item[Damping] reduces frame-to-frame oscillations. It is a normalized scalar
+  defining how much of the computed delta from the previous position is
+  applied. The equal load distribution within the region of interest assumed by
+  the load equalizer is in reality not equal, causing the load balancing to
+  overshoot.
+\item[Resistance] eliminates small deltas in the load balancing step. This might
+  help the application to cache some computations since the frustum does not
+  change each frame.
+\item[Boundaries] define the modulo factor in pixels onto which a load split may
+  fall. Some rendering algorithms produce artefacts related to the OpenGL raster
+  position, e.g., screen door transparency, which can be eliminated by aligning
+  the boundary to the pixel repetition. Furthermore, some rendering algorithms
+  are sensitive to cache alignments, which can again be exploited by chosing the
+  corresponding boundary.
+\end{compactdesc}
 
-summarize \cite{EEP:11}
+\subsubsection{Cross-Segment Load Balancing}
+
+Cross-segment load balancing addresses the optimal resource allocation of $n$
+rendering resources to $m$ output channels (with $n\geq m$). The view equalizer
+works in conjunction with load equalizer balancing the individual output
+channels. It monitors the usage of shared source channels (across outputs) and
+activates them to balance the rendering time of all outputs. In \cite{EEP:11},
+we provide a detailed description and evaluation of our algorithm.
 
 \subsubsection{Dynamic Frame Resolution}
 
 Constant frame rate for fill-limited applications
 
-\subsubsection{Frame Rate Equalizer}
+\subsubsection{Frame Rate Equalizer}\label{SEC_framerateEq}
 
 Predominantly used by DPlex to smooth output framerate
 
