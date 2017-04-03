@@ -238,29 +238,31 @@ work published since then.
 The concept of transparent OpenGL interception popularized by WireGL and
 Chromium~\cite{HHNFAKK:02} has received little attention since 2009. While some
 commercial implementations such as TechViz and MechDyne Conduit continue to
-exist, on the research side only ClusterGL~\cite{NHM:11} has been
-presented. ClusterGL employs the same approach as Chromium, but delivers a
-significantly faster implementation of transparent OpenGL interception and
-distribution for parallel rendering. CGLX~\cite{DK:11} tries to bring parallel
-execution transparently to OpenGL applications, by emulating the GLUT API and
-intercepting certain OpenGL calls. In contrast to frameworks like Chromium, CGLX
-follows the distributed application approach, which works transparently for
-trivial applications, but quickly requires the application developer to address
-the complexities of a distributed application when mutable application states
-need to be synchronized across processes.\FIXME{do we need to state how Equalizer
-is different from the new ClusterGL and CGLX?}
+exist, on the research side only ClusterGL~\cite{NHM:11} has been presented.
+ClusterGL employs the same approach as Chromium, but delivers a significantly
+faster implementation of transparent OpenGL interception and distribution for
+parallel rendering. CGLX~\cite{DK:11} tries to bring parallel execution
+transparently to OpenGL applications, by emulating the GLUT API and intercepting
+certain OpenGL calls. In contrast to frameworks like Chromium and ClusterGL
+which distribute OpenGL calls, CGLX follows the distributed application
+approach. This works transparently for trivial applications, but quickly
+requires the application developer to address the complexities of a distributed
+application, when mutable application state needs to be synchronized across
+processes. For realistic applications, writing parallel applications remains the
+only viable approach for scalable parallel rendering, as shown by the success of
+Paraview, Visit and Equalizer-based applications.
 
 On the other hand, software for driving and interacting with tiled display walls
-has received significant attention, including Sage~\cite{Sage} and Sage~2~\cite{Sage2}
-in particular. Sage was built entirely around the concept
-of a shared framebuffer where all content windows are separate applications
-using pixel streaming but is no longer actively supported. Sage 2 is a complete,
+has received significant attention, including Sage~\cite{Sage} and
+Sage~2~\cite{Sage2} in particular. Sage was built entirely around the concept of
+a shared framebuffer where all content windows are separate applications using
+pixel streaming but is no longer actively supported. Sage 2 is a complete,
 browser-centric reimplementation where each application is a web application
 distributed across browser instances. DisplayCluster~\cite{DC}, and its
 continuation Tide~\cite{tide}, also implement the shared framebuffer concept of
 Sage, but provide a few native content applications integrated into the display
-servers.\FIXME{also here, maybe a differentiation to Sage2 and DC is needed,
-showing the advantages of EQ}
+servers. These solutions implement a scalable display environment and are a
+target display platform for scalable 3D graphics applications.
 
 Equalizer itself has received significant attention within the research
 community. Various algorithms to improve the parallel rendering performance have
@@ -484,11 +486,19 @@ camera and scene are not changed.
 %------------------------------------------------------------------------------
 \subsection{Equalizers}
 
-{\em Equalizers} are an addition to compound trees. They modify parameters of their
-respective subtree at runtime to dynamically optimize one aspect of the decomposition. Due
-to their nature, they are transparent to application developers, but might have
-application-accessible parameters to tune their behavior.
-\FIXME{ok, this is a bit tricky to have Equalizer as a name for the framework as well as for this component, can't we change this?}
+{\em Equalizers} are an addition to compound trees. They modify parameters of
+their respective subtree at runtime to dynamically optimize the resource usage,
+by each tuning one aspect of the decomposition. Due to their nature, they are
+transparent to application developers, but might have application-accessible
+parameters to tune their behavior. Resource equalization is the critical
+component for scalable parallel rendering, and therefore the eponym for the
+Equalizer project name. \FIXME{ok, this is a bit tricky to have Equalizer as a
+name for the framework as well as for this component, can't we change this?
+eile: We can't change the product name, and changing the component name will be
+hard. In fact, this is an artefact of the architecture: The runtime balancing of
+resources is the core contribution of Equalizer, and therefore the equalizers
+performing this task are the name-givers for the product. Modified paragraph
+above for clarity.}
 
 \begin{figure*}[ht]\center
   \begin{subfigure}[b]{0.24\textwidth}
