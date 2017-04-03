@@ -1244,10 +1244,12 @@ situations. Pragmatic multicast (PGM~\cite{pgm}) provides full ordering, but
 slow clients will disconnect from the multicast session instead of throttling
 the send rate.
 
-RSP is optimized for LAN performance. In the following we will outline the RSP
-protocol and implementation and motivate the design decisions. Any defaults
-given below are for Linux or OS X, the Windows UDP stack requires different
-default values which can be found in the implementation.
+RSP combines various established algorithms~\cite{nack, flowcontrol} for
+multicast in an open source implementation capable of delivering wire speed
+transmission rates on high-speed LAN interfaces. In the following we will
+outline the RSP protocol and implementation and motivate the design
+decisions. Any defaults given below are for Linux or OS X, the Windows UDP stack
+requires different default values which can be found in the implementation.
 
 Our RSP implementation uses a separate protocol thread for each RSP connection,
 which handles all reads and writes on the multicast group. This thread
@@ -1288,7 +1290,7 @@ bytes connection identifier.
 The \textsf{\_appBuffers} queue, which is blocking, contains received UDP
 datagrams on incoming connections, or empty buffers for writing on outgoing
 connections. The \textsf{\_threadBuffers} queue is lock-free and used by the
-protocol thread to store empty buffers on incoming connections and pre-packaged
+protocol thread to store empty buffers on incoming connections, and pre-packaged
 UDP datagrams on outgoing connections. The application thread pushes buffers
 into this queue, consumed by the protocol thread. A datagram is up to 64
 kilobytes (UDP limit, configurable) and contains a header (two bytes type, two
@@ -1549,6 +1551,11 @@ Livre using 1..16 nodes with all modes (2D, 2D LB, DB, DPlex (over AA steps),
 tiles, chunks, pixel, subpixel) (+DFR for Livre)
 
 \subsection{Object Distribution}
+
+\begin{figure}[ht]\center
+  \includegraphics[width=\columnwidth]{images/compressor}
+  \caption{\label{fCompressor}Data Compression Engines}
+\end{figure}
 
 Pression data compressor benchmark
 
