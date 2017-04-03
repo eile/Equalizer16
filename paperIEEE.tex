@@ -398,7 +398,7 @@
 % not capitalized unless they are the first or last word of the title.
 % Linebreaks \\ can be used within to get better formatting as desired.
 % Do not put math or special symbols in the title.
-\title{Equalizer: A Mature Parallel Rendering Framework}
+\title{Equalizer 2.0\\Convergence of a Parallel Rendering Framework}
 %
 %
 % author names and IEEE memberships
@@ -553,36 +553,12 @@ Parallel Rendering, Scalable Visualization, Cluster Graphics, Immersive Environm
 \IEEEraisesectionheading{\section{Introduction}\label{sec:introduction}}
 %----------------------------------------------------------------------
 
-The continuing improvements in hardware integration lead to ever faster CPUs and GPUs, as well as higher resolution sensor and display devices. Moreover, increased hardware parallelism is applied in form of multi-core CPU workstations, massive parallel super computers, or cluster systems. Hand in hand goes the rapid growth in complexity of data sets from numerical simulations, high-resolution 3D scanning systems or bio-medical imaging, which causes interactive exploration and visualization of such large data sets to become a serious challenge. It is thus crucial for a visualization solution to take advantage of hardware accelerated scalable parallel rendering. In this systems paper we describe a new scalable parallel rendering framework called {\em Equalizer} that is aimed primarily at cluster-parallel rendering, but works as well in a shared-memory system. Cluster systems are the main focus  because workstation graphics hardware is developing faster than high-end graphics (super-) computers can absorb new developments, and also because clusters offer a better cost-performance balance.
-
-Previous parallel rendering approaches typically failed in one of the following system requirements:
-%
-\begin{compactenum}\renewcommand{\labelenumi}{\alph{enumi})}
-\item generic application support, instead of special domain solution
-\item scalable abstraction of the graphics layer
-\item exploit existing code infrastructure, such as proprietary scene graphs, molecular data structures, level-of-detail and geometry databases
-\end{compactenum}
-
-To date, generic and scalable parallel rendering frameworks  that can be adopted to a wide range of scientific visualization domains are not yet readily available. Furthermore, flexible
-configurability to arbitrary cluster and display-wall configurations has also not been addressed in the past, but is of immense practical importance to scientists depending high-performance interactive visualization as a scientific tool. In this paper we present Equalizer, which is a novel flexible framework for parallel rendering that supports scalable performance, configuration flexibility, is {\em minimally invasive} with respect to adapting existing visualization applications, and is applicable to virtually any scientific visualization application domain.
-
-The main contributions that Equalizer introduces in a single parallel rendering system, and which are presented in this paper are:
-%
-\begin{compactenum}\renewcommand{\labelenumi}{\roman{enumi})}
-\item novel concept of compound trees for flexible configuration of graphics system resources,
-\item easy specification of parallel task decomposition and image compositing choice through compound tree layouts,
-\item automatic decomposition and distributed execution of rendering tasks according to compound tree,
-\item support for parallel surface as well as transparent (volume) rendering through $z$-visibility as well as $\alpha$-blending compositing,
-\item fully decentralized architecture providing network swap barrier (synchronization) and distributed objects functionality,
-\item support for low-latency distributed frame synchronization and image compositing,
-\item minimally invasive programming model.
-\end{compactenum}
-
-Equalizer is open source, available under the LGPL license from http://www.equalizergraphcis.com/, which allows it to be used both for open source and commercial applications. It is source-code portable, and has been tested on Linux, Microsoft Windows, and Mac OS X in 32 and 64 bit mode using both little endian and big endian processors.
+Highlight integration of many features into a general framework vs one-off
+research implemenation of one algorithm.
 
 
 %----------------------------------------------------------------------
-\section{Related Work}\label{SEC_related}
+\section{Related Work}\label{sec:related}
 %----------------------------------------------------------------------
 
 In~\cite{EMP:09}, we presented the Equalizer parallel rendering framework. This
@@ -658,27 +634,32 @@ same \textit{compound} framework introduced in \cite{EMP:09}
   \begin{subfigure}[b]{0.24\textwidth}
     \includegraphics[width=\textwidth]{images/subpixel}
   \end{subfigure}\\[\medskipamount]
-  \begin{subfigure}[b]{0.24\textwidth}
+  \begin{subfigure}[t]{0.24\textwidth}
     {\tiny\begin{lstlisting}
 compound {
   channel "destination"
   framerate_equalizer {}
   compound {
     channel "source1"
-    phase 0 period 2
+    phase 0 period 3
     outputframe  { name "frame" }
   }
   compound {
     channel "source2"
-    phase 1 period 2
+    phase 1 period 3
+    outputframe  { name "frame" }
+  }
+  compound {
+    channel "source3"
+    phase 2 period 3
     outputframe  { name "frame" }
   }
   inputframe { name "frame" }
 }
-    \end{lstlisting}}
+    \end{lstlisting}\vspace{24ex}}
     \caption{\label{fig:dplex}Time-Multiplex}
   \end{subfigure}
-  \begin{subfigure}[b]{0.24\textwidth}
+  \begin{subfigure}[t]{0.24\textwidth}
     {\tiny\begin{lstlisting}
 compound {
   channel "destination"
@@ -691,56 +672,81 @@ compound {
     inputtiles { name "queue" }
   }
   compound {
-    channel "source"
+    channel "source1"
     inputtiles { name "queue" }
     outputframe {}
   }
-  inputframe { name "frame.source" }
+  compound {
+    channel "source2"
+    inputtiles { name "queue" }
+    outputframe {}
+  }
+  compound {
+    channel "source3"
+    inputtiles { name "queue" }
+    outputframe {}
+  }
+  inputframe { name "frame.source1" }
+  inputframe { name "frame.source2" }
+  inputframe { name "frame.source3" }
 }
     \end{lstlisting}}
     \caption{\label{fig:tiles}Tiles}
   \end{subfigure}
-  \begin{subfigure}[b]{0.24\textwidth}
+  \begin{subfigure}[t]{0.24\textwidth}
     {\tiny\begin{lstlisting}
 compound {
   channel "dest"
   compound {
     channel "dest"
-    pixel [ 0 0 2 1 ]
+    pixel [ 0 0 3 1 ]
     outputframe { type texture }
   }
   compound {
-    channel "source"
-    pixel [ 1 0 2 1 ]
-    outputframe{}
+    channel "source1"
+    pixel [ 1 0 3 1 ]
+    outputframe {}
+  }
+  compound {
+    channel "source2"
+    pixel [ 2 0 3 1 ]
+    outputframe {}
   }
   inputframe { name "frame.dest" }
-  inputframe { name "frame.source" }
+  inputframe { name "frame.source1" }
+  inputframe { name "frame.source2" }
 }
-    \end{lstlisting}}
+    \end{lstlisting}\vspace{21ex}}
     \caption{\label{fig:pixel}Pixel}
   \end{subfigure}
-  \begin{subfigure}[b]{0.24\textwidth}
+  \begin{subfigure}[t]{0.24\textwidth}
     {\tiny\begin{lstlisting}
 compound {
   channel "dest"
   compound {
     channel "dest"
-    subpixel [ 0 2 ]
+    subpixel [ 0 3 ]
     outputframe { type texture }
   }
   compound {
-    channel "source"
-    subpixel [ 1 2 ]
-    outputframe{}
+    channel "source1"
+    subpixel [ 1 3 ]
+    outputframe {}
+  }
+  compound {
+    channel "source2"
+    subpixel [ 1 3 ]
+    outputframe {}
   }
   inputframe { name "frame.dest" }
-  inputframe { name "frame.source" }
+  inputframe { name "frame.source1" }
+  inputframe { name "frame.source2" }
 }
-    \end{lstlisting}}
+    \end{lstlisting}\vspace{21ex}}
     \caption{\label{fig:subpixel}Subpixel}
   \end{subfigure}
-  \caption{New Equalizer task decompositions for parallel rendering}
+  \caption{New Equalizer task decompositions and their compounds for parallel
+    rendering}
   \label{fig:compounds}
 \end{figure*}
 
@@ -757,9 +763,9 @@ for non-interactive movie generation. It is transparent to Equalizer
 applications, but does require the configuration latency to be equal or greater
 than the number of source channels. Furthermore, to work in a multi-threaded,
 multi-GPU configuration, the application needs to support running the rendering
-threads asynchronously, as outlined in \sref{SEC_threading}. The output frame
+threads asynchronously, as outlined in \sref{sec:threading}. The output frame
 rate of the destination channel is smoothened using a frame rate equalizer
-(\sref{SEC_framerateEq}).
+(\sref{sec:framerateEq}).
 
 \subsubsection{Tiles and Chunks}\label{sec:tile}
 
@@ -881,7 +887,7 @@ transfer. If the performance and source channel resolutions allows, this will
 not only subsample, but also supersample the destination channel to reduce
 aliasing artefacts.
 
-\subsubsection{Frame Rate Equalizer}\label{SEC_framerateEq}
+\subsubsection{Frame Rate Equalizer}\label{sec:framerateEq}
 
 The framerate equalizer smoothens the output frame rate of a destination
 channel by instructing the corresponding window to delay its buffer swap to a
@@ -933,7 +939,7 @@ plugins, allowing easy extension and customization to application-specific
 compression. In \cite{MEP:10}, we show this to be a critical step for
 interactive performance at scale.
 
-\subsubsection{Thread Synchronization Modes}\label{SEC_threading}
+\subsubsection{Thread Synchronization Modes}\label{sec:threading}
 
 Different applications have different degrees on how decoupled and thread-safe
 the rendering code is from the application logic. For full decoupling all
@@ -980,7 +986,7 @@ cases and have been validated with their respective users.
 
 Head tracking is the minimal feature needed to support immersive
 installations. Equalizer does support multiple, independent tracked views
-through the observer abstraction introduced in \sref{SEC_observer}. Built-in
+through the observer abstraction introduced in \sref{sec:observer}. Built-in
 VRPN support enables the direct, application-transparent configuration of a VRPN
 tracker device. Alternatively, an application can provide a $4\times 4$ tracking
 matrix defining the transformation from the canvas coordinate system to the
@@ -1019,7 +1025,7 @@ and can run both monoscopic and stereoscopic views concurrently
 (\fig{FIG_teaser} (b)). While this is trivial for active stereo rendering, it
 does potentially involve the start and stop of resources and processes for
 passive stereo or stereo-dependent task decompositions, as described in
-\sref{SEC_reconfig}.
+\sref{sec:reconfig}.
 
 %------------------------------------------------------------------------------
 \section{Usability}
@@ -1058,7 +1064,7 @@ screens. These frusta describe a physically-correct display setup for a Virtual
 Reality installation. \label{sec:swap} A canvas may have a software or hardware
 swap barrier, which will synchronize the rendering of all contributing GPUs. The
 software barrier executes a \textsf{glFinish} to ensure the GPU is ready to
-swap, a Collage barrier (\sref{SEC_barrier}) to synchronize all segments, the
+swap, a Collage barrier (\sref{sec:barrier}) to synchronize all segments, the
 swap buffers call followed by a \textsf{glFlush} to ensure timely execution of
 the swap command. The hardware swap barrier is implemented using the
 \textsf{WGL\_NV\_swap\_group} or \textsf{GLX\_NV\_swap\_group} extensions.
@@ -1083,13 +1089,13 @@ wall. If the view does not specify a frustum, the corresponding destination
 channels will use the physically correct sub-frustum resulting from the
 view/segment intersection.
 
-\label{SEC_observer}
+\label{sec:observer}
 An observer looks at one or more views. It is described by the observer position
 in the world and its eye separation. Each observer will have its own stereo
 mode, focus distance and frame loop (framerate). This allows to have untracked
 views and multiple tracked views, e.g., two HMDs, in the same application.
 
-\subsection{Runtime Reconfiguration}\label{SEC_reconfig}
+\subsection{Runtime Reconfiguration}\label{sec:reconfig}
 
 Switching a layout, as described above, or switching the stereo rendering mode,
 may involve a different set of resources after the change, including the launch
@@ -1197,7 +1203,7 @@ primitives in Collage are:
   transmit raw data reliably between two endpoints for unicast connections, and
   between a set of endpoints for multicast connections. For unicast,
   process-local pipes, TCP and Infiniband RDMA are implemented. For multicast,
-  a reliable, UDP-based protocol is discussed in \sref{SEC_RSP}.
+  a reliable, UDP-based protocol is discussed in \sref{sec:RSP}.
 \item[DataI/OStream] Abstracts the input and output of C++ data types from or to
   a set of connections by implementing output stream operators. Uses buffering
   to aggregate data for network transmission. Performs endian swapping during
@@ -1221,7 +1227,7 @@ primitives in Collage are:
 
 needed? reverse-engr impl
 
-\subsection{Reliable Stream Protocol}\label{SEC_RSP}
+\subsection{Reliable Stream Protocol}\label{sec:RSP}
 
 UDP-based reliability protocol
 
@@ -1305,21 +1311,21 @@ Besides the instance data serialization methods used to map an object, versioned
 objects may implement \textsf{pack} and \textsf{unpack} to serialize or
 deserialize the changes since the last version.
 
-The Collage Serializable implements one convenient usage pattern for object data
-distribution. The \textsf{co::Serializable} data distribution is based on the
-concept of dirty bits, allowing inheritance with data distribution. Dirty bits
-form a 64-bit mask which marks the parts of the object to be distributed during
-the next commit. For serialization, the application developer implements
-\textsf{serialize} or \textsf{deserialize}, which are called with the bit mask
-specifying which data has to be transmitted or received. During a commit or
-sync, the current dirty bits are given, whereas during object mapping all dirty
-bits are passed to the serialization methods.
+\label{sec:Serializable}The Collage Serializable implements one convenient usage
+pattern for object data distribution. The \textsf{co::Serializable} data
+distribution is based on the concept of dirty bits, allowing inheritance with
+data distribution. Dirty bits form a 64-bit mask which marks the parts of the
+object to be distributed during the next commit. For serialization, the
+application developer implements \textsf{serialize} or \textsf{deserialize},
+which are called with the bit mask specifying which data has to be transmitted
+or received. During a commit or sync, the current dirty bits are given, whereas
+during object mapping all dirty bits are passed to the serialization methods.
 
 Blocking commits allow to limit the number of outstanding, queued versions on
 the slave nodes. A token-based protocol will block the commit on the master
 instance if to many unsynchronized versions exist.
 
-\subsection{Barriers, Queues and Object Maps}\label{SEC_barrier}
+\subsection{Barriers, Queues and Object Maps}\label{sec:barrier}
 
 Collage implements a few generic distributed objects which are used by Equalizer
 and applicatons. A barrier is a distributed barrier primitive used for software
@@ -1349,10 +1355,40 @@ problems.
 
 \subsection{Livre}
 
-Livre (Large-scale interactive volume rendering engine) is an out-of-core
-parallel 4D volume renderer.
+Livre (Large-scale Interactive Volume Rendering Engine) is an out-of-core
+parallel 4D volume renderer. It supports sort-first decomposition, both for
+scalability as well as for driving large-scale tiled display walls. The
+out-of-core loading of data relies on a shared file system, only the high-level
+state, e.g., camera position and rendering settings, are shared through Collage
+objects.
 
 \subsection{RTT Deltagen}
+
+RTT Deltagen (now Dassault 3D Excite) is a commercial application for
+interactive, high quality rendering of CAD data. The RTT Scale module,
+delivering multi-GPU and distributed execution, is based on Equalizer and
+Collage, and has driven many of the aforementioned features.
+
+RTT Scale uses a master-slave execution mode, were a single running Deltagen
+instance can go into "Scale mode" at any time by launching an Equalizer
+configuration. Consequently, the whole internal representation needed for
+rendering is based on a Collage-based data distribution. The rendering clients
+are separate, smaller applications which will map their scenes during
+startup. At runtime, any change performed in the main application is committed
+as a delta at the beginning of the next frame, following a design pattern
+similar to the Collage \textsf{Serializable}
+(\sref{sec:Serializable}). Multicast (\sref{sec:RSP}) is used to keep data
+distribution times during session launch reasonable for larger cluster sizes
+(tens to hundreds of nodes).
+
+RTT Scale is used for a wide variety of use cases. In virtual reality, the
+application is used for virtual prototyping and design reviews in front of
+high-resolution display walls or in a CAVE and for virtual prototyping of
+human-machine interactions in a CAVE or using HMDs. For scalability, sort-first
+and tile compounds are used to achieve fast, high-quality rendering, primarily
+for interactive raytracing, both based on CPUs and GPUs. For CPU-based
+raytracing, often Linux-based rendering clients are used with a Windows-based
+application node.
 
 \subsection{RTNeuron}
 \cite{HBBES:13}
@@ -1363,11 +1399,13 @@ parallel 4D volume renderer.
 %----------------------------------------------------------------------
 \section{Experimental Results}
 %----------------------------------------------------------------------
-\label{SEC_results}
+\label{sec:results}
 
 \subsection{Object Distribution}
 
 Distribute large ply model to 1..16 nodes using TCP, IB and RSP
+
+Distribute a video texture (per frame)
 
 \subsection{Decomposition Modes}
 
@@ -1378,7 +1416,7 @@ tiles, chunks, pixel, subpixel) (+DFR for Livre)
 %----------------------------------------------------------------------
 \section{Discussion and Conclusion}
 %----------------------------------------------------------------------
-\label{SEC_conclusions}
+\label{sec:conclusions}
 
 
 %----------------------------------------------------------------------
@@ -1397,6 +1435,9 @@ for providing the 3D geometry and volume test data sets: the Digital
 Michelangelo Project, Stanford 3D Scanning Repository, Cyberware Inc.,
 volvis.org and the Visual Human Project.  This work was partially supported by
 the Swiss National Science Foundation Grant 200021-116329/1.
+
+We would also like to thank all supporters and contributors of Equalizer, most
+notably RTT, the Blue Brain Project, the University of Siegen, EVL, Dardo, TBD.
 
 % trigger a \newpage just before the given reference
 % number - used to balance the columns on the last page
