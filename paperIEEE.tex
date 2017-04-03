@@ -1386,20 +1386,12 @@ improves performance by reducing the CPU and copy overhead. Combining
 compression and buffering leads to the best performance, although only by about
 10\%.
 
-\begin{figure*}[ht]\center
-  \includegraphics[width=\textwidth]{images/daviddist}
-  \caption{\label{fDavidDist}Object mapping (left) and data synchronization
-    time (middle, detail view right) for the David 2mm data set in
-    \fig{fDavid2mm}}
-\end{figure*}
-
 During synchronization, data is pushed from the master process to all mapped
 slaves using a unicast connection to each slave. While the results in the
 \fig{fDavidDist} (middle) are relatively close to each other, we can still
 observe how the tradeoff between compression ratio and speed influences overall
 performance. Better, slower compression algorithms lead to better overall better
 performance when amortized over many send operations.
-
 
 The volume data sets are distributed in a single object, serializing the
 raw volume buffer. The spike volume data set has a significant compression
@@ -1411,13 +1403,6 @@ compression makes a huge difference, since the compression cost can be amortized
 over $n$ nodes, reaching raw data transmission rates of 3.7 GB/s with the
 default Snappy compressor and at best 4.4 GB/s with ZStandard at level 1.
 
-\begin{figure*}[ht]\center
-  \includegraphics[width=\textwidth]{images/spikesdist}
-  \caption{\label{fSpikesDist}Object mapping (left) and data synchronization
-    time (middle, detail view right) for the spike data set in
-    \fig{fVolumes}, left}
-\end{figure*}
-
 The distribution of the beechnut data set also behaves as expected
 (\fig{fBeechnutDist}). Due to the larger object size, uncompressed transmission
 is slightly faster compared to the spike data set at 700 MB/s, and compressed
@@ -1428,25 +1413,11 @@ compression engines is consistent with the benchmarks in
 other, and ZSTD1 can provide better performance after four nodes due to the
 better compression ratio.
 
-\begin{figure*}[ht]\center
-  \includegraphics[width=\textwidth]{images/beechnutdist}
-  \caption{\label{fBeechnutDist}Object mapping (left) and data synchronization
-    time (middle, detail view right) for the beechnut data set in
-    \fig{fVolumes}, right}
-\end{figure*}
-
-
 Finally, we compare data distribution speed using different protocols. In this
 benchmark, data synchronization time of the spike volume data set is measured,
 as in \fig{fSpikesDist} (middle). Buffering is enabled, and compression is
 disabled to focus on the raw network performance. \fig{fIFDist} shows the
 performance using various protocols.
-
-\begin{figure*}[ht]\center
-  \includegraphics[width=\textwidth]{images/ifdist}
-  \caption{\label{fIFDist}Object synchronization using different network
-    transports}
-\end{figure*}
 
 Unsurprisingly, TCP over the faster InfiniBand link outperforms the cheaper ten
 gigabit ethernet link by more than a factor of two. Unexpectedly, the native
@@ -1464,13 +1435,40 @@ mapped, since the transmission to a single client is better done using unicast.
 RSP consistently outperforms unicast on the same physical interface and shows
 good scaling behavior (2.5 times slower on 16 vs 2 clients on ethernet, 1.8
 times slower on InfiniBand). The scaling is significantly better when only one
-process per node is used (\fig{fIFDist}, middle: 30\% slower on ethernet, flat
-on InfiniBand). The increased transmission time with multiple clients is caused
-by a higher probability of packet loss, which increases significantly when using
-more than one process per node, as shown in \fig{fIFDist}, right. Infiniband
-outperforms ethernet slightly, but is largely limited by the RSP implementation
-throughput of preparing and queueing the datagrams to and from the protocol
-thread, which we observed in a profiling analysis.
+process per node is used (\fig{fIFDist}, middle: 30\% slower on ethernet,
+nearly flat on InfiniBand). The increased transmission time with multiple
+clients is caused by a higher probability of packet loss, which increases
+significantly when using more than one process per node, as shown in
+\fig{fIFDist}, right. This figure plots the number of retransmissions
+divided by the number of datagrams. Infiniband outperforms ethernet slightly,
+but is largely limited by the RSP implementation throughput of preparing and
+queueing the datagrams to and from the protocol thread, which we observed in a
+profiling analysis.
+
+\begin{figure*}[ht]\center
+  \includegraphics[height=.19\textheight]{images/daviddist}
+  \caption{\label{fDavidDist}Object mapping (left) and data synchronization
+    time (middle, detail view right) for the David 2mm data set in
+    \fig{fDavid2mm}}
+\end{figure*}
+\begin{figure*}[ht]\center
+  \includegraphics[height=.19\textheight]{images/spikesdist}
+  \caption{\label{fSpikesDist}Object mapping (left) and data synchronization
+    time (middle, detail view right) for the spike data set in
+    \fig{fVolumes}, left}
+\end{figure*}
+\begin{figure*}[ht]\center
+  \includegraphics[height=.19\textheight]{images/beechnutdist}
+  \caption{\label{fBeechnutDist}Object mapping (left) and data synchronization
+    time (middle, detail view right) for the beechnut data set in
+    \fig{fVolumes}, right}
+\end{figure*}
+\begin{figure*}[ht]\center
+  \includegraphics[height=.19\textheight]{images/ifdist}
+  \caption{\label{fIFDist}Object synchronization using different network
+    transports}
+\end{figure*}
+\clearpage
 
 %----------------------------------------------------------------------
 \section{Discussion and Conclusion}
