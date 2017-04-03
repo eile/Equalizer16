@@ -643,7 +643,12 @@ all of its segments. A segment can also define a frustum, which overrides the
 canvas frustum, e.g., for non-planar setups such as CAVEs or curved
 screens. These frusta describe a physically-correct display setup for a Virtual
 Reality installation. A canvas may have a software or hardware swap barrier,
-which will synchronize the rendering of all contributing GPUs.
+which will synchronize the rendering of all contributing GPUs. The software
+barrier executes a \textsf{glFinish} to ensure the GPU is ready to swap, a
+Collage barrier (\sref{SEC_barrier}) to synchronize all segments, the swap
+buffers call followed by a \textsf{glFlush} to ensure timely execution of the
+swap command. The hardware swap barrier is implemented using the
+\textsf{WGL\_NV\_swap\_group} or \textsf{GLX\_NV\_swap\_group} extensions.
 
 On each canvas, the application can display one or more views. A view is a view
 on a model, in the sense used by the MVC pattern. The view class is used by
@@ -670,6 +675,26 @@ An observer looks at one or more views. It is described by the observer position
 in the world and its eye separation. Each observer will have its own stereo
 mode, focus distance and frame loop (framerate). This allows to have untracked
 views and multiple tracked views, e.g., two HMDs, in the same application.
+
+\subsection{Runtime Reconfiguration}\label{SEC_reconfig}
+
+Switching a layout, as described above, or switching the stereo rendering mode,
+may involve a different set of resources after the change, including the launch
+and exit of render client processes. Equalizer solves this through a
+reconfiguration step at the beginning of each rendering frame. Each resource
+(channel, window, pipe, node) has an activation count, which is updated when the
+layout or any other relevant rendering parameter is changed. When a resource is
+found whose activation count does not match its current start/stopped state, the
+resource is created or destroyed and \textsf{configInit} or \textsf{configExit}
+are called accordingly. In the current implementation, a normal configuration
+initialization or exit, as described in \cite{EMP:09}, uses the same code path
+with all used resources transitioning to a running or stopped state,
+accordingly. Since starting new resources typically requires object mapping and
+associated data distribution, it is a costly operation. To improve performance
+and robustness, Equalizer will flush the rendering pipeline whenever a runtime
+reconfiguration is detected, before executing the change. This implementation
+allows the late join or early exit, transparent to application developers.
+
 
 \subsection{Automatic Configuration}
 
@@ -863,7 +888,7 @@ Blocking commits allow to limit the number of outstanding, queued versions on
 the slave nodes. A token-based protocol will block the commit on the master
 instance if to many unsynchronized versions exist.
 
-\subsection{Barriers, Queues and Object Maps}
+\subsection{Barriers, Queues and Object Maps}\label{SEC_barrier}
 
 Collage implements a few generic distributed objects which are used by Equalizer
 and applicatons. A barrier is a distributed barrier primitive used for software
@@ -924,13 +949,22 @@ are not symmetric, and by measuring individual users a more precise frustum can
 be computed. Equalizer supports this through the optional configuration (file or
 programmatically) of individual 3D positions for the left and right eye.
 
-\subsection{Application-specific Scaling}
+\subsection{Model Unit}
 
-Gullivers world
+This feature allows applications to specify a scaling factor between the model
+and the real world, to allow exploration of macroscopic or microscopic worlds in
+virtual reality. The unit is per view, allowing different scale factors within
+the same configuration. It scales both the specified projection surface as well
+as the eye position (and therefore separation) to achieve the necessary effect.
 
 \subsection{Runtime Stereo Switch}
 
-\subsection{Swap Synchronization and GPU affinity}\label{sec:swap}
+Applications can switch each view between mono and stereo rendering at runtime,
+and can run both monoscopic and stereoscopic views concurrently
+(\fig{FIG_teaser} (b)). While this is trivial for active stereo rendering, it
+does potentially involve the start and stop of resources and processes for
+passive stereo or stereo-dependent task decompositions, as described in
+\sref{SEC_reconfig}.
 
 %------------------------------------------------------------------------------
 \section{Performance}
@@ -1063,7 +1097,12 @@ algorithms.
 
 \subsubsection{Monitoring}
 
-Control workstation in VR setups
+The monitor allows to reuse the rendering on another channel, typically for
+monitoring a larger setup on a control workstation. Output frames on the display
+channels are connected to input frames on a single monitoring channel. The
+monitor equalizer changes the scaling factor and offset between the output and
+input, so that the monitor channel has the same, but typically downscaled view,
+as the originating segments.
 
 \subsection{Optimizations}
 
