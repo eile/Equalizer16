@@ -581,17 +581,37 @@ Equalizer is open source, available under the LGPL license from http://www.equal
 
 
 %----------------------------------------------------------------------
-\section{Related Work}
+\section{Related Work}\label{SEC_related}
 %----------------------------------------------------------------------
-\label{SEC_related}
 
-In \cite{EMP:09}, we presented the Equalizer parallel rendering framework. This
-paper also summarized the work in parallel rendering up to 2009. In the
-following we will present the related work published since then. An extensive
-Programming and User Guide provides in-depth documentation on using and
-programming Equalizer\cite{Eilemann:13}.
+In~\cite{EMP:09}, we presented the Equalizer parallel rendering framework. This
+paper summarized the work in parallel rendering up to 2009. In the following we
+will present the related work published since then. An extensive Programming and
+User Guide provides in-depth documentation on using and programming
+Equalizer~\cite{Eilemann:13}.
 
-\cite{EEP:11} cross-segment load balancing
+The concept of transparent OpenGL interception popularized by WireGL and
+Chromium~\cite{HHNFAKK:02} has received little attention. While some commercial
+implementations such as TechViz and MechDyne Conduit continue to exists, only
+ClusterGL?~\cite{NHM:11} has been published. ClusterGL employs the same approach
+as Chromium, but delivers a significantly faster implementation of transparent
+OpenGL interception and distribution for parallel rendering.
+
+On the other hand, software for driving and interacting with tiled display walls
+has received significant attention. Sage~\cite{TBD} and Sage2~\cite{TBD}
+
+Equalizer itself has received significant attention to research and validate
+parallel rendering performance, by using compression and region of interest
+during compositing~\cite{MEP:10}, load-balancing resources for multi-display
+installations~\cite{EEP:11}, asynchronous compositing and NUMA
+optimizations~\cite{EBAHMP:12} as well as work queueing~\cite{SPEP:16}.
+
+Various applications and frameworks have used Equalizer for new research in
+visualization, such as the RTNeuron~\cite{HBBES:13}, an OpenGL renderer for
+visualizing simulations of neucortical brain regions, Omegalib~\cite{TBD},
+extending Equalizer for the hybrid 2D/3D environments such as the CAVE2,
+Siegen~\cite{TBD}
+
 
 \cite{DK:11}: Framework to develop apps for multitile, thus targeted
 specifically for tiled-wall visualization systems: grid configuration,
@@ -603,8 +623,6 @@ contexts and events
 \cite{CKP:12} tiled display wall virtual environment
 
 \cite{TBD} DisplayCluster
-
-\cite{NHM:11} ClusterGL?
 
 Omegalib
 
@@ -663,6 +681,7 @@ ensures that the task communication overlaps with rendering. As shown in
 \cite{SPEP:16}, these modes provide better performance due to being inherently
 load-balanced, as long as there is an insignificant overhead for the render task
 setup. This mode is transparent to Equalizer applications.
+
 
 \subsubsection{Pixel}
 
@@ -938,12 +957,12 @@ A canvas can define a frustum, which will create default, planar sub-frusta for
 all of its segments. A segment can also define a frustum, which overrides the
 canvas frustum, e.g., for non-planar setups such as CAVEs or curved
 screens. These frusta describe a physically-correct display setup for a Virtual
-Reality installation. A canvas may have a software or hardware swap barrier,
-which will synchronize the rendering of all contributing GPUs. The software
-barrier executes a \textsf{glFinish} to ensure the GPU is ready to swap, a
-Collage barrier (\sref{SEC_barrier}) to synchronize all segments, the swap
-buffers call followed by a \textsf{glFlush} to ensure timely execution of the
-swap command. The hardware swap barrier is implemented using the
+Reality installation. \label{sec:swap} A canvas may have a software or hardware
+swap barrier, which will synchronize the rendering of all contributing GPUs. The
+software barrier executes a \textsf{glFinish} to ensure the GPU is ready to
+swap, a Collage barrier (\sref{SEC_barrier}) to synchronize all segments, the
+swap buffers call followed by a \textsf{glFlush} to ensure timely execution of
+the swap command. The hardware swap barrier is implemented using the
 \textsf{WGL\_NV\_swap\_group} or \textsf{GLX\_NV\_swap\_group} extensions.
 
 On each canvas, the application can display one or more views. A view is a view
