@@ -369,11 +369,22 @@ Control workstation in VR setups
 
 \subsubsection{Region of Interest}
 
-for compositing and load equalizer.
+The region of interest is the screen-space 2D bounding box enclosing the
+geometry rendered by a single resource. We have extended the core parallel
+rendering framework to use an application-provided ROI to optimize the load
+equalizer as well as image compositing performance. The load equalizer uses the
+ROI to refine its load grid to the regions containing data. The compositing code
+uses the ROI to minimize image readback and network transmission. In
+\cite{EBAHMP:12}, we provide the details of the algorithm, and show that this
+improves rendering performance of up to 25\%.
 
-\subsubsection{Asynchronous Readback}
+\subsubsection{Asynchronous Compositing}
 
-pipelines rendering with compositing
+Asynchronous compositing pipelines rendering with compositing operations, by
+executing the image readback, network transfer and image assembly from threads
+running in parallel to the rendering threads. In \cite{EBAHMP:12}, we provide
+the details of the implementation and experimental data showing an improvement
+of the rendering performance of over 25\% for large node counts.
 
 \subsubsection{Download and Compression Plugins}
 
@@ -390,7 +401,11 @@ Per-node sync, draw sync, async
 
 \subsection{Livre}
 \subsection{RTT Deltagen}
+
 \subsection{RTNeuron}
+\cite{HBBES:13}
+
+\subsection{Raster}
 \subsection{Omegalib}
 
 %----------------------------------------------------------------------
