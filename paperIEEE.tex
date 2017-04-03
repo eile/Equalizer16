@@ -77,8 +77,10 @@
 \and Renato Pajarola~\IEEEmembership{Senior Member,~IEEE}\thanks{email: pajarola@acm.org}}
 
 
-\author{Stefan~Eilemann, David~Steiner and Renato Pajarola% <-this % stops a space
-\IEEEcompsocitemizethanks{\IEEEcompsocthanksitem All authors are with the Visualization and MultiMedia Lab, Department of Informatics, University of Z\"urich.
+\author{Stefan~Eilemann, David~Steiner and Renato Pajarola%
+\IEEEcompsocitemizethanks{\IEEEcompsocthanksitem All authors are with the
+Visualization and MultiMedia Lab, Department of Informatics, University of
+Z\"urich.
 \IEEEcompsocthanksitem S. Eilemann is also with the Blue Brain Project, Ecole
 Polytechnique Federale de Lausanne.}}
 
@@ -932,11 +934,6 @@ primitives in \textsf{Collage} are:
 \fig{fNetObject} illustrates this architecture.
 
 %------------------------------------------------------------------------------
-\subsection{Infiniband RDMA}
-
-needed? reverse-engr impl
-
-%------------------------------------------------------------------------------
 \subsection{Reliable Stream Protocol}\label{sec:RSP}
 
 RSP is an implementation of a reliable multicast protocol over unreliable UDP
@@ -951,25 +948,17 @@ RSP combines various established algorithms~\cite{adamson2004negative,
   Gau:2002:MFC:506824.506832} for multicast in an open source implementation
 capable of delivering wire speed transmission rates on high-speed LAN
 interfaces. In the following we will outline the RSP protocol and implementation
-as well as motivate the design decisions. Any defaults given below are for Linux or OS
-X, the Windows UDP stack requires different default values which can be found in
-the implementation.
+as well as motivate the design decisions. Any defaults given below are for
+Linux or OS X, the Windows UDP stack requires different default values which can
+be found in the implementation.
 
-Our RSP implementation uses a separate protocol thread for each RSP connection,
+Our RSP implementation uses a separate protocol thread for each RSP group,
 which handles all reads and writes on the multicast group. This thread
 implements the protocol handling and communicates with the application threads
 through thread-safe queues, as shown in \fig{fRSPProto}. These queues contain
 datagrams, which are prefixed by a type-specific header. Each connection has a
 configurable number of buffers, (1024 by default) of a configurable MTU (1470
-bytes default) which are either free for use or in-use for reading or writing.
-
-%%     1,     // RSP_ERROR_DOWNSCALE
-%%     5,     // RSP_ERROR_UPSCALE
-%%     20,    // RSP_ERROR_MAXSCALE
-%%     3,     // RSP_MIN_SENDRATE_SHIFT
-
-%%     17,    // RSP_ACK_FREQUENCY
-
+bytes default) which are either free for use or in use for reading or writing.
 
 \begin{figure}[ht]\center
   \includegraphics[width=\columnwidth]{images/rspPackets}
@@ -1011,16 +1000,18 @@ received by an incoming connection. Upon each reception it is checked, and
 in-order datagrams are placed into \textsf{\_appBuffers} for consumption by the
 application thread.
 
-Handling a smooth packet flow is critical for performance. RSP uses an activ
-flow control to advance the byte stream buffered by the implementation. Each
-incoming connection actively acknowledges every $n$ (17 by default) packets
-fully received. The incoming connections shift this acknowledgment by their
-connection identifier to avoid bursts of acks. Any missed datagram is actively
-nack'ed as soon as it is detected. Write connections continuously retransmit
-packets from nack datagrams, and advance their \textsf{\_writeBuffers} upon
-reception of acks from all readers. Furthermore, the writer will explicitly
-request an ack or nack when it runs out of empty buffers or finishes its write
-queue.
+Handling a smooth packet flow is critical for performance. RSP uses active flow
+control to advance the byte stream buffered by the implementation. Each incoming
+connection actively acknowledges every $n$ (17 by default) packets fully
+received. The incoming connections temporarily offset this acknowledgment by
+their connection identifier to avoid bursts of acks. Any missed datagram is
+actively nack'ed as soon as it is detected. Write connections continuously
+retransmit packets from nack datagrams, and advance their
+\textsf{\_writeBuffers} upon reception of acks from all readers. Furthermore,
+the writer will explicitly request an ack or nack when it runs out of empty
+buffers or finishes its write queue. Nack datagrams may contain multiple ranges
+of missed datagrams, as UDP implementations often drop multiple packets at
+once.
 
 Congestion control is necessary to optimize bandwidth usage. While TCP uses the
 well-known AIMD (additive increase, multiplicative decrease) algorithm, we have
@@ -1247,6 +1238,13 @@ application node.
 
 \subsection{Bino}
 
+Bino is a stereoscopic 3D video player capable of running on very large display
+systems. Originally written for the immersive semi-cylindrical projection
+system at the University of Siegen, it has been used in many installations
+thanks to its flexibility of configuration. Bino decodes the video on each
+Equalizer rendering process, and only synchronizes the time step globally,
+therefore providing a scalable solution to video playback.
+
 \subsection{Omegalib}
 
 %----------------------------------------------------------------------
@@ -1297,8 +1295,8 @@ data transmission.
 
 The spike frequency volumes aggregate the number of spikes which happened within
 a given voxel over a given time. The absolute spike count is renormalized to an
-unsigned byte value (0..255) during creation. Higher densities in the volume
-represent higher spiking activity in the voxel.
+unsigned byte value during creation. Higher densities in the volume represent
+higher spiking activity in the voxel.
 
 \subsubsection{Data Compression Engines}
 
@@ -1376,10 +1374,32 @@ points. Slave nodes queue this data and consume it during synchronization. We
 test the time to commit and sync the data using different compression engines.
 
 The David statue at 2mm resolution is organized in a kD-tree for rendering. Each
-node is a separate distributable object, which has two child node objects. A
-total of $1023$ objects is distributed and synchronized.
+node is a separate distributed object, which has two child node objects. A
+total of $1023$ objects is distributed and synchronized. \fig{fDavidDist} shows
+the distribution times for this data set. Due to limited compressibility of the
+data, the results are relative similar. Compressing the data repeatedly for
+each client leads to decreased performance, since the compression overhead
+cannot be amortized by the decreased transmission time. Buffering data slightly
+improves performance by reducing the CPU and copy overhead. Combining
+compression and buffering leads to the best performance, although only by about
+10\%.
 
-The volume data sets are each distributed in a single object, serializing the
+\begin{figure*}[ht]\center
+  \includegraphics[width=\textwidth]{images/daviddist}
+  \caption{\label{fDavidDist}Object mapping (left) and data synchronization
+    time (middle, detail view right) for the David 2mm data set in
+    \fig{fDavid2mm}}
+\end{figure*}
+
+During synchronization, data is pushed from the master process to all mapped
+slaves using a unicast connection to each slave. While the results in the
+\fig{fDavidDist} (middle) are relatively close to each other, we can still
+observe how the tradeoff between compression ratio and speed influences overall
+performance. Better, slower compression algorithms lead to better overall better
+performance when amortized over many send operations.
+
+
+The volume data sets are distributed in a single object, serializing the
 raw volume buffer. The spike volume data set has a significant compression
 ratio, which reflects in the results in \fig{fSpikesDist}. Compression for this
 data is benefitial for transmitting data over a 10~Gb/s link even for a single
@@ -1387,13 +1407,12 @@ slave process only (970 MB/s vs 570 MB/s raw data transfer). Buffering has
 little benefit since the serialization of volume data is trivial. Buffered
 compression makes a huge difference, since the compression cost can be amortized
 over $n$ nodes, reaching raw data transmission rates of 3.7 GB/s with the
-default Snappy compressor and at best 4.4 GB/s with ZStandard at the lowest
-compression ratio.
+default Snappy compressor and at best 4.4 GB/s with ZStandard at level 1.
 
 \begin{figure*}[ht]\center
   \includegraphics[width=\textwidth]{images/spikesdist}
   \caption{\label{fSpikesDist}Object mapping (left) and data synchronization
-    times (middle, detail view right) for the spike volume data set in
+    time (middle, detail view right) for the spike data set in
     \fig{fVolumes}, left}
 \end{figure*}
 
@@ -1402,7 +1421,7 @@ The distribution of the beechnut data set also behaves as expected
 is slightly faster compared to the spike data set at 700 MB/s, and compressed
 transmission does not improve the mapping performance, likely due to increased
 memory pressure caused by the large data size. The comparison of the various
-compression engines is consisten with the benchmarks in
+compression engines is consistent with the benchmarks in
 \fig{fCompressorDetail}; RLE, Snappy and the LZ variants are very close to each
 other, and ZSTD1 can provide better performance after four nodes due to the
 better compression ratio.
@@ -1410,18 +1429,53 @@ better compression ratio.
 \begin{figure*}[ht]\center
   \includegraphics[width=\textwidth]{images/beechnutdist}
   \caption{\label{fBeechnutDist}Object mapping (left) and data synchronization
-    times (middle, detail view right) for the beechnut volume data set in
+    time (middle, detail view right) for the beechnut data set in
     \fig{fVolumes}, right}
 \end{figure*}
 
-\FIXME{Missing: david on 10GE, spike comparisoon 10GE-IB-RSP}
 
+Finally, we compare data distribution speed using different protocols. In this
+benchmark, data synchronization time of the spike volume data set is measured,
+as in \fig{fSpikesDist} (middle). Buffering is enabled, and compression is
+disabled to focus on the raw network performance. \fig{fIFDist} shows the
+performance using various protocols.
+
+\begin{figure*}[ht]\center
+  \includegraphics[width=\textwidth]{images/ifdist}
+  \caption{\label{fIFDist}Object synchronization using different network
+    transports}
+\end{figure*}
+
+Unsurprisingly, TCP over the faster InfiniBand link outperforms the cheaper ten
+gigabit ethernet link by more than a factor of two. Unexpectedly, the native
+RDMA connection performs worse, even though it outperforms IPoIB in a simple
+peer-to-peer connection benchmark. This needs further investigations, but we
+suspect the abstraction of a byte stream connection chosen by \textsf{Collage}
+for historical reasons is not will suited for remote DMA semantics, that is,
+one needs to design the network API around zero-copy semantics with managed
+memory for modern high-speed transports. Both Infiniband connections show
+significant measurement jitter.
+
+Our RSP multicast implementation performs as expected. \textsf{Collage} starts
+using multicast to commit new object versions when two or more clients are
+mapped, since the transmission to a single client is better done using unicast.
+RSP consistently outperforms unicast on the same physical interface and shows
+good scaling behavior (2.5 times slower on 16 vs 2 clients on ethernet, 1.8
+times slower on InfiniBand). The scaling is significantly better when only one
+process per node is used (\fig{fIFDist}, middle: 30\% slower on ethernet, flat
+on InfiniBand). The increased transmission time with multiple clients is caused
+by a higher probability of packet loss, which increases significantly when using
+more than one process per node, as shown in \fig{fIFDist}, right. Infiniband
+outperforms ethernet slightly, but is largely limited by the RSP implementation
+throughput of preparing and queueing the datagrams to and from the protocol
+thread, which we observed in a profiling analysis.
 
 %----------------------------------------------------------------------
 \section{Discussion and Conclusion}
 %----------------------------------------------------------------------
 \label{sec:conclusions}
 
+RDMA needs further investigation.
 
 %----------------------------------------------------------------------
 \appendices
