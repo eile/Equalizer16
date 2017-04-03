@@ -503,8 +503,8 @@ by each tuning one aspect of the decomposition. Due to their nature, they are
 transparent to application developers, but might have application-accessible
 parameters to tune their behavior. Resource equalization is the critical
 component for scalable parallel rendering, and therefore the eponym for the
-\textsf{Equalizer} project name. \FIXME{modified paragraph is ok; but we
-still must make sure that the font differs between the Equalizer project and the
+\textsf{Equalizer} project name. \FIXME{modified paragraph is ok; we
+have to ensure that the font differs between the Equalizer project and the
 Equalizer components consistently throughout the text}
 
 \begin{figure*}[ht]\center
@@ -1195,16 +1195,18 @@ problems.
 
 \subsection{Livre}
 
-Livre (Large-scale Interactive Volume Rendering Engine) is an out-of-core
-parallel 4D volume renderer. It supports sort-first decomposition, both for
-scalability as well as for driving large-scale tiled display walls. The
-out-of-core loading of data relies on a shared file system, only the high-level
-state, e.g., camera position and rendering settings, are shared through \textsf{Collage}
-objects.
+Livre (Large-scale Interactive Volume Rendering Engine) is a GPU ray-casting based parallel
+4D volume renderer, implementing state-of-the-art view-dependent level-of-detail rendering (LOD)
+and out-of-core data management~\cite{EHKRW:06}. Hierarchical and out-of-core LOD
+data management is supported by an implicit volume octree, accessed asynchronously
+by the renderer from a data source on a shared file system. Different data sources providing
+an octree conform access to RAW or compressed as well as to implicitly generated volume data
+(e.g. such as from event simulations or surface meshes) can be used.
 
-% Was meinst du damit konkret? Die Implementierung verwendet einen impliziten Octtree (dh kein “baum” ist im Speicher, die Koordinaten werden anhand der Tiefe & position implizit berechnet), asynchrones laden von der DataSource, asychronen Upload auf die GPU. Die “source” Datenstruktur kennt Livre nicht, das hängt von der Implementierung der Datasource ab (zZ UVF, RAW (one octree node), Fivox (3D events-to-volume), Cubist (mesh-to-volume)).
-
-% A VisibleNodesVisitor traverses the Octtree to select the nodes based on the given screen space error (~max pixel/voxel) and their availability. How the nodes are selected, in particular when between different neighbour LOD levels is beyond my knowledge. Another (?) visitor is used to select desired nodes, which are submitted to the data loader threads, which use the data source to load them, then upload them (async) and add them to the available set.
+High-level state information, e.g., camera position and rendering settings, is shared in Livre
+through \textsf{Collage} objects between the parallel applications and rendering threads.
+Sort-first decomposition is efficiently supported through octree traversal and culling both
+for scalability as well as for driving large-scale tiled display walls.
 
 \subsection{RTT Deltagen}
 
