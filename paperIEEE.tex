@@ -48,7 +48,7 @@
 % not capitalized unless they are the first or last word of the title.
 % Linebreaks \\ can be used within to get better formatting as desired.
 % Do not put math or special symbols in the title.
-\title{Equalizer 2.0\\Convergence of a Parallel Rendering Framework}
+\title{Equalizer 2\\Convergence of a Parallel Rendering Framework}
 %
 %
 % author names and IEEE memberships
@@ -142,17 +142,19 @@ Polytechnique Federale de Lausanne.}}
 % in the abstract or keywords.
 \IEEEtitleabstractindextext{%
   \begin{abstract}
-    Developing complex, real world graphics applications which utilize multiple GPUs and
-    computers for interactive 3D rendering tasks can be a daunting task, in
-    particular since it requires expertise in distributed systems and parallel
-    rendering in addition to the application domain itself. We present a mature
-    parallel rendering framework which provides a large set of features,
-    algorithms and system integration for a wide range of real-world research
-    and industry applications. Based on the basic architecture and
-    implementation of the \textsf{Equalizer} parallel rendering framework presented in
-    \cite{EMP:09}, we show how a variety of generic algorithms are integrated in the
-    framework to help application development in many different domains, and we show
-    a number of applications highlighting the diverse aspects and use cases of \textsf{Equalizer}.
+    Developing complex, real world graphics applications which utilize multiple
+    GPUs and computers for interactive 3D rendering tasks is a complex task, it
+    requires expertise in distributed systems and parallel rendering in addition
+    to the application domain itself. We present a mature parallel rendering
+    framework which provides a large set of features, algorithms and system
+    integration for a wide range of real-world research and industry
+    applications. Based on the basic architecture and implementation of the
+    \textsf{Equalizer} parallel rendering framework presented in \cite{EMP:09},
+    we show how a variety of generic algorithms are integrated in the framework
+    to help application scalability and development in many different domains,
+    highlight how concrete applications benefit from the diverse aspects and use
+    cases of \textsf{Equalizer}, and show new experimental results for parallel
+    rendering and data distribution.
   \end{abstract}
 
   % Note that keywords are not normally used for peerreview papers.
@@ -194,10 +196,10 @@ Polytechnique Federale de Lausanne.}}
   \includegraphics[width=2\columnwidth]{images/teaser} \\
   (a) \hfil \hfil (b) \hfil \hfil (c)
   \vspace{-2mm}
-  \caption{Example \textsf{Equalizer} application use cases: (a) 192 Megapixel CAVE at
+  \caption{Example Equalizer applications: (a) 192 Megapixel CAVE at
     KAUST running RTNeuron, (b) Immersive HMD with external tracked and
-    untracked views running RTT DeltaGen for virtual car usability studies, and (c)
-    Cave2 running a molecular visualization build based on Omegalib.}
+    untracked views running RTT DeltaGen for virtual car usability studies,
+    and (c) Cave2 running a molecular visualization.}
   \label{FIG_teaser}
 \end{figure*}
 
