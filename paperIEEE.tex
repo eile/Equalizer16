@@ -270,6 +270,20 @@ schedulers. This feature is transparent to Equalizer application developers.
 
 \subsection{Qt Windowing}
 
+Qt is a popular window system with many application developers. Unfortunately,
+it imposes a different threading model for window creation and event handling
+then Equalizer. In Equalizer, each GPU rendering thread is independently
+responsible for creating its windows, receiving the events and eventually
+dispatching them to the application process main thread. This design is
+motivated by the natural threading model of X11 and WGL, and allows simple
+sequential semantics between OpenGL rendering and event handling. In contrast,
+Qt requires all windows and QOpenGLContext to be created from the Qt main
+thread. An existing Qt window or context may be moved to a different thread, and
+events are signalled from the main thread.
+
+
+
+
 Challenges in threading model, architecture
 
 \subsection{Tide Integration}
@@ -489,8 +503,9 @@ rendering framework to use an application-provided ROI to optimize the load
 equalizer as well as image compositing performance. The load equalizer uses the
 ROI to refine its load grid to the regions containing data. The compositing code
 uses the ROI to minimize image readback and network transmission. In
-\cite{EBAHMP:12}, we provide the details of the algorithm, and show that this
-improves rendering performance of up to 25\%.
+\cite{MEP:10} and \cite{EBAHMP:12}, we provide the details of the algorithm, and
+show that using ROI can quadruple the rendering performance, in particular for
+the costly compositing step in sort-last rendering.
 
 \subsubsection{Asynchronous Compositing}
 
@@ -503,7 +518,7 @@ of the rendering performance of over 25\% for large node counts.
 \subsubsection{Download and Compression Plugins}
 
 GPU-CPU transfer plugins with optional compression (eg YUV) linked to CPU
-compression for network transfer
+compression for network transfer \cite{MEP:10}
 
 \subsubsection{Thread Synchronization Modes}\label{SEC_threading}
 
