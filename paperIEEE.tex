@@ -48,7 +48,7 @@
 % not capitalized unless they are the first or last word of the title.
 % Linebreaks \\ can be used within to get better formatting as desired.
 % Do not put math or special symbols in the title.
-\title{Equalizer 2\\Convergence of a Parallel Rendering Framework}
+\title{Equalizer 2.0 --\\Convergence of a Parallel Rendering Framework}
 %
 %
 % author names and IEEE memberships
@@ -503,13 +503,9 @@ by each tuning one aspect of the decomposition. Due to their nature, they are
 transparent to application developers, but might have application-accessible
 parameters to tune their behavior. Resource equalization is the critical
 component for scalable parallel rendering, and therefore the eponym for the
-\textsf{Equalizer} project name. \FIXME{ok, this is a bit tricky to have Equalizer as a
-name for the framework as well as for this component, can't we change this?
-eile: We can't change the product name, and changing the component name will be
-hard. In fact, this is an artefact of the sw architecture: The runtime balancing
-of resources is the core contribution of Equalizer, and therefore the equalizers
-performing this task are the name-givers for the product. Modified paragraph
-above for clarity.}
+\textsf{Equalizer} project name. \FIXME{modified paragraph is ok; but we
+still must make sure that the font differs between the Equalizer project and the
+Equalizer components consistently throughout the text}
 
 \begin{figure*}[ht]\center
   \begin{subfigure}[b]{0.24\textwidth}
@@ -1205,6 +1201,10 @@ scalability as well as for driving large-scale tiled display walls. The
 out-of-core loading of data relies on a shared file system, only the high-level
 state, e.g., camera position and rendering settings, are shared through \textsf{Collage}
 objects.
+
+% Was meinst du damit konkret? Die Implementierung verwendet einen impliziten Octtree (dh kein “baum” ist im Speicher, die Koordinaten werden anhand der Tiefe & position implizit berechnet), asynchrones laden von der DataSource, asychronen Upload auf die GPU. Die “source” Datenstruktur kennt Livre nicht, das hängt von der Implementierung der Datasource ab (zZ UVF, RAW (one octree node), Fivox (3D events-to-volume), Cubist (mesh-to-volume)).
+
+% A VisibleNodesVisitor traverses the Octtree to select the nodes based on the given screen space error (~max pixel/voxel) and their availability. How the nodes are selected, in particular when between different neighbour LOD levels is beyond my knowledge. Another (?) visitor is used to select desired nodes, which are submitted to the data loader threads, which use the data source to load them, then upload them (async) and add them to the available set.
 
 \subsection{RTT Deltagen}
 
