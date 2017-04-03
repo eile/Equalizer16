@@ -694,14 +694,28 @@ Equalizer are an addition to compound trees. They modify parameters of their
 respective subtree at runtime to optimize one aspect of the decomposition. Due
 to their nature, they are transparent to application developers, but might have
 application-accessible parameters to tune their behaviour.
+
+\begin{figure*}[ht]\center
+  \subfigure[Load-Balancing]{\label{fig:loadeq}
+    \includegraphics[width=0.24\textwidth]{images/loadeq}}\hfil
+  \subfigure[Cross-Segment Load-Balancing]{\label{fig:vieweq}
+    \includegraphics[width=0.24\textwidth]{images/vieweq}}\hfil
+  \subfigure[Dynamic Frame Resolution]{\label{fig:dfr}
+    \includegraphics[width=0.24\textwidth]{images/dfr}}\hfil
+  \subfigure[Monitoring]{\label{fig:monitor}
+    \includegraphics[width=0.24\textwidth]{images/monitoreq}}\hfil
+  \caption{Runtime modifications}
+  \label{fig:equalizers}
+\end{figure*}
+
 \subsubsection{Sort-First and Sort-Last Load Equalizer}
 
-Sort-first and sort-last load balancing is the most obvious optimization for
-these parallel rendering modes. Our load equalizer is fully transparent for
-application developers, that is, it uses a reactive approach based on past
-rendering times. This assumes a reasonable frame-to-frame coherency. Our
-implementation stores a 2D or 1D grid of the load, mapping the load of each
-channel. The load is stored in normalized 2D/1D coordinates using
+Sort-first (\fig{fig:loadeq}) and sort-last load balancing is the most obvious
+optimization for these parallel rendering modes. Our load equalizer is fully
+transparent for application developers, that is, it uses a reactive approach
+based on past rendering times. This assumes a reasonable frame-to-frame
+coherency. Our implementation stores a 2D or 1D grid of the load, mapping the
+load of each channel. The load is stored in normalized 2D/1D coordinates using
 $\frac{time}{area}$ as the load, the contributing source channels are organized
 in a binary tree, and then the algorithm balances the two branches of each level
 by equalizing the integral over the area on each side.
@@ -728,25 +742,27 @@ algorithm:
 
 \subsubsection{Cross-Segment Load Balancing}
 
-Cross-segment load balancing addresses the optimal resource allocation of $n$
-rendering resources to $m$ output channels (with $n\geq m$). The view equalizer
-works in conjunction with load equalizer balancing the individual output
-channels. It monitors the usage of shared source channels (across outputs) and
-activates them to balance the rendering time of all outputs. In \cite{EEP:11},
-we provide a detailed description and evaluation of our algorithm.
+Cross-segment load balancing (\fig{fig:vieweq}) addresses the optimal resource
+allocation of $n$ rendering resources to $m$ output channels (with $n\geq
+m$). The view equalizer works in conjunction with load equalizer balancing the
+individual output channels. It monitors the usage of shared source channels
+(across outputs) and activates them to balance the rendering time of all
+outputs. In \cite{EEP:11}, we provide a detailed description and evaluation of
+our algorithm.
 
 \subsubsection{Dynamic Frame Resolution}
 
-The DFR equalizer provides a functionality similar to dynamic video resizing
-\cite{MBDM:97}, that is, it maintains a constant framerate by adapting the
-rendering resolution of a fill-limited application. In Equalizer, this works by
-rendering into a source channel (typically on a FBO) separate to the destination
-channel, and then scaling the rendering during the transfer (typically through
-an on-GPU texture) to the destination channel. The DFR equalizer monitors the
-rendering performance and accordingly adapts the resolution of the source
-channel and zoom factor for the source to destination transfer. If the
-performance and source channel resolutions allows, this will not only subsample,
-but also supersample the destination channel to reduce aliasing artefacts.
+The DFR equalizer (\fig{fig:dfr}) provides a functionality similar to dynamic
+video resizing \cite{MBDM:97}, that is, it maintains a constant framerate by
+adapting the rendering resolution of a fill-limited application. In Equalizer,
+this works by rendering into a source channel (typically on a FBO) separate to
+the destination channel, and then scaling the rendering during the transfer
+(typically through an on-GPU texture) to the destination channel. The DFR
+equalizer monitors the rendering performance and accordingly adapts the
+resolution of the source channel and zoom factor for the source to destination
+transfer. If the performance and source channel resolutions allows, this will
+not only subsample, but also supersample the destination channel to reduce
+aliasing artefacts.
 
 \subsubsection{Frame Rate Equalizer}\label{SEC_framerateEq}
 
@@ -760,12 +776,12 @@ algorithms.
 
 \subsubsection{Monitoring}
 
-The monitor allows to reuse the rendering on another channel, typically for
-monitoring a larger setup on a control workstation. Output frames on the display
-channels are connected to input frames on a single monitoring channel. The
-monitor equalizer changes the scaling factor and offset between the output and
-input, so that the monitor channel has the same, but typically downscaled view,
-as the originating segments.
+The monitor equalizer (\fig{fig:monitor}) allows to reuse the rendering on
+another channel, typically for monitoring a larger setup on a control
+workstation. Output frames on the display channels are connected to input frames
+on a single monitoring channel. The monitor equalizer changes the scaling factor
+and offset between the output and input, so that the monitor channel has the
+same, but typically downscaled view, as the originating segments.
 
 \subsection{Optimizations}
 
