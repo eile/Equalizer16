@@ -381,7 +381,9 @@ scene are not changed.
 \subsection{Equalizers}
 
 Equalizer are an addition to compound trees. They modify parameters of their
-respective subtree at runtime to optimize one aspect of the decomposition.
+respective subtree at runtime to optimize one aspect of the decomposition. Due
+to their nature, they are transparent to application developers, but might have
+application-accessible parameters to tune their behaviour.
 
 \subsubsection{Sort-First and Sort-Last Load Equalizer}
 
@@ -430,7 +432,13 @@ Constant frame rate for fill-limited applications
 
 \subsubsection{Frame Rate Equalizer}\label{SEC_framerateEq}
 
-Predominantly used by DPlex to smooth output framerate
+The framerate equalizer smoothens the output frame rate of a destination
+channel by instructing the corresponding window to delay its buffer swap to a
+minimum time between swaps. This is regularly used for time-multiplexed
+decompostions, where source channels tend to drift and finish their rendering
+not evenly distributed over time. This equalizer is however fully independent of
+DPlex compounds, and may be used to smoothen irregular application rendering
+algorithms.
 
 \subsubsection{Monitoring}
 
