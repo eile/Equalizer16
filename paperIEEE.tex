@@ -536,7 +536,7 @@ above for clarity.}
 
 Sort-first (\fig{fig:loadeq}) and sort-last load balancing is the most obvious
 optimization for these parallel rendering modes. Our load equalizer is fully
-transparent for application developers, that is, it uses a reactive approach
+transparent for application developers; that is, it uses a reactive approach
 based on past rendering times. This assumes a reasonable frame-to-frame
 coherency. Our implementation stores a 2D or 1D grid of the load, mapping the
 load of each channel. The load is stored in normalized 2D/1D coordinates using
@@ -578,8 +578,9 @@ our algorithm.
 \subsubsection{Dynamic Frame Resolution}
 
 The DFR equalizer (\fig{fig:dfr}) provides a functionality similar to dynamic
-video resizing \cite{MBDM:97}, that is, it maintains a constant framerate by
-adapting the rendering resolution of a fill-limited application. In \textsf{Equalizer},
+video resizing \cite{MBDM:97}; that is, it maintains a constant framerate by
+adapting the rendering resolution of a fill-limited application. In
+\textsf{Equalizer},
 this works by rendering into a source channel (typically on a FBO) separate to
 the destination channel, and then scaling the rendering during the transfer
 (typically through an on-GPU texture) to the destination channel. The DFR
@@ -652,14 +653,14 @@ a single process, \textsf{Equalizer} implements three threading modes:  Full
 synchronization, draw synchronization and asynchronous. Note that the execution
 between nodes is always asynchronous, for up to \textsf{latency} frames.
 
-In full synchronization, all threads always execute the same frame, that is, the
+In full synchronization, all threads always execute the same frame; that is, the
 render threads are unlocked after \textsf{Node::frameStart}, and the node is
 blocked for all render threads to finish the frame before executing
 \textsf{Node::frameFinish}. This allows the render threads to read shared data
 from all their operations, but provides the slowest performance.
 
 In draw synchronization, the node thread and all render threads are synchronized
-for all \textsf{frameDraw} operations, that is, \textsf{Node::frameFinish} is
+for all \textsf{frameDraw} operations; that is, \textsf{Node::frameFinish} is
 executed after the last channel is done drawing. This allows the render threads
 to read shared data during their draw operation, but not during
 compositing. Since compositing is typically independent of the rendered data,
@@ -703,7 +704,7 @@ with the physical display surface. For better viewing comfort, we introduce a
 new dynamic focus mode, where the application defines the distance of the focal
 plane from the observer, based on the current view direction of the
 user. Initial experiments show that this is particularly effective for objects
-placed within the immersive space, that is, in front of all display segments.
+placed within the immersive space; that is, in front of all display segments.
 
 \subsection{Asymmetric Eye Position}
 
@@ -969,7 +970,7 @@ bytes default) which are either free for use or in use for reading or writing.
 
 A client opens a listening multicast RSP connection. Similar to TCP, this
 listener will create one connected RSP connection for each remote member in the
-multicast group, that is, on each node $n$ RSP connection instances exist, $1$
+multicast group; that is, on each node $n$ RSP connection instances exist, $1$
 for the local listener and $n-1$ for all other nodes. A multicast group
 therefore looks like a fully connected set of TCP connections between $n$ nodes
 for the user.
@@ -1019,7 +1020,7 @@ Congestion control is necessary to optimize bandwidth usage. While TCP uses the
 well-known AIMD (additive increase, multiplicative decrease) algorithm, we have
 chosen a more aggressive congestion control algorithm of additive increase and
 decrease. This has proven experimentally to be more optimal: UDP is often
-rate-limited by switches, that is, packets are discarded regularly and not
+rate-limited by switches; that is, packets are discarded regularly and not
 exceptionally. Only slowly backing of the current send rate helps to stay close
 to this limit. Furthermore, our RSP traffic is limited to the local subnet,
 making cooparation between multiple data stream less of an issue. Send rate
@@ -1066,7 +1067,7 @@ available:
   serialized whenever a new slave instance is mapped. No additional data is
   stored.
 \item[Instance] The object is versioned and buffered. The instance and delta
-  data are identical, that is, only instance data is serialized. Previous
+  data are identical; that is, only instance data is serialized. Previous
   instance data is saved to be able to map old versions.
 \item[Delta] The object is versioned and buffered. The delta data is typically
   smaller than the instance data. The delta data is transmitted to slave
@@ -1103,7 +1104,7 @@ characteristics:
   slaves. These versions are continuous. It is possible to commit on slave
   instances, but special care has to be taken to handle possible
   conflicts.
-\item Slave instance versions can only be advanced, that is, \textsf{sync(
+\item Slave instance versions can only be advanced; that is, \textsf{sync(
   version )} with a version smaller than the current version will fail.
 \item Newly mapped slave instances are mapped to the oldest available
   version by default, or to the version specified when calling
@@ -1422,9 +1423,9 @@ performance using various protocols.
 Unsurprisingly, TCP over the faster InfiniBand link outperforms the cheaper ten
 gigabit ethernet link by more than a factor of two. Unexpectedly, the native
 RDMA connection performs worse, even though it outperforms IPoIB in a simple
-peer-to-peer connection benchmark. This needs further investigations, but we
+peer-to-peer connection benchmark. This needs further investigation, but we
 suspect the abstraction of a byte stream connection chosen by \textsf{Collage}
-for historical reasons is not will suited for remote DMA semantics, that is,
+for historical reasons is not well suited for remote DMA semantics; that is,
 one needs to design the network API around zero-copy semantics with managed
 memory for modern high-speed transports. Both Infiniband connections show
 significant measurement jitter.
