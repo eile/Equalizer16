@@ -25,7 +25,7 @@
 	<key>ColumnSpacing</key>
 	<real>36</real>
 	<key>CreationDate</key>
-	<string>2007-03-21 07:56:57 +0100</string>
+	<string>2007-03-21 06:56:57 +0000</string>
 	<key>Creator</key>
 	<string>Stefan Eilemann</string>
 	<key>DisplayScale</key>
@@ -36,15 +36,13 @@
 	<array>
 		<dict>
 			<key>Bounds</key>
-			<string>{{439.368, 14.1728}, {722.837, 311.811}}</string>
+			<string>{{921.25983, 14.173228}, {467.71655, 311.81104}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>ID</key>
-			<integer>851</integer>
+			<integer>854</integer>
 			<key>ImageID</key>
-			<integer>25</integer>
-			<key>Scale</key>
-			<real>0.37999999523162842</real>
+			<integer>30</integer>
 			<key>Shape</key>
 			<string>Rectangle</string>
 			<key>Style</key>
@@ -53,6 +51,11 @@
 				<dict>
 					<key>Draws</key>
 					<string>NO</string>
+					<key>GradientColor</key>
+					<dict>
+						<key>w</key>
+						<string>0.666667</string>
+					</dict>
 				</dict>
 				<key>shadow</key>
 				<dict>
@@ -79,15 +82,13 @@
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{1176.38, 14.1728}, {453.543, 311.811}}</string>
+			<string>{{496.06293, 14.173218}, {411.02365, 311.81104}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>ID</key>
-			<integer>425</integer>
+			<integer>853</integer>
 			<key>ImageID</key>
-			<integer>27</integer>
-			<key>Scale</key>
-			<real>0.30000001192092896</real>
+			<integer>29</integer>
 			<key>Shape</key>
 			<string>Rectangle</string>
 			<key>Style</key>
@@ -96,6 +97,11 @@
 				<dict>
 					<key>Draws</key>
 					<string>NO</string>
+					<key>GradientColor</key>
+					<dict>
+						<key>w</key>
+						<string>0.666667</string>
+					</dict>
 				</dict>
 				<key>shadow</key>
 				<dict>
@@ -122,15 +128,13 @@
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{14.1732, 14.1728}, {411.023, 311.811}}</string>
+			<string>{{14.173233, 14.173218}, {467.71655, 311.81104}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>ID</key>
-			<integer>4</integer>
+			<integer>852</integer>
 			<key>ImageID</key>
-			<integer>1</integer>
-			<key>Scale</key>
-			<real>0.25</real>
+			<integer>28</integer>
 			<key>Shape</key>
 			<string>Rectangle</string>
 			<key>Style</key>
@@ -139,6 +143,11 @@
 				<dict>
 					<key>Draws</key>
 					<string>NO</string>
+					<key>GradientColor</key>
+					<dict>
+						<key>w</key>
+						<string>0.666667</string>
+					</dict>
 				</dict>
 				<key>shadow</key>
 				<dict>
@@ -182,7 +191,7 @@
 	<key>HPages</key>
 	<integer>1</integer>
 	<key>ImageCounter</key>
-	<integer>28</integer>
+	<integer>31</integer>
 	<key>ImageLinkBack</key>
 	<array>
 		<dict/>
@@ -191,9 +200,9 @@
 	</array>
 	<key>ImageList</key>
 	<array>
-		<string>image27.png</string>
-		<string>image25.png</string>
-		<string>image1.png</string>
+		<string>image30.jpg</string>
+		<string>image29.jpg</string>
+		<string>image28.jpg</string>
 	</array>
 	<key>IsPalette</key>
 	<string>NO</string>
@@ -293,9 +302,9 @@
 		</dict>
 	</array>
 	<key>ModificationDate</key>
-	<string>2007-11-30 13:49:27 +0100</string>
+	<string>2016-05-25 22:16:22 +0000</string>
 	<key>Modifier</key>
-	<string>Stefan Eilemann</string>
+	<string>Eilemann Stefan</string>
 	<key>NotesVisible</key>
 	<string>NO</string>
 	<key>Orientation</key>
@@ -370,7 +379,7 @@
 		<key>Frame</key>
 		<string>{{403, 30}, {1134, 848}}</string>
 		<key>VisibleRegion</key>
-		<string>{{-34, 0}, {1702.37, 1141}}</string>
+		<string>{{-34, 0}, {1700.8507, 1141.0001}}</string>
 		<key>Zoom</key>
 		<real>1.3129317760467529</real>
 	</dict>
