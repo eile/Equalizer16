@@ -1204,6 +1204,24 @@ tiles, chunks, pixel, subpixel) (+DFR for Livre)
 
 \subsection{Object Distribution}
 
+To benchmark the data distribution we used two datasets: The david statue at 2mm
+resolution (\fig{fDavid2mm}) and 3D volumes of a spike frequencies of a 3
+million neuron simulation (\fig{fVolumes}).
+
+\begin{figure}[ht]\center
+  \includegraphics[width=.49\columnwidth]{images/spikes512}\hfil
+  \includegraphics[width=.49\columnwidth]{images/spikes1280}
+  \caption{\label{fVolumes}Spike frequencies of a 3 million neuron simulation at
+    437x240x512 (51MB, left) and 1092x600x1280 (800MB, right) resolution}
+\end{figure}
+
+The spike frequency volumes aggregate the number of spikes which happened within
+a given voxel over a given time. The absolute spike count is renormalized to an
+unsigned byte value (0..255) during creation. Higher densities in the volume
+represent higher spiking activity in the voxel. Consequently, the volume is more
+sparsely populated and has a more even distribution of values at higher
+resolution.
+
 \subsubsection{Data Compression Engines}
 
 A critical piece for data distribution performance are the characteristics of
@@ -1225,6 +1243,28 @@ much higher speed. The ZStandard compressor has roughly the same speed as the LZ
 variants at the lowest compression level, but provides significantly better
 compression. At higher compression levels it can improve the compression ratio
 slightly, but at a high cost for the compression speed.
+
+The compression ratio for the models used in the following benchmark deviate
+from this averaged distribution. \fig{fCompressorDetail} shows the compression
+ratios for the triangle and volume data.
+
+\begin{figure*}[ht]\center
+  \includegraphics[width=\textwidth]{images/compressorDetail}
+  \caption{\label{fCompressorDetail}Data Compression for ply data (left, David
+    statue 2mm) and raw volume data shown in \fig{fVolumes} (middle and right)}
+\end{figure*}
+
+The ply data is little compressible, the default compressor achieves a 10\%
+reduction. This is due to a high entropy in the data and the dominant use of
+floating point representations. Overall the profile is similar to the generic
+benchmark, at a smaller compression rate.
+
+The volume data on the other hand is sparsely populated and using integer (byte)
+representation, which is easier to compress. The naive RLE implementation
+already achieves a good compression, showing that the smaller volume contains at
+most 28\% empty space and the bigger volume at most 90\%. Snappy and ZStandard
+can reduce the data much further, reducing the data to a few megabytes.
+
 
 \subsubsection{Model Distribution and Update}
 Distribute large ply and raw model to 1..16 nodes using TCP, IB and RSP
