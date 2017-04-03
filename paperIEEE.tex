@@ -648,42 +648,16 @@ same \textit{compound} framework introduced in \cite{EMP:09}
 \begin{figure*}[ht]\center
   \begin{subfigure}[b]{0.24\textwidth}
     \includegraphics[width=\textwidth]{images/dplex}
-      \caption{\label{fig:dplex}Time-Multiplex}
   \end{subfigure}
   \begin{subfigure}[b]{0.24\textwidth}
     \includegraphics[width=\textwidth]{images/tile}
-      \caption{\label{fig:tile}Tiles}
   \end{subfigure}
   \begin{subfigure}[b]{0.24\textwidth}
     \includegraphics[width=\textwidth]{images/pixel}
-      \caption{\label{fig:pixel}Pixel}
   \end{subfigure}
   \begin{subfigure}[b]{0.24\textwidth}
     \includegraphics[width=\textwidth]{images/subpixel}
-      \caption{\label{fig:subpixel}Subpixel}
-  \end{subfigure}
-  \caption{New Equalizer task decompositions for parallel rendering}
-  \label{fig:compounds}
-\end{figure*}
-
-
-\subsubsection{Time-Multiplex}
-
-Time-multiplexing (\fig{fig:dplex}), also called AFR or DPlex, was first
-implemented in \cite{BRE:05} for shared memory machines. It is however a better
-fit for distributed memory systems, since the separate memory space makes
-concurrent rendering of different frames easier to implement. While it increases
-the framerate linearly, it does not decrease the latency between user input and
-the corresponding output. Consequently, this decomposition mode is mostly useful
-for non-interactive movie generation. It is transparent to Equalizer
-applications, but does require the configuration latency to be equal or greater
-than the number of source channels. Furthermore, to work in a multi-threaded,
-multi-GPU configuration, the application needs to support running the rendering
-threads asynchronously, as outlined in \sref{SEC_threading}. The output frame
-rate of the destination channel is smoothened using a frame rate equalizer
-(\sref{SEC_framerateEq}).
-
-\begin{figure*}[ht]\center
+  \end{subfigure}\\[\medskipamount]
   \begin{subfigure}[b]{0.24\textwidth}
     {\tiny\begin{lstlisting}
 compound {
@@ -702,7 +676,7 @@ compound {
   inputframe { name "frame" }
 }
     \end{lstlisting}}
-    \caption{\label{eqc:dplex}Time-Multiplex}
+    \caption{\label{fig:dplex}Time-Multiplex}
   \end{subfigure}
   \begin{subfigure}[b]{0.24\textwidth}
     {\tiny\begin{lstlisting}
@@ -724,7 +698,7 @@ compound {
   inputframe { name "frame.source" }
 }
     \end{lstlisting}}
-    \caption{\label{eqc:tiles}Tiles}
+    \caption{\label{fig:tiles}Tiles}
   \end{subfigure}
   \begin{subfigure}[b]{0.24\textwidth}
     {\tiny\begin{lstlisting}
@@ -744,7 +718,7 @@ compound {
   inputframe { name "frame.source" }
 }
     \end{lstlisting}}
-    \caption{\label{eqc:pixel}Pixel}
+    \caption{\label{fig:pixel}Pixel}
   \end{subfigure}
   \begin{subfigure}[b]{0.24\textwidth}
     {\tiny\begin{lstlisting}
@@ -764,11 +738,28 @@ compound {
   inputframe { name "frame.source" }
 }
     \end{lstlisting}}
-    \caption{\label{eqc:subpixel}Subpixel}
+    \caption{\label{fig:subpixel}Subpixel}
   \end{subfigure}
-  \caption{Compound configurations for \fig{fig:compounds}}
-  \label{eqc:compounds}
+  \caption{New Equalizer task decompositions for parallel rendering}
+  \label{fig:compounds}
 \end{figure*}
+
+
+\subsubsection{Time-Multiplex}
+
+Time-multiplexing (\fig{fig:dplex}), also called AFR or DPlex, was first
+implemented in \cite{BRE:05} for shared memory machines. It is however a better
+fit for distributed memory systems, since the separate memory space makes
+concurrent rendering of different frames easier to implement. While it increases
+the framerate linearly, it does not decrease the latency between user input and
+the corresponding output. Consequently, this decomposition mode is mostly useful
+for non-interactive movie generation. It is transparent to Equalizer
+applications, but does require the configuration latency to be equal or greater
+than the number of source channels. Furthermore, to work in a multi-threaded,
+multi-GPU configuration, the application needs to support running the rendering
+threads asynchronously, as outlined in \sref{SEC_threading}. The output frame
+rate of the destination channel is smoothened using a frame rate equalizer
+(\sref{SEC_framerateEq}).
 
 \subsubsection{Tiles and Chunks}\label{sec:tile}
 
