@@ -194,7 +194,7 @@ Polytechnique Federale de Lausanne.}}
   \caption{Example Equalizer application use cases: (a) 192 Megapixel CAVE at
     KAUST running RTNeuron, (b) Immersive HMD with external tracked and
     untracked views running RTT DeltaGen for virtual car usability studies (c)
-    Cave2 running a molecular visualization build using Omegalib.}
+    Cave2 running a molecular visualization build based on Omegalib.}
   \label{FIG_teaser}
 \end{figure*}
 
@@ -286,8 +286,8 @@ algorithms.
 The initial version of Equalizer implemented sort-first (2D), sort-last (DB),
 stereo (EYE) and multilevel decompositions \cite{EMP:09}. In the following we
 present new decomposition modes and motivate their use case. \fig{fig:compounds}
-provides an overview of the new modes. We describe their configuration in
-same \textit{compound} framework introduced in \cite{EMP:09}
+provides an overview of the new modes. We describe their configuration in the
+\textit{compound} framework introduced in \cite{EMP:09}.
 
 \begin{figure*}[ht]\center
   \begin{subfigure}[b]{0.24\textwidth}
@@ -887,7 +887,7 @@ primitives in Collage are:
 
 \begin{figure}[ht]\center
   \includegraphics[width=\columnwidth]{EqDocs/Developer/ProgrammingGuide/images/netObject}
-  \caption{\label{fNetObject}Communication between two Collage Objects}
+  \caption{\label{fNetObject}Communication between two Collage objects}
 \end{figure}
 \fig{fNetObject} illustrates this architecture.
 
@@ -1104,8 +1104,11 @@ compression rates well above one gigabyte per second. Collage uses the Pression
 library~\cite{pression}, which provides an unified interface for a number of
 compression libraries, such as FastLZ~\cite{jesperfast}, Snappy~\cite{snappy}
 and ZStandard~\cite{zstd}. It also contains a custom, virtually zero-cost RLE
-compressor. Pression also parallelizes the compression and decompression using
-data decomposition.
+compressor. Pression parallelizes the compression and decompression using
+data decomposition. Note that this compression is generic, and implemented
+transparently for the application. Applications can still use data-specific
+compression and feed the compressed data to Collage, typically disabling the
+generic compression.
 
 The data streaming interface also implements chunking, which aims to pipeline
 the serialization code with the network transmission. After a configurable
@@ -1239,19 +1242,18 @@ rendering, and the resulting data structure is serialized in binary form for
 data transmission.
 
 \begin{figure}[ht]\center
-  \includegraphics[width=.49\columnwidth]{images/spikes512}\hfil
-  \includegraphics[width=.49\columnwidth]{images/spikes1280}
+  \includegraphics[height=.37\columnwidth]{images/spikes512}\hfil
+  \includegraphics[height=.37\columnwidth]{images/beechnut}
   \caption{\label{fVolumes}Volumes used for object distribution benchmarks:
     spike frequencies of a three million neuron electrical simulation at
-    437x240x512 (51MB, left) and 1092x600x1280 (800MB, right) resolution}
+    437x240x512 unsigned byte (51MB, left) and an MRI scan of a beechnut at
+    1024x1024x1546 unsigned short (3GB, right) resolution}
 \end{figure}
 
 The spike frequency volumes aggregate the number of spikes which happened within
 a given voxel over a given time. The absolute spike count is renormalized to an
 unsigned byte value (0..255) during creation. Higher densities in the volume
-represent higher spiking activity in the voxel. Consequently, the volume is more
-sparsely populated and has a more even distribution of values at higher
-resolutions.
+represent higher spiking activity in the voxel.
 
 \subsubsection{Data Compression Engines}
 
@@ -1265,7 +1267,7 @@ measurements were performed on a single, isolated node.
 
 \begin{figure}[ht]\center
   \includegraphics[width=\columnwidth]{images/compressor}
-  \caption{\label{fCompressor}Data Compression for Generic Binary Data}
+  \caption{\label{fCompressor}Data compression for generic binary data}
 \end{figure}
 
 RLE compression has a very low overhead, but does not compress the data will
@@ -1282,8 +1284,8 @@ ratios for the triangle and volume data.
 
 \begin{figure*}[ht]\center
   \includegraphics[width=\textwidth]{images/compressorDetail}
-  \caption{\label{fCompressorDetail}Data Compression for ply data (left, David
-    statue 2mm) and raw volume data shown in \fig{fVolumes} (middle and right)}
+  \caption{\label{fCompressorDetail}Data compression for ply data (left, David
+    statue 2mm) and raw volumes shown in \fig{fVolumes} (middle and right)}
 \end{figure*}
 
 The ply data is little compressible, the default compressor achieves a 10\%
@@ -1299,9 +1301,28 @@ can reduce the data much further, reducing the data to a few megabytes.
 
 
 \subsubsection{Model Distribution and Update}
+
+In this section we present results on how data distribution and synchronization
+performs in real-world applications. We extracted the existing data distribution
+code in a PLY and a volume renderer into a benchmark application to measure the
+time to initially map all the objects on the render client nodes, and to perform
+a commit-sync of the full data set after mapping has been established. All
+figures observe a noticable measurement jitter due to other services running on
+the cluster. The details of the benchmark algorithm can be found in the implementation~\cite{eqObjectBench}.
+
+David 2mm
+
+
+\begin{figure*}[ht]\center
+  \includegraphics[width=\textwidth]{images/spikesdist}
+  \caption{\label{fSpikesDist}Object mapping (left )and data synchronization
+    times (middle, detail view right) for the spike volume data set in
+    \fig{fVolumes}, right}
+\end{figure*}
+
+
 Distribute large ply and raw model to 1..16 nodes using TCP, IB and RSP
 
-Distribute a video texture (per frame)
 
 %----------------------------------------------------------------------
 \section{Discussion and Conclusion}
