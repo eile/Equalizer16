@@ -1241,6 +1241,17 @@ application node.
 
 \subsection{Raster}
 
+RASTeR~\cite{BGP:09} is an out-of-core and view-dependent real-time multiresolution
+terrain rendering approach using a patch-based restricted quadtree triangulation.
+For load-balanced parallel rendering~\cite{GMBP:10} it exploits fast hierarchical
+view-frustum culling of the level-of-detail (LOD) quadtree for sort-first decomposition, and
+uniform distribution of the visible LOD triangle patches for sort-last decomposition.
+The latter is enabled by a fast traversal of the patch-based restricted quadtree
+triangulation hierarchy which results in a list of selected LOD nodes,
+constituting a view-dependent cut or \emph{front of activated nodes} through the LOD hierarchy.
+Assigning and distributing equally sized segments of this active LOD front to the concurrent
+rendering threads results in a near-optimal sort-last decomposition for each frame.
+
 \subsection{Bino}
 
 Bino is a stereoscopic 3D video player capable of running on very large display
