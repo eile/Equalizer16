@@ -54,6 +54,7 @@
 \definecolor{RED}{rgb}{1,0,0}
 \definecolor{BLUE}{rgb}{0,0,1}
 \newcommand{\FIXME}[1]{\textbf{\color{BLUE}{FIXME: #1}}}
+\newcommand{\sref}[1]{Section~\ref{#1}}
 %\newcommand{\FIXME}[1]{}
 
 % suppress  single floating lines on top (widow) and bottom (club)
@@ -325,19 +326,50 @@ and motivate their use case.
 
 \subsubsection{Time-Multiplex}
 
-Interaction with threading
+Time-multiplexing, or DPlex, was already implemented in \cite{BRE:05}. While it
+increases the framerate linearly, it does not decrease the latency between user
+input and the corresponding output. Consequently, this decomposition mode is
+mostly useful for non-interactive movie generation. It is transparent to
+Equalizer applications, but does require the configuration latency to be equal
+or greater than the number of source channels. Furthermore, to work in a
+multi-threaded, multi-GPU configuration, the application needs to support
+running the rendering threads asynchronously, as outlined in
+\sref{SEC_threading}.
 
 \subsubsection{Tiles and Chunks}
 
-Equalizers do what?
+Tile and chunk decompositions are a variant of sort-first and sort-last
+rendering, respectively. They decompose the scene into a predefined set of
+fixed-size image tiles or database ranges. These tasks are queued and processed
+by all source channels by polling a server-central queue. Prefetching ensures
+that the task communication overlaps with rendering. As shown in \cite{SPEP:16},
+these modes provide better performance due to being inherently load-balanced, as
+long as there is an insignificant overhead for the render task setup. This mode
+is transparent to Equalizer applications.
 
 \subsubsection{Pixel}
 
-Equal load for fill-limited apps
+Pixel compounds decompose the destination channel by interleaving rows or
+columns in image space. They are a variant of sort-first decomposition which
+works well for fill-limited applications which are not geometry bound. Source
+channels cannot reduce geometry load through view frustum culling, since each
+source channel has almost the same frustum (only shifted by some pixels),
+but applied to a reduced 2D viewport. However, the fragment load on all source
+channels is very similar due to the interleaved distribution of pixels. This
+functionality is transparent to Equalizer applications, and the default
+compositing implementation uses the OpenGL stencil buffer to blit pixels onto
+the destination channel.
 
 \subsubsection{Subpixel}
 
-MSAA and DOF, plus idle refinement algo
+Subpixel compounds are similar to pixel compounds, but they decompose the work
+for a single pixel, for example when using multisampling or depth of
+field. Composition typically uses accumulation and averaging of all computed
+fragments for a pixel. This feature is not fully transparent to the application,
+since it needs to adapt (jitter or tilt) the frustum based on the iteration
+executed. Furthermore, subpixel compounds interact with idle image refinements,
+e.g., they can accelerate idle anti-aliasing of a scene when the camera and
+scene are not changed.
 
 \subsection{Equalizers}
 
@@ -391,7 +423,7 @@ of the rendering performance of over 25\% for large node counts.
 GPU-CPU transfer plugins with optional compression (eg YUV) linked to CPU
 compression for network transfer
 
-\subsubsection{Thread Synchronization Modes}
+\subsubsection{Thread Synchronization Modes}\label{SEC_threading}
 
 Per-node sync, draw sync, async
 
