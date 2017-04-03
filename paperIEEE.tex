@@ -488,7 +488,7 @@ camera and scene are not changed.
 respective subtree at runtime to dynamically optimize one aspect of the decomposition. Due
 to their nature, they are transparent to application developers, but might have
 application-accessible parameters to tune their behavior.
-\FIXME{ok, this is a bit tricky to Equalizer as a name for the framework as well as for this, can't we resolve this?}
+\FIXME{ok, this is a bit tricky to have Equalizer as a name for the framework as well as for this component, can't we change this?}
 
 \begin{figure*}[ht]\center
   \begin{subfigure}[b]{0.24\textwidth}
@@ -806,7 +806,8 @@ Automatic configuration implements the discovery of local and remote resources
 as well as the creation of typical configurations using the discovered resources
 at application launch time.
 
-The discovery is implemented in a separate library, hwsd (HardWare Service
+The discovery is implemented in a separate library, hwsd\FIXME{need to somehow identify this term in the text,
+UPPERCASE or some special font type} (HardWare Service
 Discovery), which uses a plugin-based approach to discover GPUs for GLX, AGL or
 WGL windowing systems, as well as network interfaces on Linux, Mac OS X and
 Windows. Furthermore, it detects the presence of VirtualGL to allow optimal
@@ -844,14 +845,16 @@ Challenges in threading model, architecture
 %------------------------------------------------------------------------------
 \subsection{Tide Integration}
 
+\FIXME{Tide and Deflect and other 'names' should be clearly identifiable in the text.
+We have many of them and sometimes this isn't visually clear in the text.}
 Tide (Tiled interactive display environment) is an improved version of
-DisplayCluster~\cite{DC}, providing touch-based, multi-window user interface for
+DisplayCluster~\cite{DC}, providing a touch-based, multi-window user interface for
 high-resolution tiled display walls. Remote applications receive input events
 and send pixel streams using the Deflect client library. Equalizer includes full
 support, enabling application-transparent integration with Tide. When a Tide
 server is configured, all output channels of a view stream in parallel to one
 window on the wall. In \cite{deflect} we have shown interactive framerates for
-an 24 megapixel resolution over a WAN link. Events received are translated into
+a 24 megapixel resolution over a WAN link. Events received are translated into
 Equalizer events and injected into the normal event flow, allowing seamless
 application integration.
 
@@ -868,6 +871,7 @@ for each (pipe) render thread. They also provide the natural place to store and
 distribute data. Last, but not least, \textsf{ViewData} provides a convenient
 way to manage multiple views by storing the camera, model or any other
 view-specific information.
+
 
 %------------------------------------------------------------------------------
 \section{The Collage Network Library}
@@ -932,7 +936,7 @@ RSP combines various established algorithms~\cite{adamson2004negative,
   Gau:2002:MFC:506824.506832} for multicast in an open source implementation
 capable of delivering wire speed transmission rates on high-speed LAN
 interfaces. In the following we will outline the RSP protocol and implementation
-and motivate the design decisions. Any defaults given below are for Linux or OS
+as well as motivate the design decisions. Any defaults given below are for Linux or OS
 X, the Windows UDP stack requires different default values which can be found in
 the implementation.
 
@@ -992,8 +996,8 @@ received by an incoming connection. Upon each reception it is checked, and
 in-order datagrams are placed into \textsf{\_appBuffers} for consumption by the
 application thread.
 
-Handling a smooth packet flow is critical for performance. RSP actively flow
-control to advance the stream. Each incoming connection actively acknowledges
+Handling a smooth packet flow is critical for performance. \FIXME{RSP actively flow
+control to advance the stream}. Each incoming connection actively acknowledges
 every $n$ (17 by default) packets fully received. The incoming connections shift
 this acknowledgment by their connection identifier to avoid bursts of acks. Any
 missed datagram is actively nack'ed as soon as it is detected. Write connections
@@ -1397,7 +1401,7 @@ We would like to thank and acknowledge the following institutions and projects
 for providing the 3D geometry and volume test data sets: the Digital
 Michelangelo Project, Stanford 3D Scanning Repository, Cyberware Inc.,
 volvis.org and the Visual Human Project.  This work was partially supported by
-the Swiss National Science Foundation Grant 200021-116329/1.
+the Swiss National Science Foundation Grant 200021-116329/1.\FIXME{SNF and Hasler as well as EU grants}
 
 We would also like to thank all supporters and contributors of Equalizer, most
 notably RTT, the Blue Brain Project, the University of Siegen, EVL, Dardo, TBD.
@@ -1433,7 +1437,7 @@ Multipipe SDK - a toolkit for scalable, parallel visualization software on
 shared memory supercomputers. He received his masters degree in Computer Science
 from EPFL in 2015, and his Engineering Diploma in Computer Science in 1998. He
 is currently working towards a PhD in Computer Science at the Visualization and
-Multimedia Lab at the University of Zurich.
+MultiMedia Lab at the University of Zurich.
 \end{IEEEbiography}
 
 % if you will not have a photo at all:
