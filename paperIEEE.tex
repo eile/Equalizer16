@@ -213,16 +213,24 @@ Polytechnique Federale de Lausanne.}}
 Highlight integration of many features into a general framework vs one-off
 research implemenation of one algorithm.
 
+The rest of this paper is structured as follows: First we introduce new related
+work since the introduction of Equalizer. The main body of this paper presents
+new performance features, virtual reality algorithms, usability features to
+build complex applications, main novel features of the underlying Collage
+network library and a quick overview of the main Equalizer-based applications. A
+result section presents new experiments not previously published, followed by
+the discussion and conclusion.
 
 %----------------------------------------------------------------------
 \section{Related Work}\label{sec:related}
 %----------------------------------------------------------------------
 
 In~\cite{EMP:09}, we presented the Equalizer parallel rendering framework. This
-paper summarized the work in parallel rendering up to 2009. In the following we
-will present the related work published since then. An extensive Programming and
-User Guide provides in-depth documentation on using and programming
-Equalizer~\cite{Eilemann:13}.
+paper summarized the work in parallel rendering up to 2009. An extensive
+Programming and User Guide provides in-depth documentation on using and
+programming Equalizer~\cite{Eilemann:13}. In the following we assume these two
+publications and their references as the basis, and will present the related
+work published since then.
 
 The concept of transparent OpenGL interception popularized by WireGL and
 Chromium~\cite{HHNFAKK:02} has received little attention since 2009. While some
@@ -232,32 +240,35 @@ presented. ClusterGL employs the same approach as Chromium, but delivers a
 significantly faster implementation of transparent OpenGL interception and
 distribution for parallel rendering. CGLX~\cite{DK:11} tries to bring parallel
 execution transparently to OpenGL applications, by emulating the GLUT API and
-intercepting certain OpenGL calls. This approach works transparently for trivial
-applications, but quickly requires the application developer to address the
-complexities of a distributed application when mutable application state needs
-to be synchronized across processes.
+intercepting certain OpenGL calls. In contrast to frameworks like Chromium, CGLX
+follows the distribution application approach, whichworks transparently for
+trivial applications, but quickly requires the application developer to address
+the complexities of a distributed application when mutable application state
+needs to be synchronized across processes.
 
 On the other hand, software for driving and interacting with tiled display walls
-has received significant attention. Sage~\cite{Sage} and Sage2~\cite{Sage2} have
-received significant attention. Sage is build entirely around the concept of a
-shared framebuffer where all content windows are separate applications using
-pixel streaming. It is no longer actively supported. Sage 2 is a complete,
+has received significant attention. Sage~\cite{Sage} and Sage~2~\cite{Sage2}
+have received significant attention. Sage is build entirely around the concept
+of a shared framebuffer where all content windows are separate applications
+using pixel streaming. It is no longer actively supported. Sage 2 is a complete,
 browser-centric reimplementation where each application is a web application
 distributed across browser instances. DisplayCluster~\cite{DC}, and its
-continuation Tide, also implement the shared framebuffer concept of Sage, but
-provide a few native content applications integrated into the display servers.
+continuation Tide~\cite{tide}, also implement the shared framebuffer concept of
+Sage, but provide a few native content applications integrated into the display
+servers.
 
-Equalizer itself has received significant attention to research and validate
-parallel rendering performance, by using compression and region of interest
-during compositing~\cite{MEP:10}, load-balancing resources for multi-display
-installations~\cite{EEP:11}, asynchronous compositing and NUMA
-optimizations~\cite{EBAHMP:12} as well as work queueing~\cite{SPEP:16}.
+Equalizer itself has received significant attention within the research
+community. Various algorithms to improve the parallel rendering performance have
+been proposed: compression and region of interest during
+compositing~\cite{MEP:10}; load-balancing resources for multi-display
+installations~\cite{EEP:11}; asynchronous compositing and NUMA
+optimizations~\cite{EBAHMP:12}; as well as work queueing~\cite{SPEP:16}.
 
 Various applications and frameworks have used Equalizer for new research in
 visualization, such as the RTNeuron~\cite{HBBES:13}, an OpenGL renderer for
-visualizing simulations of neucortical brain regions, Omegalib~\cite{Omegalib},
-extending Equalizer for the hybrid 2D/3D environments such as the CAVE2,
-visualization for remote sensing date~\cite{LK:09}, .
+visualizing simulations of neucortical brain regions; Omegalib~\cite{Omegalib},
+extending Equalizer for the hybrid 2D/3D environments such as the CAVE2;
+visualization for remote sensing data~\cite{LK:09}, bino.
 
 \cite{CKP:12} tiled display wall virtual environment
 
@@ -1194,7 +1205,12 @@ application node.
 \section{Experimental Results}\label{sec:results}
 %----------------------------------------------------------------------
 
-hardware description
+This section presents new experiments, complementing the results of previous
+publications~\cite{EP:07, EMP:09, MEP:10, EEP:11, EBAHMP:12, HBBES:13, deflect,
+  SPEP:16}. The first part analyses data distribution performance, in particular
+how the various optimizations in Collage effect complex operations in realistic
+scenarios. The second part summarizes rendering performance over all
+decomposition modes with a few representative workloads.
 
 \subsection{Decomposition Modes}
 
@@ -1211,9 +1227,9 @@ electrical simulation of three million neurons (\fig{fVolumes}).
 \begin{figure}[ht]\center
   \includegraphics[width=.49\columnwidth]{images/spikes512}\hfil
   \includegraphics[width=.49\columnwidth]{images/spikes1280}
-  \caption{\label{fVolumes}Spike frequencies of a three million neuron
-    electrical simulation at 437x240x512 (51MB, left) and 1092x600x1280 (800MB,
-    right) resolution}
+  \caption{\label{fVolumes}Volumes used for object distribution benchmarks:
+    spike frequencies of a three million neuron electrical simulation at
+    437x240x512 (51MB, left) and 1092x600x1280 (800MB, right) resolution}
 \end{figure}
 
 The spike frequency volumes aggregate the number of spikes which happened within
@@ -1221,7 +1237,7 @@ a given voxel over a given time. The absolute spike count is renormalized to an
 unsigned byte value (0..255) during creation. Higher densities in the volume
 represent higher spiking activity in the voxel. Consequently, the volume is more
 sparsely populated and has a more even distribution of values at higher
-resolution.
+resolutions.
 
 \subsubsection{Data Compression Engines}
 
@@ -1317,8 +1333,17 @@ notably RTT, the Blue Brain Project, the University of Siegen, EVL, Dardo, TBD.
 %\begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{mshell}}]{Michael Shell}
 % or if you just want to reserve a space for a photo:
 
-\begin{IEEEbiography}{Michael Shell}
-Biography text here.
+\begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{images/stefan}}]{Stefan Eilemann}
+Stefan is the technical manager of the Visualization Team in the Blue Brain
+Project. His work involves working towards large-scale visualization for
+Exascale simulations; interactive integration of simulation, analysis and
+visualization as well as flexible frameworks for data sharing and dynamic
+allocation of heterogenous resources. He is the CEO and founder of Eyescale and
+also the lead developer of the Equalizer parallel rendering framework. He has
+worked in SGI's Advanced Graphics Division as the technical lead of OpenGL
+Multipipe SDK - a toolkit for scalable, parallel visualization software on
+shared memory supercomputers. He received his masters degree in Computer Science
+from EPFL in 2015, and his Engineering Diploma in Computer Science in 1998.
 \end{IEEEbiography}
 
 % if you will not have a photo at all:
