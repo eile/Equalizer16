@@ -591,14 +591,27 @@ User Guide provides in-depth documentation on using and programming
 Equalizer~\cite{Eilemann:13}.
 
 The concept of transparent OpenGL interception popularized by WireGL and
-Chromium~\cite{HHNFAKK:02} has received little attention. While some commercial
-implementations such as TechViz and MechDyne Conduit continue to exists, only
-ClusterGL?~\cite{NHM:11} has been published. ClusterGL employs the same approach
-as Chromium, but delivers a significantly faster implementation of transparent
-OpenGL interception and distribution for parallel rendering.
+Chromium~\cite{HHNFAKK:02} has received little attention since 2009. While some
+commercial implementations such as TechViz and MechDyne Conduit continue to
+exist, on the research side only ClusterGL~\cite{NHM:11} has been
+presented. ClusterGL employs the same approach as Chromium, but delivers a
+significantly faster implementation of transparent OpenGL interception and
+distribution for parallel rendering. CGLX~\cite{CGLX:11} tries to bring parallel
+execution transparently to OpenGL applications, by emulating the GLUT API and
+intercepting certain OpenGL calls. This approach works transparently for trivial
+applications, but quickly requires the application developer to address the
+complexities of a distributed application when mutable application state needs
+to be synchronized across processes.
 
 On the other hand, software for driving and interacting with tiled display walls
-has received significant attention. Sage~\cite{TBD} and Sage2~\cite{TBD}
+has received significant attention. Sage~\cite{Sage} and Sage2~\cite{Sage2} have
+received significant attention. Sage is build entirely around the concept of a
+shared framebuffer where all content windows are separate applications using
+pixel streaming. It is no longer actively supported. Sage 2 is a complete,
+browser-centric reimplementation where each application is a web application
+distributed across browser instances. DisplayCluster~\cite{DC}, and its
+continuation Tide, also implement the shared framebuffer concept of Sage, but
+provide a few native content applications integrated into the display servers.
 
 Equalizer itself has received significant attention to research and validate
 parallel rendering performance, by using compression and region of interest
@@ -608,9 +621,9 @@ optimizations~\cite{EBAHMP:12} as well as work queueing~\cite{SPEP:16}.
 
 Various applications and frameworks have used Equalizer for new research in
 visualization, such as the RTNeuron~\cite{HBBES:13}, an OpenGL renderer for
-visualizing simulations of neucortical brain regions, Omegalib~\cite{TBD},
+visualizing simulations of neucortical brain regions, Omegalib~\cite{Omegalib},
 extending Equalizer for the hybrid 2D/3D environments such as the CAVE2,
-Siegen~\cite{TBD}
+visualization for remote sensing date~\cite{LK:09}, .
 
 
 \cite{DK:11}: Framework to develop apps for multitile, thus targeted
@@ -622,9 +635,6 @@ contexts and events
 
 \cite{CKP:12} tiled display wall virtual environment
 
-\cite{TBD} DisplayCluster
-
-Omegalib
 
 %------------------------------------------------------------------------------
 \section{Performance}
@@ -1053,7 +1063,16 @@ Challenges in threading model, architecture
 
 \subsection{Tide Integration}
 
-Tiled interactive display environment, parallel pixel streaming, events
+Tide (Tiled interactive display environment) is an improved version of
+DisplayCluster~\cite{DC}, providing touch-based, multi-window user interface for
+high-resolution tiled display walls. Remote applications receive input events
+and send pixel streams using the Deflect client library. Equalizer includes full
+support, enabling application-transparent integration with Tide. When a Tide
+server is configured, all output channels of a view stream in parallel to one
+window on the wall. In \cite{deflect} we have shown interactive framerates for
+an 24 megapixel resolution over a WAN link. Events received are translated into
+Equalizer events and injected into the normal event flow, allowing seamless
+application integration.
 
 \subsection{Sequel}\label{sec:sequel}
 
@@ -1236,7 +1255,15 @@ distribution with minimal application logic. It is used by Sequel
 \section{Applications}
 %----------------------------------------------------------------------
 
+In this section, we present some major applications built using Equalizer, and
+show how they interact with the framework to solve complex parallel rendering
+problems.
+
 \subsection{Livre}
+
+Livre (Large-scale interactive volume rendering engine) is an out-of-core
+parallel 4D volume renderer.
+
 \subsection{RTT Deltagen}
 
 \subsection{RTNeuron}
