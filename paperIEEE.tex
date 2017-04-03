@@ -489,18 +489,24 @@ Polytechnique Federale de Lausanne.}}
 % As a general rule, do not put math, special symbols or citations
 % in the abstract or keywords.
 \IEEEtitleabstractindextext{%
-\begin{abstract}
-  We present the features, algorithms and system integration necessary to
-  implement a parallel rendering framework usable in a wide range of real-world
-  research and industry applications, based on the basic architecture and
-  implementation of the Equalizer parallel rendering framework presented in
-  \cite{EMP:09}.
-\end{abstract}
+  \begin{abstract}
+    Developing complex, real world applications which utilize multiple GPUs and
+    computers for 3D interactive rendering tasks can be a daunting task, in
+    particular since it requires expertise in distributed systems and parallel
+    rendering in addition to the application domain. We present a mature
+    parallel rendering framework which provides a large set of features,
+    algorithms and system integration for a wide range of real-world research
+    and industry applications. Based on the basic architecture and
+    implementation of the Equalizer parallel rendering framework presented in
+    \cite{EMP:09}, we show how the generic algorithms are integrated in the
+    framework to help application development in many different domains.
+  \end{abstract}
 
-% Note that keywords are not normally used for peerreview papers.
-\begin{IEEEkeywords}
-Parallel Rendering, Scalable Visualization, Cluster Graphics, Immersive Environments, Display Walls
-\end{IEEEkeywords}}
+  % Note that keywords are not normally used for peerreview papers.
+  \begin{IEEEkeywords}
+    Parallel Rendering, Scalable Visualization, Cluster Graphics, Immersive Environments, Display Walls
+  \end{IEEEkeywords}
+}
 
 
 % make the title area
@@ -552,6 +558,7 @@ Parallel Rendering, Scalable Visualization, Cluster Graphics, Immersive Environm
 % \IEEEraisesectionheading puts \section within a raised box.
 \IEEEraisesectionheading{\section{Introduction}\label{sec:introduction}}
 %----------------------------------------------------------------------
+
 
 Highlight integration of many features into a general framework vs one-off
 research implemenation of one algorithm.
@@ -769,7 +776,7 @@ rate of the destination channel is smoothened using a frame rate equalizer
 
 \subsubsection{Tiles and Chunks}\label{sec:tile}
 
-Tile (\fig{fig:tile}) and chunk decompositions are a variant of sort-first and
+Tile (\fig{fig:tiles}) and chunk decompositions are a variant of sort-first and
 sort-last rendering, respectively. They decompose the scene into a predefined
 set of fixed-size image tiles or database ranges. These tasks are queued and
 processed by all source channels by polling a server-central queue. Prefetching
@@ -1401,17 +1408,17 @@ application node.
 %----------------------------------------------------------------------
 \label{sec:results}
 
-\subsection{Object Distribution}
-
-Distribute large ply model to 1..16 nodes using TCP, IB and RSP
-
-Distribute a video texture (per frame)
-
 \subsection{Decomposition Modes}
 
 Two graphs: Time to render a 4k, 256-step MSAA image of largest ply model and
 Livre using 1..16 nodes with all modes (2D, 2D LB, DB, DPlex (over AA steps),
 tiles, chunks, pixel, subpixel) (+DFR for Livre)
+
+\subsection{Object Distribution}
+
+Distribute large ply model to 1..16 nodes using TCP, IB and RSP
+
+Distribute a video texture (per frame)
 
 %----------------------------------------------------------------------
 \section{Discussion and Conclusion}
