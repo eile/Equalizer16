@@ -56,6 +56,7 @@
 \definecolor{BLUE}{rgb}{0,0,1}
 \newcommand{\FIXME}[1]{\textbf{\color{BLUE}{FIXME: #1}}}
 \newcommand{\sref}[1]{Section~\ref{#1}}
+\newcommand{\fig}[1]{Figure~\ref{#1}}
 %\newcommand{\FIXME}[1]{}
 
 % suppress  single floating lines on top (widow) and bottom (club)
@@ -158,9 +159,9 @@ Equalizer is open source, available under the LGPL license from http://www.equal
 %----------------------------------------------------------------------
 \label{SEC_related}
 
-\cite{EMP:09} summarized the work in parallel rendering at the time of
-publication. In the following we will present the related work published since
-this publication.
+In \cite{EMP:09}, we presented the Equalizer parallel rendering framework. This
+paper also summarized the work in parallel rendering up to 2009. In the
+following we will present the related work published since then.
 
 \cite{EEP:11} cross-segment load balancing
 
@@ -236,6 +237,7 @@ wall. If the view does not specify a frustum, the corresponding destination
 channels will use the physically correct sub-frustum resulting from the
 view/segment intersection.
 
+\label{SEC_observer}
 An observer looks at one or more views. It is described by the observer position
 in the world and its eye separation. Each observer will have its own stereo
 mode, focus distance and frame loop (framerate). This allows to have untracked
@@ -299,18 +301,42 @@ reverse-engr impl
 \section{Virtual Reality}
 %------------------------------------------------------------------------------
 
-Virtual Reality
+Virtual Reality is an important field for parallel rendering. It does however
+require special attention to support it as a first-class citizen in a generic
+parallel rendering framework. Equalizer has been used in many virtual reality
+installations, such as the Cave2 (\cite{FNTTL:13}), the high-resolution C6 CAVE
+at the KAUST visualization laboratory and head-mounted displays
+(\fig{FIG_teaser}). In the following we lay out the features needed support
+these installations. All features presented were motivated by application use
+cases and have been validated with their respective users.
 
 \subsection{Head Tracking}
 
+Head tracking is the minimal feature needed to support immersive
+installations. Equalizer does support multiple, independent tracked views
+through the observer abstraction introduced in \sref{SEC_observer}. Built-in
+VRPN support enables the direct, application-transparent configuration of a VRPN
+tracker device. Alternatively, an application can provide a $4\times 4$ tracking
+matrix defining the transformation from the canvas coordinate system to the
+observer. Both CAVE-like tracking with fixed projection surfaces and HMD
+tracking modes are implemented.
 
 \subsection{Dynamic Focus Distance}
 
-Focus what user is looking at
+To our knowledge, all parallel rendering systems have the focal plane coincide
+with the physical display surface. For better viewing comfort, we introduce a
+new dynamic focus mode, where the application defines the distance of the focal
+plane from the observer, based on the current view direction af the
+user. Initial experiments show that this is particularly effective for objects
+placed within the immersive space, that is, in front of all display segments.
 
 \subsection{Asymmetric Eye Position}
 
-Better HMD by measuring user geometry
+Traditional head tracking computes the left and right eye positions by using a
+configurable interocular distance and the tracking matrix. However, human heads
+are not symmetric, and by measuring individual users a more precise frustum can
+be computed. Equalizer supports this through the optional configuration (file or
+programmatically) of individual 3D positions for the left and right eye.
 
 \subsection{Application-specific Scaling}
 
@@ -428,7 +454,16 @@ we provide a detailed description and evaluation of our algorithm.
 
 \subsubsection{Dynamic Frame Resolution}
 
-Constant frame rate for fill-limited applications
+The DFR equalizer provides a functionality similar to dynamic video resizing
+\cite{MBDM:97}, that is, it maintains a constant framerate by adapting the
+rendering resolution of a fill-limited application. In Equalizer, this works by
+rendering into a source channel (typically on a FBO) separate to the destination
+channel, and then scaling the rendering during the transfer (typically through
+an on-GPU texture) to the destination channel. The DFR equalizer monitors the
+rendering performance and accordingly adapts the resolution of the source
+channel and zoom factor for the source to destination transfer. If the
+performance and source channel resolutions allows, this will not only subsample,
+but also supersample the destination channel to reduce aliasing artefacts.
 
 \subsubsection{Frame Rate Equalizer}\label{SEC_framerateEq}
 
@@ -500,7 +535,7 @@ Distribute large ply model to 1..16 nodes using TCP, IB and RSP
 
 Two graphs: Time to render a 4k, 256-step MSAA image of largest ply model and
 Livre using 1..16 nodes with all modes (2D, 2D LB, DB, DPlex (over AA steps),
-tiles, chunks, pixel, subpixel)
+tiles, chunks, pixel, subpixel) (+DFR for Livre)
 
 %----------------------------------------------------------------------
 \section{Discussion and Conclusion}
