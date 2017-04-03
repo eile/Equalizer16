@@ -194,7 +194,7 @@ Polytechnique Federale de Lausanne.}}
   \vspace{-2mm}
   \caption{Example Equalizer application use cases: (a) 192 Megapixel CAVE at
     KAUST running RTNeuron, (b) Immersive HMD with external tracked and
-    untracked views running RTT DeltaGen for virtual car usability studies (c)
+    untracked views running RTT DeltaGen for virtual car usability studies, and (c)
     Cave2 running a molecular visualization build based on Omegalib.}
   \label{FIG_teaser}
 \end{figure*}
@@ -291,13 +291,14 @@ This section introduces new decomposition modes, runtime adaptations and other
 optimizations to increase the rendering performance for a wide variety of
 algorithms.
 
+%------------------------------------------------------------------------------
 \subsection{New Decomposition Modes}
 
-The initial version of Equalizer implemented sort-first (2D), sort-last (DB),
+The initial version of Equalizer implemented the basic sort-first (2D), sort-last (DB),
 stereo (EYE) and multilevel decompositions \cite{EMP:09}. In the following we
-present new decomposition modes and motivate their use case. \fig{fig:compounds}
-provides an overview of the new modes. We describe their configuration in the
-\textit{compound} framework introduced in \cite{EMP:09}.
+present the newly added decomposition modes and motivate their use case. \fig{fig:compounds}
+provides an overview of the new modes. We describe how to setup compound
+descriptions in the framework in \cite{EMP:09}.
 
 \begin{figure*}[ht]\center
   \begin{subfigure}[b]{0.24\textwidth}
@@ -423,8 +424,7 @@ compound {
     \end{lstlisting}\vspace{21ex}}
     \caption{\label{fig:subpixel}Subpixel}
   \end{subfigure}
-  \caption{New Equalizer task decompositions and their compounds for parallel
-    rendering}
+  \caption{New Equalizer task decomposition modes and their compound descriptions for parallel rendering}
   \label{fig:compounds}
 \end{figure*}
 
@@ -441,8 +441,8 @@ for non-interactive movie generation. It is transparent to Equalizer
 applications, but does require the configuration latency to be equal or greater
 than the number of source channels. Furthermore, to work in a multi-threaded,
 multi-GPU configuration, the application needs to support running the rendering
-threads asynchronously, as outlined in \sref{sec:threading}. The output frame
-rate of the destination channel is smoothened using a frame rate equalizer
+threads asynchronously, as outlined below in \sref{sec:threading}. The output frame
+rate of the destination channel is smoothened using a {\em frame rate equalizer}
 (\sref{sec:framerateEq}).
 
 \subsubsection{Tiles and Chunks}\label{sec:tile}
@@ -451,7 +451,7 @@ Tile (\fig{fig:tiles}) and chunk decompositions are a variant of sort-first and
 sort-last rendering, respectively. They decompose the scene into a predefined
 set of fixed-size image tiles or database ranges. These tasks are queued and
 processed by all source channels by polling a server-central queue. Prefetching
-ensures that the task communication overlaps with rendering. As shown in
+ensures that the task communication overlaps with rendering. As shown in~
 \cite{SPEP:16}, these modes provide better performance due to being inherently
 load-balanced, as long as there is an insignificant overhead for the render task
 setup. This mode is transparent to Equalizer applications.
@@ -481,12 +481,14 @@ iteration executed. Furthermore, subpixel compounds interact with idle image
 refinements, e.g., they can accelerate idle anti-aliasing of a scene when the
 camera and scene are not changed.
 
+%------------------------------------------------------------------------------
 \subsection{Equalizers}
 
-Equalizer are an addition to compound trees. They modify parameters of their
-respective subtree at runtime to optimize one aspect of the decomposition. Due
+{\em Equalizers} are an addition to compound trees. They modify parameters of their
+respective subtree at runtime to dynamically optimize one aspect of the decomposition. Due
 to their nature, they are transparent to application developers, but might have
-application-accessible parameters to tune their behaviour.
+application-accessible parameters to tune their behavior.
+\FIXME{ok, this is a bit tricky to Equalizer as a name for the framework as well as for this, can't we resolve this?}
 
 \begin{figure*}[ht]\center
   \begin{subfigure}[b]{0.24\textwidth}
@@ -524,6 +526,7 @@ by equalizing the integral over the area on each side.
 We have implemented various tunable parameters allowing application developers
 to optimize the load balancing based on the characteristics of their rendering
 algorithm:
+
 \begin{compactdesc}
 \item[Damping] reduces frame-to-frame oscillations. It is a normalized scalar
   defining how much of the computed delta from the previous position is
@@ -584,6 +587,7 @@ on a single monitoring channel. The monitor equalizer changes the scaling factor
 and offset between the output and input, so that the monitor channel has the
 same, but typically downscaled view, as the originating segments.
 
+%------------------------------------------------------------------------------
 \subsection{Optimizations}
 
 \subsubsection{Region of Interest}
@@ -611,8 +615,8 @@ of the rendering performance of over 25\% for large node counts.
 Compression for the compositing step in parallel rendering is critical for
 performance. This not only applies to the well-researched network transfer step,
 but also for the transfer between GPU and CPU. Equalizer supports a variety of
-compression algorithms, from very fast RLE encoding, JPEG compression to YUV
-subsampling on the GPU. These algorithms are implemented as runtime-loaded
+compression algorithms, from very fast RLE encoding, YUV
+subsampling on the GPU to JPEG compression. These algorithms are implemented as runtime-loaded
 plugins, allowing easy extension and customization to application-specific
 compression. In \cite{MEP:10}, we show this to be a critical step for
 interactive performance at scale.
@@ -656,7 +660,7 @@ require special attention to support it as a first-class citizen in a generic
 parallel rendering framework. Equalizer has been used in many virtual reality
 installations, such as the Cave2 (\cite{FNTTL:13}), the high-resolution C6 CAVE
 at the KAUST visualization laboratory and head-mounted displays
-(\fig{FIG_teaser}). In the following we lay out the features needed support
+(\fig{FIG_teaser}). In the following we lay out the features needed to support
 these installations. All features presented were motivated by application use
 cases and have been validated with their respective users.
 
@@ -676,7 +680,7 @@ tracking modes are implemented.
 To our knowledge, all parallel rendering systems have the focal plane coincide
 with the physical display surface. For better viewing comfort, we introduce a
 new dynamic focus mode, where the application defines the distance of the focal
-plane from the observer, based on the current view direction af the
+plane from the observer, based on the current view direction of the
 user. Initial experiments show that this is particularly effective for objects
 placed within the immersive space, that is, in front of all display segments.
 
@@ -715,6 +719,7 @@ motivate the use case, explain the architecture and integration into our
 parallel rendering framework, and, where applicable, show the steps needed to
 use this functionality in applications.
 
+%------------------------------------------------------------------------------
 \subsection{Physical and Logical Visualization Setup}
 
 Real-world visualization setups are often complex, and having an abstract
@@ -773,6 +778,7 @@ in the world and its eye separation. Each observer will have its own stereo
 mode, focus distance and frame loop (framerate). This allows to have untracked
 views and multiple tracked views, e.g., two HMDs, in the same application.
 
+%------------------------------------------------------------------------------
 \subsection{Runtime Reconfiguration}\label{sec:reconfig}
 
 Switching a layout, as described above, or switching the stereo rendering mode,
@@ -793,6 +799,7 @@ reconfiguration is detected, before executing the change. This implementation
 allows the late join or early exit, transparent to application developers.
 
 
+%------------------------------------------------------------------------------
 \subsection{Automatic Configuration}
 
 Automatic configuration implements the discovery of local and remote resources
@@ -818,6 +825,7 @@ multi-GPU workstations and visualization clusters, as well as to provide system
 administrators with the tools to implement easy to use integration with cluster
 schedulers. This feature is transparent to Equalizer application developers.
 
+%------------------------------------------------------------------------------
 \subsection{Qt Windowing}
 
 Qt is a popular window system with many application developers. Unfortunately,
@@ -833,6 +841,7 @@ events are signalled from the main thread.
 
 Challenges in threading model, architecture
 
+%------------------------------------------------------------------------------
 \subsection{Tide Integration}
 
 Tide (Tiled interactive display environment) is an improved version of
@@ -846,6 +855,7 @@ an 24 megapixel resolution over a WAN link. Events received are translated into
 Equalizer events and injected into the normal event flow, allowing seamless
 application integration.
 
+%------------------------------------------------------------------------------
 \subsection{Sequel}\label{sec:sequel}
 
 Sequal is a simplification layer for Equalizer. It is based on the realization
@@ -869,6 +879,7 @@ Collage network library for its internal operation. Collage furthermore provides
 powerful abstractions for writing Equalizer applications, which are introduced
 in this section.
 
+%------------------------------------------------------------------------------
 \subsection{Architecture}
 
 Collage provides networking functionality of different abstraction layers,
@@ -901,16 +912,18 @@ primitives in Collage are:
 \end{figure}
 \fig{fNetObject} illustrates this architecture.
 
+%------------------------------------------------------------------------------
 \subsection{Infiniband RDMA}
 
 needed? reverse-engr impl
 
+%------------------------------------------------------------------------------
 \subsection{Reliable Stream Protocol}\label{sec:RSP}
 
 RSP is an implementation of a reliable multicast protocol over unreliable UDP
 transport. RSP behaves similarly to TCP, it provides full reliability and
 ordering of the data, and slow receivers will eventually throttle the
-sender. This behaviour is needed to guarantee delivery of data in all
+sender. This behavior is needed to guarantee delivery of data in all
 situations. Pragmatic generic multicast (PGM~\cite{pgm}) provides full ordering,
 but slow clients will disconnect from the multicast session instead of
 throttling the send rate.
@@ -1001,6 +1014,7 @@ limiting uses a bucket algorithm, where over time the bucket fills with send
 credits, from which sends are substracted. If there are no available credits,
 the sender sleeps until sufficient credits are available.
 
+%------------------------------------------------------------------------------
 \subsection{Distributed, Versioned Objects}
 
 Adapting an existing application for parallel rendering requires the
@@ -1140,6 +1154,7 @@ multicast session, and more than one slave instance is mapped, Collage
 automatically uses the multicast connection to send the new version
 information.
 
+%------------------------------------------------------------------------------
 \subsection{Barriers, Queues and Object Maps}\label{sec:barrier}
 
 Collage implements a few generic distributed objects which are used by Equalizer
