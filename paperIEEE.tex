@@ -742,7 +742,16 @@ Tiled interactive display environment, parallel pixel streaming, events
 
 \subsection{Sequel}\label{sec:sequel}
 
-application, renderer, view data
+Sequal is a simplification layer for Equalizer. It is based on the realization
+that while fully expressive, the verbatim abstraction layer of nodes, pipes,
+windows and channels in Equalizer requires significant learning to fully
+understand and exploit. In reality, a higher abstraction of \textsf{Application}
+and \textsf{Renderer} is sufficient for most use cases. In Sequel, the
+application class drives the configuration, and one renderer instance is created
+for each (pipe) render thread. They also provide the natural place to store and
+distribute data. Last, but not least, view data provides a convenient way to
+manage multiple views by storing the camera, model or any other view-specific
+information.
 
 %------------------------------------------------------------------------------
 \section{The Collage Network Library}
@@ -973,8 +982,8 @@ passive stereo or stereo-dependent task decompositions, as described in
 \subsection{New Decomposition Modes}
 
 The initial version of Equalizer implemented sort-first (2D), sort-last (DB) and
-stereo (EYE) decomposition. In the following we present new decomposition modes
-and motivate their use case.
+stereo (EYE) decomposition \cite{EMP:09}. In the following we present new
+decomposition modes and motivate their use case.
 
 \subsubsection{Time-Multiplex}
 
@@ -1128,12 +1137,45 @@ of the rendering performance of over 25\% for large node counts.
 
 \subsubsection{Download and Compression Plugins}
 
-GPU-CPU transfer plugins with optional compression (YUV, RLE) linked to CPU
-compression for network transfer \cite{MEP:10}
+Compression for the compositing step in parallel rendering is critical for
+performance. This not only applies to the well-researched network transfer step,
+but also for the transfer between GPU and CPU. Equalizer supports a variety of
+compression algorithms, from very fast RLE encoding, JPEG compression to YUV
+subsampling on the GPU. These algorithms are implemented as runtime-loaded
+plugins, allowing easy extension and customization to application-specific
+compression. In \cite{MEP:10}, we show this to be a critical step for
+interactive performance at scale.
 
 \subsubsection{Thread Synchronization Modes}\label{SEC_threading}
 
-Per-node sync, draw sync, async
+Different applications have different degrees on how decoupled and thread-safe
+the rendering code is from the application logic. For full decoupling all
+mutable data has to have a copy in each render thread, which is not feasible in
+large data scenarios. To easily customize the synchronization of all threads on
+a single process, Equalizer implements three threading modes:  Full
+synchronization, draw synchronization and asynchronous. Note that the execution
+between nodes is always asynchronous, for up to \textsf{latency} frames.
+
+In full synchronization, all threads always execute the same frame, that is, the
+render threads are unlocked after \textsf{Node::frameStart}, and the node is
+blocked for all render threads to finish the frame before executing
+\textsf{Node::frameFinish}. This allows the render threads to read shared data
+from all their operations, but provides the slowest performance.
+
+In draw synchronization, the node thread and all render threads are synchronized
+for all \textsf{frameDraw} operations, that is, \textsf{Node::frameFinish} is
+executed after the last channel is done drawing. This allows the render threads
+to read shared data during their draw operation, but not during
+compositing. Since compositing is typically independent of the rendered data,
+this is the default mode. This mode allows to overlap compositing with data
+synchronization on multi-GPU machines.
+
+In asynchronous execution, all threads run asynchronously. Render threads may
+work on different frames at any given time. This mode is the fastest, and
+requires the application to have one instance of each mutable object in each
+render thread. It is required for using time-multiplex compounds in
+multithreaded rendering.
+
 
 %----------------------------------------------------------------------
 \section{Applications}
