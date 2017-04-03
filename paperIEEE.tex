@@ -724,18 +724,145 @@ application, renderer, view data
 \section{The Collage Network Library}
 %------------------------------------------------------------------------------
 
-\subsection{Distributed, Versioned Objects}
+An important part of writing a parallel rendering application is the
+communication layer between the individual processes. Equalizer relies on the
+Collage network library for its internal operation. Collage furthermore provides
+powerful abstractions for writing Equalizer applications, which are introduced
+in this section.
 
-types (instance, delta, static), versioning, multicast, compression,
-serializable with dirty bits, mapping, blocking commits
+\subsection{Architecture}
 
-\subsection{Reliable Stream Protocol}
+Collage provides networking functionality of different abstraction layers,
+gradually providing higher level functionality for the programmer. The main
+primitives in Collage are:
 
-UDP-based reliability protocol
+\begin{compactdesc}
+\item[Connection] A stream-oriented point-to-point communication
+  line. The connections
+  transmit raw data reliably between two endpoints for unicast connections, and
+  between a set of endpoints for multicast connections. For unicast,
+  process-local pipes, TCP and Infiniband RDMA are implemented. For multicast,
+  a reliable, UDP-based protocol is discussed in \sref{SEC_RSP}.
+\item[DataI/OStream] Abstracts the input and output of C++ data types from or to
+  a set of connections by implementing output stream operators. Uses buffering
+  to aggregate data for network transmission. Performs endian swapping during
+  input if the endianness differs between the originating and local node.
+\item[Node and LocalNode] The abstraction of a process in the cluster. Nodes
+  communicate with each other using connections. A LocalNode listens on various
+  connections and processes requests for a given process. Received data is
+  wrapped in ICommands and dispatched to command handler methods. A Node is a
+  proxy for a remote LocalNode. The Equalizer Client object is a LocalNode.
+\item[Object] Provides object-oriented, versioned data distribution of C++
+  objects between nodes. Objects are registered or mapped on a Local\-Node.
+\end{compactdesc}
+
+\begin{figure}[ht]\center
+  \includegraphics[width=\columnwidth]{EqDocs/Developer/ProgrammingGuide/images/netObject}
+  \caption{\label{fNetObject}Communication between two Collage Objects}
+\end{figure}
+\fig{fNetObject} illustrates this architecture.
 
 \subsection{Infiniband RDMA}
 
-reverse-engr impl
+needed? reverse-engr impl
+
+\subsection{Reliable Stream Protocol}\label{SEC_RSP}
+
+UDP-based reliability protocol
+
+\subsection{Distributed, Versioned Objects}
+
+Adapting an existing application for parallel rendering requires the
+synchronization of application data across the processes in the parallel
+rendering setup. Existing parallel rendering frameworks address this often
+poorly, at best they rely on MPI to distribute data. Real-world, interactive
+visualization applications are typically written in C++ and have complex data
+models and class hierarchies to represent their application state. As outlined
+in \cite{EMP:09}, the parallel rendering code in an Equalizer application only
+needs access to the data needed for rendering, as all application logic is
+centralized in the application main thread. We have encountered two main
+approaches to address this distribution: Using a shared filesystem for static
+data and using data distribution for static and dynamic data.
+
+Distributed objects in Collage provide powerful, object-oriented data
+distribution for C++ objects. They facilitate the implementation of data
+distribution in a cluster environment. Distributed objects are created by
+subclassing from \textsf{co::Serializable} or \textsf{co::Object}. The
+application programmer implements serialization and deserialization of the
+distributed data. Distributed objects can be static (immutable) or
+dynamic. Objects have a universally unique identifier (UUID) to address them
+cluster-wide. A master-slave model is used to establish mapping and data
+synchronization across processes. Typically, the application mail loop registers
+a master instance and communicates the UUID to the render clients, which map
+their instance to the given identifier. The following object types are
+available:
+
+\begin{compactdesc}
+\item[Static] The object is not versioned nor buffered. The instance data is
+  serialized whenever a new slave instance is mapped. No additional data is
+  stored.
+\item[Instance] The object is versioned and buffered. The instance and delta
+  data are identical, that is, only instance data is serialized. Previous
+  instance data is saved to be able to map old versions.
+\item[Delta] The object is versioned and buffered. The delta data is typically
+  smaller than the instance data. The delta data is transmitted to slave
+  instances for synchronization. Previous instance and delta data is saved to be
+  able to map and sync old versions.
+\item[Unbuffered] The object is versioned and unbuffered. No data is stored, and
+  no previous versions can be mapped. No old versions can be mapped and no
+  additional data is stored.
+\end{compactdesc}
+
+All distributed objects have to implement \textsf{getInstanceData} and
+\textsf{applyInstanceData} to serialize and deserialize the object's distributed
+data. These methods provide an output or input stream as a parameter, which
+abstracts the data transmission and can be used like a \textsf{std::stream}. The
+data streams implement efficient buffering and compression, and automatically
+select the best connection for data transport. Custom data type serializers can
+be implemented by providing the appropriate serialization functions. No pointers
+should be directly transmitted through the data streams. For pointers, the
+corresponding object is typically a distributed object as well, and its
+identifier and potentially version is transmitted in place of the memory
+address.
+
+Dynamic objects are versioned, and have to override \textsf{getChangeType} to
+indicate how they want to have changes to be handled. Upon \textsf{commit} the
+delta data from the previous version is sent, if available using multicast, to
+all mapped slave instances. The data is queued on the remote node, and is
+applied when the application calls \textsf{sync} to synchronize the object to a
+new version. The \textsf{sync} method might block if a version has not yet been
+committed or is still in transmission. All versioned objects the following
+characteristics:
+
+\begin{compactitem}
+\item The master instance of the object generates new versions for all
+  slaves. These versions are continuous. It is possible to commit on slave
+  instances, but special care has to be taken to handle possible
+  conflicts.
+\item Slave instance versions can only be advanced, that is, \textsf{sync(
+  version )} with a version smaller than the current version will fail.
+\item Newly mapped slave instances are mapped to the oldest available
+  version by default, or to the version specified when calling
+  \textsf{mapObject}.
+\end{compactitem}
+
+Besides the instance data serialization methods used to map an object, versioned
+objects may implement \textsf{pack} and \textsf{unpack} to serialize or
+deserialize the changes since the last version.
+
+The Collage Serializable implements one convenient usage pattern for object data
+distribution. The \textsf{co::Serializable} data distribution is based on the
+concept of dirty bits, allowing inheritance with data distribution. Dirty bits
+form a 64-bit mask which marks the parts of the object to be distributed during
+the next commit. For serialization, the application developer implements
+\textsf{serialize} or \textsf{deserialize}, which are called with the bit mask
+specifying which data has to be transmitted or received. During a commit or
+sync, the current dirty bits are given, whereas during object mapping all dirty
+bits are passed to the serialization methods.
+
+Blocking commits allow to limit the number of outstanding, queued versions on
+the slave nodes. A token-based protocol will block the commit on the master
+instance if to many unsynchronized versions exist.
 
 %------------------------------------------------------------------------------
 \section{Virtual Reality}
