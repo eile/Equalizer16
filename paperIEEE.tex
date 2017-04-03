@@ -147,10 +147,10 @@ Polytechnique Federale de Lausanne.}}
     parallel rendering framework which provides a large set of features,
     algorithms and system integration for a wide range of real-world research
     and industry applications. Based on the basic architecture and
-    implementation of the Equalizer parallel rendering framework presented in
+    implementation of the \textsf{Equalizer} parallel rendering framework presented in
     \cite{EMP:09}, we show how a variety of generic algorithms are integrated in the
     framework to help application development in many different domains, and we show
-    a number of applications highlighting the diverse aspects and use cases of Equalizer.
+    a number of applications highlighting the diverse aspects and use cases of \textsf{Equalizer}.
   \end{abstract}
 
   % Note that keywords are not normally used for peerreview papers.
@@ -192,7 +192,7 @@ Polytechnique Federale de Lausanne.}}
   \includegraphics[width=2\columnwidth]{images/teaser} \\
   (a) \hfil \hfil (b) \hfil \hfil (c)
   \vspace{-2mm}
-  \caption{Example Equalizer application use cases: (a) 192 Megapixel CAVE at
+  \caption{Example \textsf{Equalizer} application use cases: (a) 192 Megapixel CAVE at
     KAUST running RTNeuron, (b) Immersive HMD with external tracked and
     untracked views running RTT DeltaGen for virtual car usability studies, and (c)
     Cave2 running a molecular visualization build based on Omegalib.}
@@ -214,13 +214,13 @@ Polytechnique Federale de Lausanne.}}
 Highlight integration of many features into a general framework vs one-off
 research implementation of one algorithm. Also point out the various and very
 diverse examples in Section 7, highlighting the variety of application and implementation
-scenarios that can benefit from Equalizer.
+scenarios that can benefit from \textsf{Equalizer}.
 
 The rest of this paper is structured as follows: First we introduce new related
-work since the introduction of Equalizer. The main body of this paper presents
+work since the introduction of \textsf{Equalizer}. The main body of this paper presents
 new performance features, virtual reality algorithms, usability features to
-build complex applications, main novel features of the underlying Collage
-network library and a quick overview of the main Equalizer-based applications. A
+build complex applications, main novel features of the underlying \textsf{Collage}
+network library and a quick overview of the main \textsf{Equalizer}-based applications. A
 result section presents new experiments not previously published, followed by
 the discussion and conclusion.
 
@@ -228,43 +228,46 @@ the discussion and conclusion.
 \section{Related Work}\label{sec:related}
 %----------------------------------------------------------------------
 
-In~\cite{EMP:09}, we presented the initial {\em Equalizer} parallel rendering framework,
+In~\cite{EMP:09}, we presented the initial \textsf{Equalizer} parallel rendering framework,
 which summarized the work in parallel rendering up to 2009. An extensive
 Programming and User Guide provides in-depth documentation on using and
-programming Equalizer~\cite{Eilemann:13}. In the following we assume these two
+programming \textsf{Equalizer}~\cite{Eilemann:13}. In the following we assume these two
 publications and their references as a starting point, and focus on the related
 work published since then.
 
-The concept of transparent OpenGL interception popularized by WireGL and
-Chromium~\cite{HHNFAKK:02} has received little attention since 2009. While some
-commercial implementations such as TechViz and MechDyne Conduit continue to
-exist, on the research side only ClusterGL~\cite{NHM:11} has been presented.
-ClusterGL employs the same approach as Chromium, but delivers a significantly
-faster implementation of transparent OpenGL interception and distribution for
-parallel rendering. CGLX~\cite{DK:11} tries to bring parallel execution
+The concept of transparent OpenGL interception popularized by \textsf{WireGL}
+and \textsf{Chromium}~\cite{HHNFAKK:02} has received little attention since
+2009. While some commercial implementations such as \textsf{TechViz} and
+\textsf{MechDyne Conduit} continue to exist, on the research side only
+\textsf{ClusterGL}~\cite{NHM:11} has been presented. \textsf{ClusterGL} employs
+the same approach as \textsf{Chromium}, but delivers a significantly faster
+implementation of transparent OpenGL interception and distribution for parallel
+rendering. \textsf{CGLX}~\cite{DK:11} tries to bring parallel execution
 transparently to OpenGL applications, by emulating the GLUT API and intercepting
-certain OpenGL calls. In contrast to frameworks like Chromium and ClusterGL
-which distribute OpenGL calls, CGLX follows the distributed application
-approach. This works transparently for trivial applications, but quickly
-requires the application developer to address the complexities of a distributed
-application, when mutable application state needs to be synchronized across
-processes. For realistic applications, writing parallel applications remains the
-only viable approach for scalable parallel rendering, as shown by the success of
-Paraview, Visit and Equalizer-based applications.
+certain OpenGL calls. In contrast to frameworks like \textsf{Chromium} and
+\textsf{ClusterGL} which distribute OpenGL calls, \textsf{CGLX} follows the
+distributed application approach. This works transparently for trivial
+applications, but quickly requires the application developer to address the
+complexities of a distributed application, when mutable application state needs
+to be synchronized across processes. For realistic applications, writing
+parallel applications remains the only viable approach for scalable parallel
+rendering, as shown by the success of \textsf{Paraview}, \textsf{Visit} and
+\textsf{Equalizer}-based applications.
 
 On the other hand, software for driving and interacting with tiled display walls
-has received significant attention, including Sage~\cite{Sage} and
-Sage~2~\cite{Sage2} in particular. Sage was built entirely around the concept of
-a shared framebuffer where all content windows are separate applications using
-pixel streaming but is no longer actively supported. Sage 2 is a complete,
-browser-centric reimplementation where each application is a web application
-distributed across browser instances. DisplayCluster~\cite{DC}, and its
-continuation Tide~\cite{tide}, also implement the shared framebuffer concept of
-Sage, but provide a few native content applications integrated into the display
-servers. These solutions implement a scalable display environment and are a
-target display platform for scalable 3D graphics applications.
+has received significant attention, including \textsf{Sage}~\cite{Sage} and
+\textsf{Sage~2}~\cite{Sage2} in particular. \textsf{Sage} was built entirely
+around the concept of a shared framebuffer where all content windows are
+separate applications using pixel streaming but is no longer actively supported.
+\textsf{Sage 2} is a complete, browser-centric reimplementation where each
+application is a web application distributed across browser instances.
+\textsf{DisplayCluster}~\cite{DC}, and its continuation
+\textsf{Tide}~\cite{tide}, also implement the shared framebuffer concept of
+\textsf{Sage}, but provide a few native content applications integrated into the
+display servers. These solutions implement a scalable display environment and
+are a target display platform for scalable 3D graphics applications.
 
-Equalizer itself has received significant attention within the research
+\textsf{Equalizer} itself has received significant attention within the research
 community. Various algorithms to improve the parallel rendering performance have
 been proposed: compression and region of interest during
 compositing~\cite{MEP:10}; load-balancing resources for multi-display
@@ -276,10 +279,13 @@ Equalizer~\cite{GMBP:10, GEMPG:13}, demonstrating the feasibility of
 the framework to be used with complex rendering algorithms and 3D model
 representations.
 
-Furthermore, various applications and frameworks have used Equalizer for new research in
-visualization, such as the RTNeuron~\cite{HBBES:13}, an OpenGL renderer for
-visualizing simulations of neurocortical brain regions; Omegalib~\cite{Omegalib},
-extending Equalizer for the hybrid 2D/3D environments such as the CAVE2;
+Furthermore, various applications and frameworks have used \textsf{Equalizer}
+for new research in visualization, such as \textsf{RTNeuron}~\cite{HBBES:13}, an
+OpenGL renderer for visualizing simulations of neurocortical brain regions;
+
+\textsf{Omegalib}~\cite{Omegalib}, extending \textsf{Equalizer} for the hybrid
+2D/3D environments such as the CAVE2;
+
 visualization for remote sensing data~\cite{LK:09}, bino.
 
 \cite{CKP:12} tiled display wall virtual environment
@@ -296,7 +302,7 @@ algorithms.
 %------------------------------------------------------------------------------
 \subsection{New Decomposition Modes}
 
-The initial version of Equalizer implemented the basic sort-first (2D), sort-last (DB),
+The initial version of \textsf{Equalizer} implemented the basic sort-first (2D), sort-last (DB),
 stereo (EYE) and multilevel decompositions \cite{EMP:09}. In the following we
 present the newly added decomposition modes and motivate their use case. \fig{fig:compounds}
 provides an overview of the new modes. We describe how to setup compound
@@ -426,7 +432,7 @@ compound {
     \end{lstlisting}\vspace{21ex}}
     \caption{\label{fig:subpixel}Subpixel}
   \end{subfigure}
-  \caption{New Equalizer task decomposition modes and their compound descriptions for parallel rendering}
+  \caption{New \textsf{Equalizer} task decomposition modes and their compound descriptions for parallel rendering}
   \label{fig:compounds}
 \end{figure*}
 
@@ -439,7 +445,7 @@ fit for distributed memory systems, since the separate memory space makes
 concurrent rendering of different frames easier to implement. While it increases
 the framerate linearly, it does not decrease the latency between user input and
 the corresponding output. Consequently, this decomposition mode is mostly useful
-for non-interactive movie generation. It is transparent to Equalizer
+for non-interactive movie generation. It is transparent to \textsf{Equalizer}
 applications, but does require the configuration latency to be equal or greater
 than the number of source channels. Furthermore, to work in a multi-threaded,
 multi-GPU configuration, the application needs to support running the rendering
@@ -456,7 +462,7 @@ processed by all source channels by polling a server-central queue. Prefetching
 ensures that the task communication overlaps with rendering. As shown in~
 \cite{SPEP:16}, these modes provide better performance due to being inherently
 load-balanced, as long as there is an insignificant overhead for the render task
-setup. This mode is transparent to Equalizer applications.
+setup. This mode is transparent to \textsf{Equalizer} applications.
 
 
 \subsubsection{Pixel}
@@ -468,7 +474,7 @@ geometry bound. Source channels cannot reduce geometry load through view frustum
 culling, since each source channel has almost the same frustum (only shifted by
 some pixels), but applied to a reduced 2D viewport. However, the fragment load
 on all source channels is very similar due to the interleaved distribution of
-pixels. This functionality is transparent to Equalizer applications, and the
+pixels. This functionality is transparent to \textsf{Equalizer} applications, and the
 default compositing implementation uses the OpenGL stencil buffer to blit pixels
 onto the destination channel.
 
@@ -492,11 +498,11 @@ by each tuning one aspect of the decomposition. Due to their nature, they are
 transparent to application developers, but might have application-accessible
 parameters to tune their behavior. Resource equalization is the critical
 component for scalable parallel rendering, and therefore the eponym for the
-Equalizer project name. \FIXME{ok, this is a bit tricky to have Equalizer as a
+\textsf{Equalizer} project name. \FIXME{ok, this is a bit tricky to have Equalizer as a
 name for the framework as well as for this component, can't we change this?
 eile: We can't change the product name, and changing the component name will be
-hard. In fact, this is an artefact of the architecture: The runtime balancing of
-resources is the core contribution of Equalizer, and therefore the equalizers
+hard. In fact, this is an artefact of the sw architecture: The runtime balancing
+of resources is the core contribution of Equalizer, and therefore the equalizers
 performing this task are the name-givers for the product. Modified paragraph
 above for clarity.}
 
@@ -568,7 +574,7 @@ our algorithm.
 
 The DFR equalizer (\fig{fig:dfr}) provides a functionality similar to dynamic
 video resizing \cite{MBDM:97}, that is, it maintains a constant framerate by
-adapting the rendering resolution of a fill-limited application. In Equalizer,
+adapting the rendering resolution of a fill-limited application. In \textsf{Equalizer},
 this works by rendering into a source channel (typically on a FBO) separate to
 the destination channel, and then scaling the rendering during the transfer
 (typically through an on-GPU texture) to the destination channel. The DFR
@@ -624,7 +630,7 @@ of the rendering performance of over 25\% for large node counts.
 
 Compression for the compositing step in parallel rendering is critical for
 performance. This not only applies to the well-researched network transfer step,
-but also for the transfer between GPU and CPU. Equalizer supports a variety of
+but also for the transfer between GPU and CPU. \textsf{Equalizer} supports a variety of
 compression algorithms, from very fast RLE encoding, YUV
 subsampling on the GPU to JPEG compression. These algorithms are implemented as runtime-loaded
 plugins, allowing easy extension and customization to application-specific
@@ -637,7 +643,7 @@ Different applications have different degrees on how decoupled and thread-safe
 the rendering code is from the application logic. For full decoupling all
 mutable data has to have a copy in each render thread, which is not feasible in
 large data scenarios. To easily customize the synchronization of all threads on
-a single process, Equalizer implements three threading modes:  Full
+a single process, \textsf{Equalizer} implements three threading modes:  Full
 synchronization, draw synchronization and asynchronous. Note that the execution
 between nodes is always asynchronous, for up to \textsf{latency} frames.
 
@@ -667,7 +673,7 @@ multithreaded rendering.
 
 Virtual Reality is an important field for parallel rendering. It does however
 require special attention to support it as a first-class citizen in a generic
-parallel rendering framework. Equalizer has been used in many virtual reality
+parallel rendering framework. \textsf{Equalizer} has been used in many virtual reality
 installations, such as the Cave2 (\cite{FNTTL:13}), the high-resolution C6 CAVE
 at the KAUST visualization laboratory and head-mounted displays
 (\fig{FIG_teaser}). In the following we lay out the features needed to support
@@ -677,7 +683,7 @@ cases and have been validated with their respective users.
 \subsection{Head Tracking}
 
 Head tracking is the minimal feature needed to support immersive
-installations. Equalizer does support multiple, independent tracked views
+installations. \textsf{Equalizer} does support multiple, independent tracked views
 through the observer abstraction introduced in \sref{sec:observer}. Built-in
 VRPN support enables the direct, application-transparent configuration of a VRPN
 tracker device. Alternatively, an application can provide a $4\times 4$ tracking
@@ -699,7 +705,7 @@ placed within the immersive space, that is, in front of all display segments.
 Traditional head tracking computes the left and right eye positions by using a
 configurable interocular distance and the tracking matrix. However, human heads
 are not symmetric, and by measuring individual users a more precise frustum can
-be computed. Equalizer supports this through the optional configuration (file or
+be computed. \textsf{Equalizer} supports this through the optional configuration (file or
 programmatically) of individual 3D positions for the left and right eye.
 
 \subsection{Model Unit}
@@ -757,14 +763,14 @@ screens. These frusta describe a physically-correct display setup for a Virtual
 Reality installation. \label{sec:swap} A canvas may have a software or hardware
 swap barrier, which will synchronize the rendering of all contributing GPUs. The
 software barrier executes a \textsf{glFinish} to ensure the GPU is ready to
-swap, a Collage barrier (\sref{sec:barrier}) to synchronize all segments, the
+swap, a \textsf{Collage} barrier (\sref{sec:barrier}) to synchronize all segments, the
 swap buffers call followed by a \textsf{glFlush} to ensure timely execution of
 the swap command. The hardware swap barrier is implemented using the
 \textsf{WGL\_NV\_swap\_group} or \textsf{GLX\_NV\_swap\_group} extensions.
 
 On each canvas, the application can display one or more views. A view is a view
 on a model, in the sense used by the MVC pattern. The view class is used by
-Equalizer applications to define view-specific data for rendering, e.g., a
+\textsf{Equalizer} applications to define view-specific data for rendering, e.g., a
 scene, viewing mode or camera. The application process manages this data, and
 the render clients receive it for rendering.
 
@@ -793,7 +799,7 @@ views and multiple tracked views, e.g., two HMDs, in the same application.
 
 Switching a layout, as described above, or switching the stereo rendering mode,
 may involve a different set of resources after the change, including the launch
-and exit of render client processes. Equalizer solves this through a
+and exit of render client processes. \textsf{Equalizer} solves this through a
 reconfiguration step at the beginning of each rendering frame. Each resource
 (channel, window, pipe, node) has an activation count, which is updated when the
 layout or any other relevant rendering parameter is changed. When a resource is
@@ -804,7 +810,7 @@ initialization or exit, as described in \cite{EMP:09}, uses the same code path
 with all used resources transitioning to a running or stopped state,
 accordingly. Since starting new resources typically requires object mapping and
 associated data distribution, it is a costly operation. To improve performance
-and robustness, Equalizer will flush the rendering pipeline whenever a runtime
+and robustness, \textsf{Equalizer} will flush the rendering pipeline whenever a runtime
 reconfiguration is detected, before executing the change. This implementation
 allows the late join or early exit, transparent to application developers.
 
@@ -816,8 +822,7 @@ Automatic configuration implements the discovery of local and remote resources
 as well as the creation of typical configurations using the discovered resources
 at application launch time.
 
-The discovery is implemented in a separate library, hwsd\FIXME{need to somehow identify this term in the text,
-UPPERCASE or some special font type} (HardWare Service
+The discovery is implemented in a separate library, \textsf{hwsd} (HardWare Service
 Discovery), which uses a plugin-based approach to discover GPUs for GLX, AGL or
 WGL windowing systems, as well as network interfaces on Linux, Mac OS X and
 Windows. Furthermore, it detects the presence of VirtualGL to allow optimal
@@ -826,22 +831,22 @@ on the local workstation, and through the help of a simple daemon using the
 zeroconf protocol, on a set of remote nodes within a visualization cluster. A
 session identifier may be used to support multiple users on a single cluster.
 
-The Equalizer server uses the hwsd library to discover local and remote
-resources when an hwsd session name instead of a \textsf{.eqc} configuration
+The \textsf{Equalizer} server uses the hwsd library to discover local and remote
+resources when an hwsd session name instead of a \texttt{.eqc} configuration
 file is provided. A set of standard decomposition modes is configured, which can
 be selected through activating the corresponding layout.
 
-This versatile mechanism allows non-experts to configure asnd profit from
+This versatile mechanism allows non-experts to configure and profit from
 multi-GPU workstations and visualization clusters, as well as to provide system
 administrators with the tools to implement easy to use integration with cluster
-schedulers. This feature is transparent to Equalizer application developers.
+schedulers. This feature is transparent to \textsf{Equalizer} application developers.
 
 %------------------------------------------------------------------------------
 \subsection{Qt Windowing}
 
 Qt is a popular window system with many application developers. Unfortunately,
 it imposes a different threading model for window creation and event handling
-compared to Equalizer. In Equalizer, each GPU rendering thread is independently
+compared to \textsf{Equalizer}. In \textsf{Equalizer}, each GPU rendering thread is independently
 responsible for creating its windows, receiving the events and eventually
 dispatching them to the application process main thread. This design is
 motivated by the natural threading model of X11 and WGL, and allows simple
@@ -855,27 +860,26 @@ Challenges in threading model, architecture
 %------------------------------------------------------------------------------
 \subsection{Tide Integration}
 
-\FIXME{Tide and Deflect and other 'names' should be clearly identifiable in the text.
-We have many of them and sometimes this isn't visually clear in the text.}
-Tide (Tiled interactive display environment) is an improved version of
-DisplayCluster~\cite{DC}, providing a touch-based, multi-window user interface for
-high-resolution tiled display walls. Remote applications receive input events
-and send pixel streams using the Deflect client library. Equalizer includes full
-support, enabling application-transparent integration with Tide. When a Tide
-server is configured, all output channels of a view stream in parallel to one
-window on the wall. In \cite{deflect} we have shown interactive framerates for
-a 24 megapixel resolution over a WAN link. Events received are translated into
-Equalizer events and injected into the normal event flow, allowing seamless
-application integration.
+\textsf{Tide} (Tiled interactive display environment) is an improved version of
+\textsf{DisplayCluster}~\cite{DC}, providing a touch-based, multi-window user
+interface for high-resolution tiled display walls. Remote applications receive
+input events and send pixel streams using the \textsf{Deflect} client library.
+\textsf{Equalizer} includes full support, enabling application-transparent
+integration with \textsf{Tide}. When a \textsf{Tide} server is configured, all
+output channels of a view stream in parallel to one window on the wall. In
+\cite{deflect}, we have shown interactive framerates for a 24 megapixel
+resolution over a WAN link. Events received are translated into
+\textsf{Equalizer} events and injected into the normal event flow, allowing
+seamless application integration.
 
 %------------------------------------------------------------------------------
-\subsection{Sequel}\label{sec:sequel}
+\subsection{\textsf{Sequel}}\label{sec:sequel}
 
-Sequal is a simplification layer for Equalizer. It is based on the realization
+\textsf{Sequel} is a simplification layer for \textsf{Equalizer}. It is based on the realization
 that while fully expressive, the verbatim abstraction layer of nodes, pipes,
-windows and channels in Equalizer requires significant learning to fully
+windows and channels in \textsf{Equalizer} requires significant learning to fully
 understand and exploit. In reality, a higher abstraction of \textsf{Application}
-and \textsf{Renderer} is sufficient for most use cases. In Sequel, the
+and \textsf{Renderer} is sufficient for most use cases. In \textsf{Sequel}, the
 application class drives the configuration, and one renderer instance is created
 for each (pipe) render thread. They also provide the natural place to store and
 distribute data. Last, but not least, \textsf{ViewData} provides a convenient
@@ -884,21 +888,21 @@ view-specific information.
 
 
 %------------------------------------------------------------------------------
-\section{The Collage Network Library}
+\section{The \textsf{Collage} Network Library}
 %------------------------------------------------------------------------------
 
 An important part of writing a parallel rendering application is the
-communication layer between the individual processes. Equalizer relies on the
-Collage network library for its internal operation. Collage furthermore provides
-powerful abstractions for writing Equalizer applications, which are introduced
+communication layer between the individual processes. \textsf{Equalizer} relies on the
+\textsf{Collage} network library for its internal operation. \textsf{Collage} furthermore provides
+powerful abstractions for writing \textsf{Equalizer} applications, which are introduced
 in this section.
 
 %------------------------------------------------------------------------------
 \subsection{Architecture}
 
-Collage provides networking functionality of different abstraction layers,
+\textsf{Collage} provides networking functionality of different abstraction layers,
 gradually providing higher level functionality for the programmer. The main
-primitives in Collage are:
+primitives in \textsf{Collage} are:
 
 \begin{compactdesc}
 \item[Connection] A stream-oriented point-to-point communication
@@ -915,14 +919,14 @@ primitives in Collage are:
   communicate with each other using connections. A LocalNode listens on various
   connections and processes requests for a given process. Received data is
   wrapped in ICommands and dispatched to command handler methods. A Node is a
-  proxy for a remote LocalNode. The Equalizer Client object is a LocalNode.
+  proxy for a remote LocalNode. The \textsf{Equalizer} Client object is a LocalNode.
 \item[Object] Provides object-oriented, versioned data distribution of C++
   objects between nodes. Objects are registered or mapped on a Local\-Node.
 \end{compactdesc}
 
 \begin{figure}[ht]\center
   \includegraphics[width=\columnwidth]{images/netObject}
-  \caption{\label{fNetObject}Communication between two Collage objects}
+  \caption{\label{fNetObject}Communication between two \textsf{Collage} objects}
 \end{figure}
 \fig{fNetObject} illustrates this architecture.
 
@@ -1006,15 +1010,16 @@ received by an incoming connection. Upon each reception it is checked, and
 in-order datagrams are placed into \textsf{\_appBuffers} for consumption by the
 application thread.
 
-Handling a smooth packet flow is critical for performance. \FIXME{RSP actively flow
-control to advance the stream}. Each incoming connection actively acknowledges
-every $n$ (17 by default) packets fully received. The incoming connections shift
-this acknowledgment by their connection identifier to avoid bursts of acks. Any
-missed datagram is actively nack'ed as soon as it is detected. Write connections
-continuously retransmit packets from nack datagrams, and advance their
-\textsf{\_writeBuffers} upon reception of acks from all readers. Furthermore,
-the writer will explicitly request an ack or nack when it runs out of empty
-buffers or finishes its write queue.
+Handling a smooth packet flow is critical for performance. RSP uses an activ
+flow control to advance the byte stream buffered by the implementation. Each
+incoming connection actively acknowledges every $n$ (17 by default) packets
+fully received. The incoming connections shift this acknowledgment by their
+connection identifier to avoid bursts of acks. Any missed datagram is actively
+nack'ed as soon as it is detected. Write connections continuously retransmit
+packets from nack datagrams, and advance their \textsf{\_writeBuffers} upon
+reception of acks from all readers. Furthermore, the writer will explicitly
+request an ack or nack when it runs out of empty buffers or finishes its write
+queue.
 
 Congestion control is necessary to optimize bandwidth usage. While TCP uses the
 well-known AIMD (additive increase, multiplicative decrease) algorithm, we have
@@ -1037,19 +1042,19 @@ rendering setup. Existing parallel rendering frameworks address this often
 poorly, at best they rely on MPI to distribute data. Real-world, interactive
 visualization applications are typically written in C++ and have complex data
 models and class hierarchies to represent their application state. As outlined
-in \cite{EMP:09}, the parallel rendering code in an Equalizer application only
+in \cite{EMP:09}, the parallel rendering code in an \textsf{Equalizer} application only
 needs access to the data needed for rendering, as all application logic is
 centralized in the application main thread. We have encountered two main
 approaches to address this distribution: Using a shared filesystem for static
 data, or using data distribution for static and dynamic data.
 
-Distributed objects are not required to build Equalizer applications. While most
+Distributed objects are not required to build \textsf{Equalizer} applications. While most
 developers choose to use this abstraction for convenience, we have seen
 applications using other means for data distribution, e.g., MPI.
 
 \subsubsection{Programming Interface}
 
-Distributed objects in Collage provide powerful, object-oriented data
+Distributed objects in \textsf{Collage} provide powerful, object-oriented data
 distribution for C++ objects. They facilitate the implementation of data
 distribution in a cluster environment. Distributed objects are created by
 subclassing from \textsf{co::Serializable} or \textsf{co::Object}. The
@@ -1115,7 +1120,7 @@ Besides the instance data serialization methods used to map an object, delta and
 unbuffered objects may implement \textsf{pack} and \textsf{unpack} to serialize
 or deserialize the changes since the last version.
 
-\label{sec:Serializable}The Collage Serializable implements one convenient usage
+\label{sec:Serializable}The \textsf{Collage} Serializable implements one convenient usage
 pattern for object data distribution. The \textsf{co::Serializable} data
 distribution is based on the concept of dirty bits, allowing inheritance with
 data distribution. Dirty bits form a 64-bit mask which marks the parts of the
@@ -1138,14 +1143,14 @@ evaluates these optimizations.
 
 The most obvious one is compression. Recently, many new compression algorithms
 have been developed which exploit modern CPU architectures and deliver
-compression rates well above one gigabyte per second. Collage uses the Pression
+compression rates well above one gigabyte per second. \textsf{Collage} uses the Pression
 library~\cite{pression}, which provides an unified interface for a number of
 compression libraries, such as FastLZ~\cite{jesperfast}, Snappy~\cite{snappy}
 and ZStandard~\cite{zstd}. It also contains a custom, virtually zero-cost RLE
 compressor. Pression parallelizes the compression and decompression using
 data decomposition. Note that this compression is generic, and implemented
 transparently for the application. Applications can still use data-specific
-compression and feed the compressed data to Collage, typically disabling the
+compression and feed the compressed data to \textsf{Collage}, typically disabling the
 generic compression.
 
 The data streaming interface also implements chunking, which aims to pipeline
@@ -1164,16 +1169,16 @@ their cache. Preloading uses multicast when available.
 
 Due to the master-slave model of data distribution, multicast can be used to
 optimize the transmission time of data. If the contributing nodes share a
-multicast session, and more than one slave instance is mapped, Collage
+multicast session, and more than one slave instance is mapped, \textsf{Collage}
 automatically uses the multicast connection to send the new version
 information.
 
 %------------------------------------------------------------------------------
 \subsection{Barriers, Queues and Object Maps}\label{sec:barrier}
 
-Collage implements a few generic distributed objects which are used by Equalizer
+\textsf{Collage} implements a few generic distributed objects which are used by \textsf{Equalizer}
 and applicatons. A barrier is a distributed barrier primitive used for software
-swap barriers in Equalizer (\sref{sec:swap}). Its implementation follows a
+swap barriers in \textsf{Equalizer} (\sref{sec:swap}). Its implementation follows a
 simple master-slave approach, which has shown to by sufficient for this use
 case. Queues are single producer, multiple consumer FIFOs. To hide network
 latencies, the consumers use prefetching of queue items into a local queue. They
@@ -1181,19 +1186,19 @@ are used for tile and chunk compounds (\sref{sec:tile}).
 
 The object map facilitates distribution and synchronization of a collection of
 distributed objects. Master versions can be registered on a central node, e.g.,
-the application node in Equalizer. Consumers, e.g., Equalizer render clients,
+the application node in \textsf{Equalizer}. Consumers, e.g., \textsf{Equalizer} render clients,
 can selectively map the objects they are interested in. Committing the object
 map will commit all registered objects and sync their new version to the
 slaves. Syncing the map on the slaves will synchronize all mapped instances to
 the new version recorded in the object map. This effective design allows data
-distribution with minimal application logic. It is used by Sequel
-(\sref{sec:sequel}) and other Collage applications.
+distribution with minimal application logic. It is used by \textsf{Sequel}
+(\sref{sec:sequel}) and other \textsf{Collage} applications.
 
 %----------------------------------------------------------------------
 \section{Applications}
 %----------------------------------------------------------------------
 
-In this section, we present some major applications built using Equalizer, and
+In this section, we present some major applications built using \textsf{Equalizer}, and
 show how they interact with the framework to solve complex parallel rendering
 problems.
 
@@ -1203,24 +1208,24 @@ Livre (Large-scale Interactive Volume Rendering Engine) is an out-of-core
 parallel 4D volume renderer. It supports sort-first decomposition, both for
 scalability as well as for driving large-scale tiled display walls. The
 out-of-core loading of data relies on a shared file system, only the high-level
-state, e.g., camera position and rendering settings, are shared through Collage
+state, e.g., camera position and rendering settings, are shared through \textsf{Collage}
 objects.
 
 \subsection{RTT Deltagen}
 
 RTT Deltagen (now Dassault 3D Excite) is a commercial application for
 interactive, high quality rendering of CAD data. The RTT Scale module,
-delivering multi-GPU and distributed execution, is based on Equalizer and
-Collage, and has driven many of the aforementioned features.
+delivering multi-GPU and distributed execution, is based on \textsf{Equalizer} and
+\textsf{Collage}, and has driven many of the aforementioned features.
 
 RTT Scale uses a master-slave execution mode, were a single running Deltagen
-instance can go into ``Scale mode'' at any time by launching an Equalizer
+instance can go into ``Scale mode'' at any time by launching an \textsf{Equalizer}
 configuration. Consequently, the whole internal representation needed for
-rendering is based on a Collage-based data distribution. The rendering clients
+rendering is based on a \textsf{Collage}-based data distribution. The rendering clients
 are separate, smaller applications which will map their scenes during
 startup. At runtime, any change performed in the main application is committed
 as a delta at the beginning of the next frame, following a design pattern
-similar to the Collage \textsf{Serializable}
+similar to the \textsf{Collage} \textsf{Serializable}
 (\sref{sec:Serializable}). Multicast (\sref{sec:RSP}) is used to keep data
 distribution times during session launch reasonable for larger cluster sizes
 (tens to hundreds of nodes).
@@ -1252,7 +1257,7 @@ publications~\cite{EP:07, EMP:09, MEP:10, EEP:11, EBAHMP:12, HBBES:13, deflect,
   SPEP:16}. The first part summarizes rendering performance over all
 decomposition modes with a few representative workloads. The second part
 analyses data distribution performance, in particular how the various
-optimizations in Collage effect complex operations in realistic scenarios.
+optimizations in \textsf{Collage} effect complex operations in realistic scenarios.
 
 \subsection{Decomposition Modes}
 
@@ -1311,7 +1316,7 @@ measurements were performed on a single, isolated node.
 
 RLE compression has a very low overhead, but does not compress the data will
 since it only removes ``blank space'' in the data. The Snappy compression, used
-as default in Collage, achieves the same compression ratio as the LZ variants at
+as default in \textsf{Collage}, achieves the same compression ratio as the LZ variants at
 a much higher speed. The ZStandard compressor has roughly the same speed as the
 LZ variants at the lowest compression level, but provides significantly better
 compression. At higher compression levels it can improve the compression ratio
@@ -1413,7 +1418,7 @@ Michelangelo Project, Stanford 3D Scanning Repository, Cyberware Inc.,
 volvis.org and the Visual Human Project.  This work was partially supported by
 the Swiss National Science Foundation Grant 200021-116329/1.\FIXME{SNF and Hasler as well as EU grants}
 
-We would also like to thank all supporters and contributors of Equalizer, most
+We would also like to thank all supporters and contributors of \textsf{Equalizer}, most
 notably RTT, the Blue Brain Project, the University of Siegen, EVL, Dardo, TBD.
 
 % trigger a \newpage just before the given reference
@@ -1435,19 +1440,19 @@ notably RTT, the Blue Brain Project, the University of Siegen, EVL, Dardo, TBD.
 %\begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{mshell}}]{Michael Shell}
 % or if you just want to reserve a space for a photo:
 
-\begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{images/stefan}}]{Stefan Eilemann}
-Stefan is the technical manager of the Visualization Team in the Blue Brain
-Project. His work involves working towards large-scale visualization for
+\begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{images/stefan}}]{Stefan
+Eilemann} Stefan is the technical manager of the Visualization Team in the Blue
+Brain Project. His work involves working towards large-scale visualization for
 Exascale simulations; interactive integration of simulation, analysis and
 visualization as well as flexible frameworks for data sharing and dynamic
 allocation of heterogenous resources. He is the CEO and founder of Eyescale and
-also the lead developer of the Equalizer parallel rendering framework. He has
-worked in SGI's Advanced Graphics Division as the technical lead of OpenGL
-Multipipe SDK - a toolkit for scalable, parallel visualization software on
-shared memory supercomputers. He received his masters degree in Computer Science
-from EPFL in 2015, and his Engineering Diploma in Computer Science in 1998. He
-is currently working towards a PhD in Computer Science at the Visualization and
-MultiMedia Lab at the University of Zurich.
+also the lead developer of the \textsf{Equalizer} parallel rendering framework.
+He has worked in SGI's Advanced Graphics Division as the technical lead of
+OpenGL Multipipe SDK - a toolkit for scalable, parallel visualization software
+on shared memory supercomputers. He received his masters degree in Computer
+Science from EPFL in 2015, and his Engineering Diploma in Computer Science in
+1998. He is currently working towards a PhD in Computer Science at the
+Visualization and MultiMedia Lab at the University of Zurich.
 \end{IEEEbiography}
 
 % if you will not have a photo at all:
