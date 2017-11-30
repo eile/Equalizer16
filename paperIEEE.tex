@@ -953,11 +953,11 @@ LocalNode.
 
 RSP is an implementation of a reliable multicast protocol over unreliable UDP
 transport. RSP behaves similarly to TCP, it provides full reliability and
-ordering of the data, and slow receivers will eventually throttle the
-sender. This behavior is needed to guarantee delivery of data in all
-situations. Pragmatic generic multicast (PGM~\cite{pgm}) provides full ordering,
-but slow clients will disconnect from the multicast session instead of
-throttling the send rate.
+ordering of the data, and slow receivers will eventually throttle the sender
+through a sliding window algorithm. This behavior is needed to guarantee
+delivery of data in all situations. Pragmatic generic multicast (PGM~\cite{pgm})
+provides full ordering, but slow clients will disconnect from the multicast
+session instead of throttling the send rate.
 
 RSP combines various established algorithms~\cite{adamson2004negative,
   Gau:2002:MFC:506824.506832} for multicast in an open source implementation
@@ -967,53 +967,14 @@ as well as motivate the design decisions. Any defaults given below are for
 Linux or OS X, the Windows UDP stack requires different default values which can
 be found in the implementation.
 
-Our RSP implementation uses a separate protocol thread for each RSP group,
-which handles all reads and writes on the multicast group. This thread
-implements the protocol handling and communicates with the application threads
-through thread-safe queues, as shown in \fig{fRSPProto}. These queues contain
-datagrams, which are prefixed by a type-specific header. Each connection has a
-configurable number of buffers, (1024 by default) of a configurable MTU (1470
-bytes default) which are either free for use or in use for reading or writing.
-
-\begin{figure}[ht]\center
-  \includegraphics[width=\columnwidth]{images/rspPackets}
-  \caption{\label{fRSPProto}Reliable Stream Protocol}
-\end{figure}
-
-A client opens a listening multicast RSP connection. Similar to TCP, this
-listener will create one connected RSP connection for each remote member in the
-multicast group; that is, on each node $n$ RSP connection instances exist, $1$
-for the local listener and $n-1$ for all other nodes. A multicast group
-therefore looks like a fully connected set of TCP connections between $n$ nodes
-for the user.
-
-Each member of a multicast group has a group-unique 16 bit identifier, which is
-randomly selected, announced to the group, and if no collisions are notified by
-any other member, confirmed for this connection. This mechanism allows
-addressing of connections with a low protocol overhead. The datagrams used in
-this exchange contain no payload, and they contain two bytes type (HELLO,
-HELLO\_REPLAY, HELLO\_DENY, HELLO\_CONFIRM), two bytes protocol version and two
-bytes connection identifier.
-
-The \textsf{\_appBuffers} queue, which is blocking, contains received UDP
-datagrams on incoming connections, or empty buffers for writing on outgoing
-connections. The \textsf{\_threadBuffers} queue is lock-free and used by the
-protocol thread to store empty buffers on incoming connections, and pre-packaged
-UDP datagrams on outgoing connections. The application thread pushes buffers
-into this queue, consumed by the protocol thread. A datagram is up to 64
-kilobytes (UDP limit, configurable) and contains a header (two bytes type, two
-bytes size, two bytes source identifier, two bytes sequence number) and its
-payload. The sequence number is used for positive (ack) and negative (nack)
-acknowledgments and reordering of packets.
-
-The \textsf{\_writeBuffers std::deque} is only used by the protocol
-thread. It contains already sent, but not yet acknowledged datagrams. Its
-datagrams are resent upon reception of a nack or recycled into
-\textsf{\_appBuffers} when acknowledged by all receivers. Similarly, the
-\textsf{\_recvBuffers std::deque} contains received out-of-order packets already
-received by an incoming connection. Upon each reception it is checked, and
-in-order datagrams are placed into \textsf{\_appBuffers} for consumption by the
-application thread.
+Our RSP implementation uses a separate protocol thread for each RSP group, which
+handles all reads and writes on the multicast group. This thread implements the
+protocol handling and communicates with the application threads through
+thread-safe queues. These queues contain datagrams of the application byte
+stream, prefixed by a type-specific header of at most eight bytes. Each
+connection has a configurable number of buffers, (1024 by default) of a
+configurable MTU (1470 bytes default) which are either free for use or in
+transmission.
 
 Handling a smooth packet flow is critical for performance. RSP uses active flow
 control to advance the byte stream buffered by the implementation. Each incoming
@@ -1021,18 +982,17 @@ connection actively acknowledges every $n$ (17 by default) packets fully
 received. The incoming connections temporarily offset this acknowledgment by
 their connection identifier to avoid bursts of acks. Any missed datagram is
 actively nack'ed as soon as it is detected. Write connections continuously
-retransmit packets from nack datagrams, and advance their
-\textsf{\_writeBuffers} upon reception of acks from all readers. Furthermore,
-the writer will explicitly request an ack or nack when it runs out of empty
-buffers or finishes its write queue. Nack datagrams may contain multiple ranges
-of missed datagrams, as UDP implementations often drop multiple packets at
-once.
+retransmit packets from nack datagrams, and advance their window upon reception
+of acks from all readers. Furthermore, the writer will explicitly request an ack
+or nack when it runs out of empty buffers or finishes its write queue. Nack
+datagrams may contain multiple ranges of missed datagrams, which is motivated by
+the observation that UDP implementations often drop multiple packets at once.
 
 Congestion control is necessary to optimize bandwidth usage. While TCP uses the
 well-known AIMD (additive increase, multiplicative decrease) algorithm, we have
 chosen a more aggressive congestion control algorithm of additive increase and
-decrease. This has proven experimentally to be more optimal: UDP is often
-rate-limited by switches; that is, packets are discarded regularly and not
+additive decrease. This has proven experimentally to be more optimal: UDP is
+often rate-limited by switches; that is, packets are discarded regularly and not
 exceptionally. Only slowly backing of the current send rate helps to stay close
 to this limit. Furthermore, our RSP traffic is limited to the local subnet,
 making cooparation between multiple data stream less of an issue. Send rate
