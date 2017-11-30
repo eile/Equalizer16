@@ -1265,7 +1265,17 @@ raytracing, often Linux-based rendering clients are used with a Windows-based
 application node.
 
 \subsection{RTNeuron}
-\cite{HBBES:13}
+
+RTNeuron \cite{HBBES:13} is a scalable real-time rendering tool for the
+visualisation of neuronal simulations based on cable models. It is on
+OpenSceneGraph for data management and Equalizer for parallel rendering, and
+focuses not only on fast rendering times, but also on fast loading times with no
+offline preprocessing. It provides level of detail (LOD) rendering, high quality
+anti-aliasing based on jittered frusta and accumulation during still views,
+interactive modification of the visual representation of neurons in a per-neuron
+basis (full neuron vs. soma only, branch pruning depending on the branch level,
+\dots). RTNeuron implements both sort-first and sort-last rendering with order
+independent transparency.
 
 \subsection{Raster}
 
