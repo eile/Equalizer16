@@ -202,11 +202,11 @@ Environments, Display Walls
 %----------------------------------------------------------------------
 
 
-Highlight integration of many features into a general framework vs one-off
+\FIXME{Highlight integration of many features into a general framework vs one-off
 research implementation of one algorithm. Also point out the various and very
 diverse examples in Section 7, highlighting the variety of application and
 implementation
-scenarios that can benefit from \textsf{Equalizer}.
+scenarios that can benefit from \textsf{Equalizer}.}
 
 The rest of this paper is structured as follows: First we introduce new related
 work since the introduction of \textsf{Equalizer}. The main body of this paper
@@ -223,14 +223,13 @@ the discussion and conclusion.
 \section{Related Work}\label{sec:related}
 %----------------------------------------------------------------------
 
-In~\cite{EMP:09}, we presented the initial \textsf{Equalizer} parallel
-rendering framework,
-which summarized the work in parallel rendering up to 2009. An extensive
-Programming and User Guide provides in-depth documentation on using and
-programming \textsf{Equalizer}~\cite{Eilemann:13}. In the following we assume
-these two
-publications and their references as a starting point, and focus on the related
-work published since then.
+In 2009 we presented the initial \textsf{Equalizer} parallel rendering
+framework~\cite{EMP:09}, which introduced the architecture of a generic parallel
+rendering frameworks and summarized the work in parallel rendering. Since then,
+an extensive Programming and User Guide provides in-depth documentation on using
+and programming \textsf{Equalizer}~\cite{Eilemann:13}. In the following related
+work we assume these two publications and their references as a starting point,
+and focus on the new work published since 2009.
 
 The concept of transparent OpenGL interception popularized by \textsf{WireGL}
 and \textsf{Chromium}~\cite{HHNFAKK:02} has received little attention since
@@ -249,19 +248,19 @@ complexities of a distributed application, when mutable application state needs
 to be synchronized across processes. For realistic applications, writing
 parallel applications remains the only viable approach for scalable parallel
 rendering, as shown by the success of \textsf{Paraview}, \textsf{Visit} and
-\textsf{Equalizer}-based applications.
+various \textsf{Equalizer}-based applications.
 
 On the other hand, software for driving and interacting with tiled display walls
 has received significant attention, including \textsf{Sage}~\cite{Sage} and
 \textsf{Sage~2}~\cite{Sage2} in particular. \textsf{Sage} was built entirely
 around the concept of a shared framebuffer where all content windows are
-separate applications using pixel streaming but is no longer actively supported.
+separate applications using pixel streaming. It is no longer actively supported.
 \textsf{Sage 2} is a complete, browser-centric reimplementation where each
 application is a web application distributed across browser instances.
 \textsf{DisplayCluster}~\cite{DC}, and its continuation
 \textsf{Tide}~\cite{tide}, also implement the shared framebuffer concept of
 \textsf{Sage}, but provide a few native content applications integrated into the
-display servers. These solutions implement a scalable display environment and
+display servers. All these solutions implement a scalable display environment and
 are a target display platform for scalable 3D graphics applications.
 
 \textsf{Equalizer} itself has received significant attention within the research
@@ -281,13 +280,10 @@ for new research in visualization. On the application side, \textsf{RTT
 Deltagen}, \textsf{Bino}, \textsf{Livre} and \textsf{RTNeuron}~\cite{HBBES:13}
 are the most mature examples and are presented in \sref{sApplications}. On the
 framework side, \textsf{Omegalib}~\cite{Omegalib}, a framework used in the
-Cave2, made significant progress in integrating 2D collaborative workspaces
-like \textsf{Sage~2} with 3D immersive content.
-
-visualization for remote sensing data~\cite{LK:09}
-
-\cite{CKP:12} tiled display wall virtual environment
-
+Cave2, made significant progress in integrating 2D collaborative workspaces like
+\textsf{Sage~2} with 3D immersive content. Lambers et.al. developed a framework
+for visualizing remote sensing data~\cite{LK:09} on large displays and immersive
+installations based on Equalizer.
 
 %------------------------------------------------------------------------------
 \section{Performance}
