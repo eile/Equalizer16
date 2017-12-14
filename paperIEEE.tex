@@ -729,11 +729,10 @@ use this functionality in applications.
 %------------------------------------------------------------------------------
 \subsection{Physical and Logical Visualization Setup}
 
-Real-world visualization setups are often complex, and having an abstract
-representation of the display system can simplify the configuration
-process. Real-world applications often have the need to be aware of spatial
-relationship of the display setup, for example to render 2D overlays or to
-configure multiple views on a tiled display wall.
+Real-world visualization setups can be complex. An abstract representation of
+the display system simplifies the configuration process. Applications often have
+the need to be aware of spatial relationship of the display setup, for example
+to render 2D overlays or to configure multiple views on a tiled display wall.
 
 We addressed this need through a new configuration section interspersed between
 the node/pipe/window/channel hardware resources and the compound trees
@@ -745,27 +744,27 @@ windows are considered a canvas. Each canvas is made of one or more segments,
 which are the individual outputs connected to a display or projector. Segments
 can be planar or non-planar to each other, and can overlap or have gaps between
 each other. A segment is referencing a channel, which defines the output area of
-this segment, e.g., on a DVI connector connected to a projector.
+this segment, e.g., on a DVI connector connected to a projector. This
+abstraction covers all use cases from simple windows, tiled display walls with
+bezels, to non-planar immersive systems with edge-blending.
 
 A canvas can define a frustum, which will create default, planar sub-frusta for
 all of its segments. A segment can also define a frustum, which overrides the
-canvas frustum, e.g., for non-planar setups such as CAVEs or curved
-screens. These frusta describe a physically-correct display setup for a Virtual
-Reality installation. \label{sec:swap} A canvas may have a software or hardware
-swap barrier, which will synchronize the rendering of all contributing GPUs. The
+canvas frustum, e.g., for non-planar setups such as CAVEs or curved screens.
+These frusta describe a physically-correct display setup for a Virtual Reality
+installation. \label{sec:swap} A canvas may have a software or hardware swap
+barrier, which will synchronize the rendering of all contributing GPUs. The
 software barrier executes a \textsf{glFinish} to ensure the GPU is ready to
 swap, a \textsf{Collage} barrier (\sref{sec:barrier}) to synchronize all
-segments, the
-swap buffers call followed by a \textsf{glFlush} to ensure timely execution of
-the swap command. The hardware swap barrier is implemented using the
-\textsf{WGL\_NV\_swap\_group} or \textsf{GLX\_NV\_swap\_group} extensions.
+segments, the swap buffers call followed by a \textsf{glFlush} to ensure timely
+execution of the swap command. The hardware swap barrier is implemented using a
+\textsf{NV\_swap\_group} extension.
 
-On each canvas, the application can display one or more views. A view is a view
-on a model, in the sense used by the MVC pattern. The view class is used by
-\textsf{Equalizer} applications to define view-specific data for rendering,
-e.g., a
-scene, viewing mode or camera. The application process manages this data, and
-the render clients receive it for rendering.
+On each canvas, the application can display one or more views. A view is used in
+the sense of the MVC pattern. The view class is available to applications to
+define view-specific data for rendering, e.g., a scene, viewing mode or camera.
+The application process manages this data, and the render clients receive it for
+rendering.
 
 A layout groups one or more views which logically belong together. A layout is
 applied to a canvas. The layout assignment can be changed at run-time by the
@@ -774,17 +773,17 @@ channels are available, and which frustum they should use for rendering. These
 output channels are then used as destination channels in a compound. They are
 automatically created during configuration.
 
-A view may have a frustum description. The view's frustum overrides frusta
-specified at the canvas or segment level. This is used for non-physically
-correct rendering, e.g., to compare two models side-by-side on a tiled display
-wall. If the view does not specify a frustum, the corresponding destination
-channels will use the physically correct sub-frustum resulting from the
-view/segment intersection.
+% A view may have a frustum description. The view's frustum overrides frusta
+% specified at the canvas or segment level. This is used for non-physically
+% correct rendering, e.g., to compare two models side-by-side on a tiled display
+% wall. If the view does not specify a frustum, the corresponding destination
+% channels will use the physically correct sub-frustum resulting from the
+% view/segment intersection.
 
 \label{sec:observer}
 An observer looks at one or more views. It is described by the observer position
-in the world and its eye separation. Each observer will have its own stereo
-mode, focus distance and frame loop (framerate). This allows to have untracked
+in the world and its eye separation. Each observer has its own stereo
+mode, focus distance and eye positions. This allows to have untracked
 views and multiple tracked views, e.g., two HMDs, in the same application.
 
 %------------------------------------------------------------------------------
@@ -802,12 +801,7 @@ are called accordingly. In the current implementation, a normal configuration
 initialization or exit, as described in \cite{EMP:09}, uses the same code path
 with all used resources transitioning to a running or stopped state,
 accordingly. Since starting new resources typically requires object mapping and
-associated data distribution, it is a costly operation. To improve performance
-and robustness, \textsf{Equalizer} will flush the rendering pipeline whenever a
-runtime
-reconfiguration is detected, before executing the change. This implementation
-allows the late join or early exit, transparent to application developers.
-
+associated data distribution, it is a costly operation.
 
 %------------------------------------------------------------------------------
 \subsection{Automatic Configuration}
@@ -834,25 +828,24 @@ be selected through activating the corresponding layout.
 This versatile mechanism allows non-experts to configure and profit from
 multi-GPU workstations and visualization clusters, as well as to provide system
 administrators with the tools to implement easy to use integration with cluster
-schedulers. This feature is transparent to \textsf{Equalizer} application
-developers.
+schedulers. This feature is transparent to application developers.
 
 %------------------------------------------------------------------------------
 \subsection{Qt Windowing}
 
 Qt is a popular window system with many application developers. Unfortunately,
 it imposes a different threading model for window creation and event handling
-compared to \textsf{Equalizer}. In \textsf{Equalizer}, each GPU rendering
-thread is independently
-responsible for creating its windows, receiving the events and eventually
-dispatching them to the application process main thread. This design is
-motivated by the natural threading model of X11 and WGL, and allows simple
+compared to \textsf{Equalizer}. In \textsf{Equalizer}, each GPU rendering thread
+is independently responsible for creating its windows, receiving the events and
+eventually dispatching them to the application process main thread. This design
+is motivated by the natural threading model of X11 and WGL, and allows simple
 sequential semantics between OpenGL rendering and event handling. In contrast,
 Qt requires all windows and QOpenGLContext to be created from the Qt main
-thread. An existing Qt window or context may be moved to a different thread, and
-events are signalled from the main thread.
-
-Challenges in threading model, architecture
+thread. An existing Qt window or context may subsequently be moved to a
+different thread, and events are signalled from the main thread. For Qt windows,
+Equalizer will internally dispatch and handle the window creation from the
+render to the main thread, move the created objects back to the render thread,
+and dispatch Qt signals to the correct render threads.
 
 %------------------------------------------------------------------------------
 \subsection{Tide Integration}
@@ -872,18 +865,16 @@ seamless application integration.
 %------------------------------------------------------------------------------
 \subsection{\textsf{Sequel}}\label{sec:sequel}
 
-\textsf{Sequel} is a simplification layer for \textsf{Equalizer}. It is based
-on the realization
-that while fully expressive, the verbatim abstraction layer of nodes, pipes,
-windows and channels in \textsf{Equalizer} requires significant learning to
-fully
-understand and exploit. In reality, a higher abstraction of \textsf{Application}
-and \textsf{Renderer} is sufficient for most use cases. In \textsf{Sequel}, the
-application class drives the configuration, and one renderer instance is created
-for each (pipe) render thread. They also provide the natural place to store and
-distribute data. Last, but not least, \textsf{ViewData} provides a convenient
-way to manage multiple views by storing the camera, model or any other
-view-specific information.
+\textsf{Sequel} is a simplification layer for \textsf{Equalizer}. It is based on
+the realization that while fully expressive, the verbatim abstraction layer of
+nodes, pipes, windows and channels in \textsf{Equalizer} requires significant
+learning to fully understand and exploit. In reality, a higher abstraction of
+only \textsf{Application} and \textsf{Renderer} is sufficient for many use
+cases. In \textsf{Sequel}, the application class drives the configuration, and
+one renderer instance is created for each (pipe) render thread. They also
+provide the natural place to store and distribute data. Last, but not least,
+\textsf{ViewData} provides a convenient way to manage multiple views by storing
+the camera, model or any other view-specific information.
 
 
 %------------------------------------------------------------------------------
