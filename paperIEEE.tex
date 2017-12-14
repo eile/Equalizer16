@@ -225,7 +225,7 @@ the discussion and conclusion.
 
 In 2009 we presented the initial \textsf{Equalizer} parallel rendering
 framework~\cite{EMP:09}, which introduced the architecture of a generic parallel
-rendering frameworks and summarized the work in parallel rendering. Since then,
+rendering framework and summarized the work in parallel rendering. Since then,
 an extensive Programming and User Guide provides in-depth documentation on using
 and programming \textsf{Equalizer}~\cite{Eilemann:13}. In the following related
 work we assume these two publications and their references as a starting point,
@@ -291,18 +291,17 @@ installations based on Equalizer.
 
 This section introduces new decomposition modes, runtime adaptations and other
 optimizations to increase the rendering performance for a wide variety of
-algorithms.
+algorithms and use cases.
 
 %------------------------------------------------------------------------------
 \subsection{New Decomposition Modes}
 
-The initial version of \textsf{Equalizer} implemented the basic sort-first
-(2D), sort-last (DB),
-stereo (EYE) and multilevel decompositions \cite{EMP:09}. In the following we
-present the newly added decomposition modes and motivate their use case.
-\fig{fig:compounds}
-provides an overview of the new modes. We describe how to setup compound
-descriptions in the framework in \cite{EMP:09}.
+The initial version of \textsf{Equalizer} implemented the basic sort-first (2D),
+sort-last (DB), stereo (EYE) and multilevel decompositions \cite{EMP:09}. In the
+following we present the newly added decomposition modes and motivate their use
+case, which bring the overall feature set way beyond the typical sort-first and
+sort-last rendering modes. \fig{fig:compounds} provides an overview of the new
+modes. We describe how to setup compound descriptions in \cite{EMP:09}.
 
 \begin{figure*}[ht]\center
   \begin{subfigure}[b]{0.24\textwidth}
@@ -444,11 +443,10 @@ the framerate linearly, it does not decrease the latency between user input and
 the corresponding output. Consequently, this decomposition mode is mostly useful
 for non-interactive movie generation. It is transparent to \textsf{Equalizer}
 applications, but does require the configuration latency to be equal or greater
-than the number of source channels. Furthermore, to work in a multi-threaded,
-multi-GPU configuration, the application needs to support running the rendering
-threads asynchronously, as outlined below in \sref{sec:threading}. The output
-frame
-rate of the destination channel is smoothened using a {\em frame rate equalizer}
+than the number of source channels. Furthermore, to work in multi-threaded,
+multi-GPU configurations, the application needs to support running the rendering
+threads asynchronously (\sref{sec:threading}). The output frame rate of the
+destination channel may be smoothened using a {\em frame rate equalizer}
 (\sref{sec:framerateEq}).
 
 \subsubsection{Tiles and Chunks}\label{sec:tile}
@@ -468,25 +466,24 @@ setup. This mode is transparent to \textsf{Equalizer} applications.
 Pixel compounds (\fig{fig:pixel}) decompose the destination channel by
 interleaving rows or columns in image space. They are a variant of sort-first
 decomposition which works well for fill-limited applications which are not
-geometry bound. Source channels cannot reduce geometry load through view frustum
-culling, since each source channel has almost the same frustum (only shifted by
-some pixels), but applied to a reduced 2D viewport. However, the fragment load
-on all source channels is very similar due to the interleaved distribution of
+geometry bound, for example direct volume rendering. Source channels cannot
+reduce geometry load through view frustum culling, since each source channel has
+almost the same frustum. However, the fragment load on all source channels is
+reduced linearly and well load-balanced due to the interleaved distribution of
 pixels. This functionality is transparent to \textsf{Equalizer} applications,
-and the
-default compositing implementation uses the OpenGL stencil buffer to blit pixels
-onto the destination channel.
+and the default compositing uses the stencil buffer to blit pixels onto the
+destination channel.
 
 \subsubsection{Subpixel}
 
 Subpixel compounds (\fig{fig:subpixel}) are similar to pixel compounds, but they
-decompose the work for a single pixel, for example when using multisampling or
-depth of field. Composition typically uses accumulation and averaging of all
-computed fragments for a pixel. This feature is not fully transparent to the
-application, since it needs to adapt (jitter or tilt) the frustum based on the
-iteration executed. Furthermore, subpixel compounds interact with idle image
-refinements, e.g., they can accelerate idle anti-aliasing of a scene when the
-camera and scene are not changed.
+decompose the work for a single pixel, for example when using FSAA or depth of
+field. Composition typically uses accumulation and averaging of all computed
+fragments for a pixel. This feature is not fully transparent to the application,
+since it needs to adapt (jitter or tilt) the frustum based on the iteration
+executed. Furthermore, subpixel compounds interact with idle image refinements,
+e.g., they can accelerate idle anti-aliasing of a scene when the camera and
+scene are not changed.
 
 %------------------------------------------------------------------------------
 \subsection{Equalizers}
@@ -497,9 +494,7 @@ by each tuning one aspect of the decomposition. Due to their nature, they are
 transparent to application developers, but might have application-accessible
 parameters to tune their behavior. Resource equalization is the critical
 component for scalable parallel rendering, and therefore the eponym for the
-\textsf{Equalizer} project name. \FIXME{modified paragraph is ok; we
-have to ensure that the font differs between the Equalizer project and the
-Equalizer components consistently throughout the text}
+\textsf{Equalizer} project name.
 
 \begin{figure*}[ht]\center
   \begin{subfigure}[b]{0.24\textwidth}
@@ -532,62 +527,59 @@ coherency. Our implementation stores a 2D or 1D grid of the load, mapping the
 load of each channel. The load is stored in normalized 2D/1D coordinates using
 $\frac{time}{area}$ as the load, the contributing source channels are organized
 in a binary tree, and then the algorithm balances the two branches of each level
-by equalizing the integral over the area on each side.
-
-We have implemented various tunable parameters allowing application developers
-to optimize the load balancing based on the characteristics of their rendering
-algorithm:
+by equalizing the integral over the area on each side. We have implemented
+various tunable parameters allowing application developers to optimize the load
+balancing based on the characteristics of their rendering algorithm:
 
 \begin{compactdesc}
-\item[Damping] reduces frame-to-frame oscillations. It is a normalized scalar
-  defining how much of the computed delta from the previous position is
-  applied. The equal load distribution within the region of interest assumed by
-  the load equalizer is in reality not equal, causing the load balancing to
-  overshoot.
+\item[Damping] reduces frame-to-frame oscillations. The equal load distribution
+within the region of interest assumed by the load equalizer is in reality not
+equal, causing the load balancing to overshoot. Damping is a normalized scalar
+defining how much of the computed delta from the previous position is applied to
+the new split.
 \item[Resistance] eliminates small deltas in the load balancing step. This might
-  help the application to cache some computations since the frustum does not
-  change each frame.
+help the application to cache visibility computations since the frustum does not
+change each frame.
 \item[Boundaries] define the modulo factor in pixels onto which a load split may
-  fall. Some rendering algorithms produce artefacts related to the OpenGL raster
-  position, e.g., screen door transparency, which can be eliminated by aligning
-  the boundary to the pixel repetition. Furthermore, some rendering algorithms
-  are sensitive to cache alignments, which can again be exploited by chosing the
-  corresponding boundary.
+fall. Some rendering algorithms produce artefacts related to the OpenGL raster
+position, e.g., screen door transparency, which can be eliminated by aligning
+the boundary to the pixel repetition. Furthermore, some rendering algorithms are
+sensitive to cache alignments, which can again be exploited by chosing the
+corresponding boundary.
 \end{compactdesc}
 
 \subsubsection{Cross-Segment Load Balancing}
 
 Cross-segment load balancing (\fig{fig:vieweq}) addresses the optimal resource
-allocation of $n$ rendering resources to $m$ output channels (with $n\geq
-m$). The view equalizer works in conjunction with load equalizer balancing the
+allocation of $n$ rendering resources to $m$ output channels (with $n\geq m$). A
+view equalizer works in conjunction with load equalizers balancing the
 individual output channels. It monitors the usage of shared source channels
-(across outputs) and activates them to balance the rendering time of all
-outputs. In \cite{EEP:11}, we provide a detailed description and evaluation of
-our algorithm.
+across outputs and activates them to balance the rendering time of all outputs.
+In \cite{EEP:11}, we provide a detailed description and evaluation of our
+algorithm.
 
 \subsubsection{Dynamic Frame Resolution}
 
 The DFR equalizer (\fig{fig:dfr}) provides a functionality similar to dynamic
-video resizing \cite{MBDM:97}; that is, it maintains a constant framerate by
+video resizing \cite{MBDM:97}, that is, it maintains a constant framerate by
 adapting the rendering resolution of a fill-limited application. In
-\textsf{Equalizer},
-this works by rendering into a source channel (typically on a FBO) separate to
-the destination channel, and then scaling the rendering during the transfer
-(typically through an on-GPU texture) to the destination channel. The DFR
-equalizer monitors the rendering performance and accordingly adapts the
-resolution of the source channel and zoom factor for the source to destination
-transfer. If the performance and source channel resolutions allows, this will
-not only subsample, but also supersample the destination channel to reduce
-aliasing artefacts.
+\textsf{Equalizer}, this works by rendering into a source channel (typically on
+a FBO) separate to the destination channel, and then scaling the rendering
+during the transfer (typically through an on-GPU texture) to the destination
+channel. The DFR equalizer monitors the rendering performance and accordingly
+adapts the resolution of the source channel and zoom factor for the source to
+destination transfer. If the performance and source channel resolutions allows,
+this will not only subsample, but also supersample the destination channel to
+reduce aliasing artefacts.
 
 \subsubsection{Frame Rate Equalizer}\label{sec:framerateEq}
 
-The framerate equalizer smoothens the output frame rate of a destination
-channel by instructing the corresponding window to delay its buffer swap to a
-minimum time between swaps. This is regularly used for time-multiplexed
-decompostions, where source channels tend to drift and finish their rendering
-not evenly distributed over time. This equalizer is however fully independent of
-DPlex compounds, and may be used to smoothen irregular application rendering
+The framerate equalizer smoothens the output frame rate of a destination channel
+by instructing the corresponding window to delay its buffer swap to a minimum
+time between swaps. This is regularly used for time-multiplexed decompostions,
+where source channels tend to drift and finish their rendering unevenly
+distributed over time. This equalizer is however fully independent of DPlex
+compounds, and may be used to smoothen irregular application rendering
 algorithms.
 
 \subsubsection{Monitoring}
@@ -640,10 +632,11 @@ interactive performance at scale.
 Different applications have different degrees on how decoupled and thread-safe
 the rendering code is from the application logic. For full decoupling all
 mutable data has to have a copy in each render thread, which is not feasible in
-large data scenarios. To easily customize the synchronization of all threads on
-a single process, \textsf{Equalizer} implements three threading modes:  Full
-synchronization, draw synchronization and asynchronous. Note that the execution
-between nodes is always asynchronous, for up to \textsf{latency} frames.
+many complex applications and large data scenarios. To easily customize the
+synchronization of all threads on a single process, \textsf{Equalizer}
+implements three threading modes:  Full synchronization, draw synchronization
+and asynchronous. Note that the execution between node processes is always
+asynchronous, for up to \textsf{latency} frames.
 
 In full synchronization, all threads always execute the same frame; that is, the
 render threads are unlocked after \textsf{Node::frameStart}, and the node is
@@ -654,9 +647,9 @@ from all their operations, but provides the slowest performance.
 In draw synchronization, the node thread and all render threads are synchronized
 for all \textsf{frameDraw} operations; that is, \textsf{Node::frameFinish} is
 executed after the last channel is done drawing. This allows the render threads
-to read shared data during their draw operation, but not during
-compositing. Since compositing is typically independent of the rendered data,
-this is the default mode. This mode allows to overlap compositing with data
+to read shared data during their draw operation, but not during compositing.
+Since compositing is typically independent of the rendered data, this is the
+default mode. This mode allows to overlap compositing with rendering and data
 synchronization on multi-GPU machines.
 
 In asynchronous execution, all threads run asynchronously. Render threads may
@@ -672,24 +665,22 @@ multithreaded rendering.
 Virtual Reality is an important field for parallel rendering. It does however
 require special attention to support it as a first-class citizen in a generic
 parallel rendering framework. \textsf{Equalizer} has been used in many virtual
-reality
-installations, such as the Cave2 (\cite{FNTTL:13}), the high-resolution C6 CAVE
-at the KAUST visualization laboratory and head-mounted displays
+reality installations, such as the Cave2 (\cite{FNTTL:13}), the high-resolution
+C6 CAVE at the KAUST visualization laboratory, and head-mounted displays
 (\fig{FIG_teaser}). In the following we lay out the features needed to support
 these installations. All features presented were motivated by application use
 cases and have been validated with their respective users.
 
 \subsection{Head Tracking}
 
-Head tracking is the minimal feature needed to support immersive
-installations. \textsf{Equalizer} does support multiple, independent tracked
-views
-through the observer abstraction introduced in \sref{sec:observer}. Built-in
-VRPN support enables the direct, application-transparent configuration of a VRPN
-tracker device. Alternatively, an application can provide a $4\times 4$ tracking
-matrix defining the transformation from the canvas coordinate system to the
-observer. Both CAVE-like tracking with fixed projection surfaces and HMD
-tracking modes are implemented.
+Head tracking is the minimal feature needed to support immersive installations.
+\textsf{Equalizer} does support multiple, independent tracked views through the
+observer abstraction (\sref{sec:observer}). Built-in VRPN support enables the
+direct, application-transparent configuration of a VRPN tracker device.
+Alternatively, an application can provide a $4\times 4$ tracking matrix defining
+the transformation from the canvas coordinate system to the observer. Both
+CAVE-like tracking with fixed projection surfaces and HMD tracking with moving
+displays are implemented.
 
 \subsection{Dynamic Focus Distance}
 
@@ -698,16 +689,16 @@ with the physical display surface. For better viewing comfort, we introduce a
 new dynamic focus mode, where the application defines the distance of the focal
 plane from the observer, based on the current view direction of the
 user. Initial experiments show that this is particularly effective for objects
-placed within the immersive space; that is, in front of all display segments.
+placed within the immersive space, that is, in front of the physical displays.
 
 \subsection{Asymmetric Eye Position}
 
 Traditional head tracking computes the left and right eye positions by using a
 configurable interocular distance and the tracking matrix. However, human heads
 are not symmetric, and by measuring individual users a more precise frustum can
-be computed. \textsf{Equalizer} supports this through the optional
-configuration (file or
-programmatically) of individual 3D positions for the left and right eye.
+be computed. \textsf{Equalizer} supports this through the optional configuration
+(file or programmatically) of individual 3D translations for all eyes relative
+to the tracking matrix.
 
 \subsection{Model Unit}
 
@@ -723,8 +714,7 @@ Applications can switch each view between mono and stereo rendering at runtime,
 and can run both monoscopic and stereoscopic views concurrently
 (\fig{FIG_teaser} (b)). While this is trivial for active stereo rendering, it
 does potentially involve the start and stop of resources and processes for
-passive stereo or stereo-dependent task decompositions, as described in
-\sref{sec:reconfig}.
+passive stereo or stereo-dependent task decompositions (\sref{sec:reconfig}).
 
 %------------------------------------------------------------------------------
 \section{Usability}
