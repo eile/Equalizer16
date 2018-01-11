@@ -229,13 +229,13 @@ the discussion and conclusion.
 \section{Related Work}\label{sec:related}
 %----------------------------------------------------------------------
 
-In 2009 we presented the initial \textsf{Equalizer} parallel rendering
-framework~\cite{EMP:09}, which introduced the architecture of a generic parallel
-rendering framework and summarized the work in parallel rendering. Since then,
-an extensive Programming and User Guide provides in-depth documentation on using
-and programming \textsf{Equalizer}~\cite{Eilemann:13}. In the following related
-work we assume these two publications and their references as a starting point,
-and focus on the new work published since 2009.
+In 2009 we presented \textsf{Equalizer}~\cite{EMP:09}, which introduced the
+architecture of a generic parallel rendering framework and summarized our work
+in parallel rendering. Since then, an extensive Programming and User Guide
+provides in-depth documentation on using and programming
+\textsf{Equalizer}~\cite{Eilemann:13}. In the following related work we assume
+these two publications and their references as a starting point, and focus on
+the new work published since 2009.
 
 The concept of transparent OpenGL interception popularized by \textsf{WireGL}
 and \textsf{Chromium}~\cite{HHNFAKK:02} has received little attention since
@@ -1487,8 +1487,8 @@ We have presented a significantly improved generic parallel rendering system
 over the original publication \cite{EMP:09}. While the original publication
 motivated the system design, this publication describes a feature-rich, mature
 implementation capable of supporting a wide variety of use cases. We doubled the
-support for scalable rendering modes, many of which presented for the first
-time. We present new runtime adaptations for better load balance and
+support for scalable rendering modes, many of which are presented here for the
+first time. We present new runtime adaptations for better load balance and
 performance, describe how common optimizations are integrated into the system,
 making Equalizer the most generically available scalable rendering system.
 
@@ -1499,7 +1499,11 @@ an advanced network data synchronization library tailored to parallel rendering
 applications. We highlight a few commercial and research applications
 underlining the generic and versatile system implemenation.
 
-RDMA needs further investigation.
+With respect to the feature set implemented, we believe that Equalizer now
+covers almost any scenario within its scope. For future work, we would like to
+integrate new research for better scalability, new network implementations in
+particular for modern zero-copy RDMA based transports, as well as extending the
+Sequel abstraction layer for ease of use.
 
 %----------------------------------------------------------------------
 \appendices
