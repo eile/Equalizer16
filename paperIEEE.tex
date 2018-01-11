@@ -199,12 +199,6 @@ Environments, Display Walls
 \IEEEraisesectionheading{\section{Introduction}\label{sec:introduction}}
 %----------------------------------------------------------------------
 
-
-\FIXME{Highlight integration of many features into a general framework vs
-one-off research implementation of one algorithm. Also point out the various and
-very diverse examples in Section 7, highlighting the variety of application and
-implementation scenarios that can benefit from \textsf{Equalizer}.}
-
 In this systems paper, we present an overview of the integration of research and
 commercial developments into the Equalizer parallel rendering framework first
 presented in \cite{EMP:09}. While individual research using the system has been
@@ -217,10 +211,11 @@ visualization applications for any type of setup and use case.
 We do present novel algorithms for parallel rendering which did not warrant a
 separate publication: pixel and subpixel decompositions, dynamic frame
 resolution, tunable sort-first load-balancing parameters, frame rate
-equalization, thread synchronization modes for multi-threaded rendering, dynamic
-focus distance and asymmetric eye positions for Virtual Reality, parallel pixel
-streaming to tiled display walls, as well as a fully-fledged data distribution
-API with compression and reliable multicast.
+equalization, thread synchronization modes for multi-threaded rendering, a
+powerful abstraction for multi-view rendering on arbitrary display setups,
+dynamic focus distance and asymmetric eye positions for Virtual Reality,
+parallel pixel streaming to tiled display walls, as well as a fully-fledged data
+distribution API with compression and reliable multicast.
 
 The rest of this paper is structured as follows: First we introduce new related
 work since the introduction of \textsf{Equalizer}. The main body of this paper
@@ -787,18 +782,29 @@ channels are available, and which frustum they should use for rendering. These
 output channels are then used as destination channels in a compound. They are
 automatically created during configuration.
 
-% A view may have a frustum description. The view's frustum overrides frusta
-% specified at the canvas or segment level. This is used for non-physically
-% correct rendering, e.g., to compare two models side-by-side on a tiled display
-% wall. If the view does not specify a frustum, the corresponding destination
-% channels will use the physically correct sub-frustum resulting from the
-% view/segment intersection.
-
 \label{sec:observer}
 An observer looks at one or more views. It is described by the observer position
 in the world and its eye separation. Each observer has its own stereo
 mode, focus distance and eye positions. This allows to have untracked
 views and multiple tracked views, e.g., two HMDs, in the same application.
+
+\begin{figure}[ht]\center
+  \includegraphics[width=\columnwidth]{images/layout}
+  \caption{\label{fLayout}A 2x2 tiled display wall and control host rendering four independent views driven by an eight node visualization cluster}
+\end{figure}
+
+\fig{fLayout} shows RTT Deltagen running an example multi-segment, multi-view
+setup driven by eight rendering nodes. The main tiled display wall canvas uses
+four LCD segments showing one layout with four views, which do not align on the
+segment boundaries. This setup creates seven destination channels. The
+configuration provides multiple, run-time configurable layouts. It is driven
+from the control host on the right, which shows four views, each in their own
+canvas and segment windows with a single-view layout each. One view on the
+control host synchronizes its content (model and camera) with one view on the
+display wall through Collage objects. The control host allows full model
+modifications and all workflows supported within the standalone Deltagen
+application, and all changes are synchronized to the corresponding rendering
+nodes. Since this setup is monoscopic, no head tracking or observers are used.
 
 %------------------------------------------------------------------------------
 \subsection{Runtime Reconfiguration}\label{sec:reconfig}
@@ -908,9 +914,9 @@ in this section.
 \subsection{Architecture}
 
 \textsf{Collage} provides networking functionality of different abstraction
-layers,
-gradually providing higher level functionality for the programmer. The main
-primitives in \textsf{Collage} are:
+layers, gradually providing higher level functionality for the programmer. The
+main primitives in \textsf{Collage} and their relation are shown in
+\fig{fNetObject} and provide:
 
 \begin{compactdesc}
 \item[Connection] A stream-oriented point-to-point communication
@@ -937,7 +943,6 @@ LocalNode.
   \includegraphics[width=\columnwidth]{images/netObject}
   \caption{\label{fNetObject}Communication between two \textsf{Collage} objects}
 \end{figure}
-\fig{fNetObject} illustrates this architecture.
 
 %------------------------------------------------------------------------------
 \subsection{Reliable Stream Protocol}\label{sec:RSP}
