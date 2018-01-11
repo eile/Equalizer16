@@ -214,16 +214,21 @@ research, APIs for developing complex distributed applications, and many
 individual features make Equalizer an unique, open source framework to develop
 visualization applications for any type of setup and use case.
 
+We do present novel algorithms for parallel rendering which did not warrant a
+separate publication: pixel and subpixel decompositions, dynamic frame
+resolution, tunable sort-first load-balancing parameters, frame rate
+equalization, thread synchronization modes for multi-threaded rendering, dynamic
+focus distance and asymmetric eye positions for Virtual Reality, parallel pixel
+streaming to tiled display walls, as well as a fully-fledged data distribution
+API with compression and reliable multicast.
+
 The rest of this paper is structured as follows: First we introduce new related
 work since the introduction of \textsf{Equalizer}. The main body of this paper
-presents
-new performance features, virtual reality algorithms, usability features to
-build complex applications, main novel features of the underlying
-\textsf{Collage}
-network library and a quick overview of the main \textsf{Equalizer}-based
-applications. A
-result section presents new experiments not previously published, followed by
-the discussion and conclusion.
+presents new performance features, virtual reality algorithms, usability
+features to build complex applications, main novel features of the underlying
+\textsf{Collage} network library and a quick overview of the main
+\textsf{Equalizer}-based applications. A result section presents new experiments
+not previously published, followed by the discussion and conclusion.
 
 %----------------------------------------------------------------------
 \section{Related Work}\label{sec:related}
@@ -538,6 +543,9 @@ various tunable parameters allowing application developers to optimize the load
 balancing based on the characteristics of their rendering algorithm:
 
 \begin{compactdesc}
+\item[Split Mode] configures the tile layout: horizontal or vertical stripes,
+and 2D, an binary tree split alternating the split axis on each level, resulting
+in compact 2D tiles.
 \item[Damping] reduces frame-to-frame oscillations. The equal load distribution
 within the region of interest assumed by the load equalizer is in reality not
 equal, causing the load balancing to overshoot. Damping is a normalized scalar
@@ -582,7 +590,7 @@ reduce aliasing artefacts.
 
 The framerate equalizer smoothens the output frame rate of a destination channel
 by instructing the corresponding window to delay its buffer swap to a minimum
-time between swaps. This is regularly used for time-multiplexed decompostions,
+time between swaps. This is regularly used for time-multiplexed decompositions,
 where source channels tend to drift and finish their rendering unevenly
 distributed over time. This equalizer is however fully independent of DPlex
 compounds, and may be used to smoothen irregular application rendering
@@ -1524,8 +1532,9 @@ the Swiss National Science Foundation Grant 200021-116329/1.\FIXME{SNF and
 Hasler as well as EU grants}
 
 We would also like to thank all supporters and contributors of
-\textsf{Equalizer}, most
-notably RTT, the Blue Brain Project, the University of Siegen, EVL, Dardo, TBD.
+\textsf{Equalizer}, most notably RTT, the Blue Brain Project, the University of
+Siegen, the Electronic Visualization Lab at the University of Illinois Chicago
+and Dardo Kleiner.
 
 % trigger a \newpage just before the given reference
 % number - used to balance the columns on the last page
