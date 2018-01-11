@@ -79,11 +79,9 @@ pajarola@acm.org}}
 
 
 \author{Stefan~Eilemann, David~Steiner and Renato Pajarola%
-\IEEEcompsocitemizethanks{\IEEEcompsocthanksitem All authors are with the
+\IEEEcompsocitemizethanks{All authors are with the
 Visualization and MultiMedia Lab, Department of Informatics, University of
-Z\"urich.
-\IEEEcompsocthanksitem S. Eilemann is also with the Blue Brain Project, Ecole
-Polytechnique Federale de Lausanne.}}
+Z\"urich.}}
 
 % note the % following the last \IEEEmembership and also \thanks -
 % these prevent an unwanted space from occurring between the last author name
@@ -202,11 +200,19 @@ Environments, Display Walls
 %----------------------------------------------------------------------
 
 
-\FIXME{Highlight integration of many features into a general framework vs one-off
-research implementation of one algorithm. Also point out the various and very
-diverse examples in Section 7, highlighting the variety of application and
-implementation
-scenarios that can benefit from \textsf{Equalizer}.}
+\FIXME{Highlight integration of many features into a general framework vs
+one-off research implementation of one algorithm. Also point out the various and
+very diverse examples in Section 7, highlighting the variety of application and
+implementation scenarios that can benefit from \textsf{Equalizer}.}
+
+In this systems paper, we present an overview of the integration of research and
+commercial developments into the Equalizer parallel rendering framework first
+presented in \cite{EMP:09}. While individual research using the system has been
+presented since, many important features have not previously been published and
+are presented here. In particular, the integration of parallel rendering
+research, APIs for developing complex distributed applications, and many
+individual features make Equalizer an unique, open source framework to develop
+visualization applications for any type of setup and use case.
 
 The rest of this paper is structured as follows: First we introduce new related
 work since the introduction of \textsf{Equalizer}. The main body of this paper
@@ -477,13 +483,13 @@ destination channel.
 \subsubsection{Subpixel}
 
 Subpixel compounds (\fig{fig:subpixel}) are similar to pixel compounds, but they
-decompose the work for a single pixel, for example when using FSAA or depth of
-field. Composition typically uses accumulation and averaging of all computed
-fragments for a pixel. This feature is not fully transparent to the application,
-since it needs to adapt (jitter or tilt) the frustum based on the iteration
-executed. Furthermore, subpixel compounds interact with idle image refinements,
-e.g., they can accelerate idle anti-aliasing of a scene when the camera and
-scene are not changed.
+decompose the work for a single pixel, for example with Monte-Carlo ray tracing,
+FSAA or depth of field rendering. Composition typically uses accumulation and
+averaging of all computed fragments for a pixel. This feature is not fully
+transparent to the application, since it needs to adapt (jitter or tilt) the
+frustum based on the iteration executed. Furthermore, subpixel compounds
+interact with idle image refinements, e.g., they can accelerate idle
+anti-aliasing of a scene when the camera and scene are not changed.
 
 %------------------------------------------------------------------------------
 \subsection{Equalizers}
@@ -1175,31 +1181,28 @@ for scalability as well as for driving large-scale tiled display walls.
 RTT Deltagen (now Dassault 3D Excite) is a commercial application for
 interactive, high quality rendering of CAD data. The RTT Scale module,
 delivering multi-GPU and distributed execution, is based on \textsf{Equalizer}
-and
-\textsf{Collage}, and has driven many of the aforementioned features.
+and \textsf{Collage}, and has driven many of the aforementioned features.
 
 RTT Scale uses a master-slave execution mode, were a single running Deltagen
 instance can go into ``Scale mode'' at any time by launching an
-\textsf{Equalizer}
-configuration. Consequently, the whole internal representation needed for
-rendering is based on a \textsf{Collage}-based data distribution. The rendering
-clients
-are separate, smaller applications which will map their scenes during
-startup. At runtime, any change performed in the main application is committed
-as a delta at the beginning of the next frame, following a design pattern
-similar to the \textsf{Collage} \textsf{Serializable}
+\textsf{Equalizer} configuration. Consequently, the whole internal
+representation needed for rendering is based on a \textsf{Collage}-based data
+distribution. The rendering clients are separate, smaller applications which
+will map their scenes during startup. At runtime, any change performed in the
+main application is committed as a delta at the beginning of the next frame,
+following a design pattern similar to the \textsf{Collage Serializable}
 (\sref{sec:Serializable}). Multicast (\sref{sec:RSP}) is used to keep data
 distribution times during session launch reasonable for larger cluster sizes
 (tens to hundreds of nodes).
 
 RTT Scale is used for a wide variety of use cases. In virtual reality, the
 application is used for virtual prototyping and design reviews in front of
-high-resolution display walls or in a CAVE and for virtual prototyping of
-human-machine interactions in a CAVE or using HMDs. For scalability, sort-first
-and tile compounds are used to achieve fast, high-quality rendering, primarily
-for interactive raytracing, both based on CPUs and GPUs. For CPU-based
-raytracing, often Linux-based rendering clients are used with a Windows-based
-application node.
+high-resolution display walls and CAVEs, as well as for virtual prototyping of
+human-machine interactions CAVEs and HMDs (\fig{FIG_teaser}(b)). For
+scalability, sort-first and tile compounds are used to achieve fast,
+high-quality rendering, primarily for interactive raytracing, both based on CPUs
+and GPUs. For CPU-based raytracing, often Linux-based rendering clients are used
+with a Windows-based application node.
 
 \subsection{RTNeuron}
 
