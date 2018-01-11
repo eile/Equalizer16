@@ -674,11 +674,10 @@ multithreaded rendering.
 Virtual Reality is an important field for parallel rendering. It does however
 require special attention to support it as a first-class citizen in a generic
 parallel rendering framework. \textsf{Equalizer} has been used in many virtual
-reality installations, such as the Cave2 (\cite{FNTTL:13}), the high-resolution
-C6 CAVE at the KAUST visualization laboratory, and head-mounted displays
+reality installations, such as the Cave2 \cite{FNTTL:13}, the high-resolution C6
+CAVE at the KAUST visualization laboratory, and head-mounted displays
 (\fig{FIG_teaser}). In the following we lay out the features needed to support
-these installations. All features presented were motivated by application use
-cases and have been validated with their respective users.
+these installations, motivated by application use cases.
 
 \subsection{Head Tracking}
 
@@ -696,34 +695,34 @@ displays are implemented.
 To our knowledge, all parallel rendering systems have the focal plane coincide
 with the physical display surface. For better viewing comfort, we introduce a
 new dynamic focus mode, where the application defines the distance of the focal
-plane from the observer, based on the current view direction of the
-user. Initial experiments show that this is particularly effective for objects
-placed within the immersive space, that is, in front of the physical displays.
+plane from the observer, based on the current view direction of the user.
+Initial experiments show that this provides better viewing comfort, in
+particular for objects placed in front of the physical displays.
 
 \subsection{Asymmetric Eye Position}
 
 Traditional head tracking computes the left and right eye positions by using a
-configurable interocular distance and the tracking matrix. However, human heads
-are not symmetric, and by measuring individual users a more precise frustum can
-be computed. \textsf{Equalizer} supports this through the optional configuration
-(file or programmatically) of individual 3D translations for all eyes relative
-to the tracking matrix.
+configurable interocular distance. However, human heads are not symmetric, and
+by measuring individual users a more precise frustum can be computed.
+\textsf{Equalizer} supports this through the optional configuration (file or
+programmatically) of individual 3D translations for all eyes relative to the
+tracking matrix.
 
 \subsection{Model Unit}
 
 This feature allows applications to specify a scaling factor between the model
 and the real world, to allow exploration of macroscopic or microscopic worlds in
 virtual reality. The unit is per view, allowing different scale factors within
-the same configuration. It scales both the specified projection surface as well
+the same application. It scales both the specified projection surface as well
 as the eye position (and therefore separation) to achieve the necessary effect.
 
 \subsection{Runtime Stereo Switch}
 
 Applications can switch each view between mono and stereo rendering at runtime,
-and can run both monoscopic and stereoscopic views concurrently
-(\fig{FIG_teaser} (b)). While this is trivial for active stereo rendering, it
-does potentially involve the start and stop of resources and processes for
-passive stereo or stereo-dependent task decompositions (\sref{sec:reconfig}).
+and run both monoscopic and stereoscopic views concurrently (\fig{FIG_teaser}
+(b)). This switch does potentially involve the start and stop of resources and
+processes for passive stereo or stereo-dependent task decompositions
+(\sref{sec:reconfig}).
 
 %------------------------------------------------------------------------------
 \section{Usability}
@@ -1110,16 +1109,13 @@ evaluates these optimizations.
 The most obvious one is compression. Recently, many new compression algorithms
 have been developed which exploit modern CPU architectures and deliver
 compression rates well above one gigabyte per second. \textsf{Collage} uses the
-Pression
-library~\cite{pression}, which provides an unified interface for a number of
-compression libraries, such as FastLZ~\cite{jesperfast}, Snappy~\cite{snappy}
-and ZStandard~\cite{zstd}. It also contains a custom, virtually zero-cost RLE
-compressor. Pression parallelizes the compression and decompression using
-data decomposition. Note that this compression is generic, and implemented
-transparently for the application. Applications can still use data-specific
-compression and feed the compressed data to \textsf{Collage}, typically
-disabling the
-generic compression.
+Pression library~\cite{pression}, which provides an unified interface for a
+number of compression libraries, such as FastLZ~\cite{jesperfast},
+Snappy~\cite{snappy} and ZStandard~\cite{zstd}. It also contains a custom,
+virtually zero-cost RLE compressor. Pression parallelizes the compression and
+decompression using data decomposition. This compression is generic, and
+implemented transparently for the application. Applications can also use
+data-specific compression.
 
 The data streaming interface also implements chunking, which aims to pipeline
 the serialization code with the network transmission. After a configurable
