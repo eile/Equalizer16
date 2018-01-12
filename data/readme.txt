@@ -14,7 +14,7 @@ LBMETHOD_PACKAGES_AFFINITY.dat
 e.g.:
 TE_16_random.dat = Tile Equalizer, 16 tiles (4x4), "Random" (first come first served) affinity
 EQNONE2DH_X_X.dat = 2D static load balancing with horizontal stripes (H), no packaging, no affinity model
-EQLOADDBU_X_X.dat = 2D Load Equalizer, render node usage adjusted (U) to heterogeneous load
+EQLOADDBU_X_X.dat = DB Load Equalizer, render node usage adjusted (U) to heterogeneous load
 
 
 Folders with data:
