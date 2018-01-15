@@ -126,18 +126,18 @@ Society Journals}
 % in the abstract or keywords.
 \IEEEtitleabstractindextext{%
   \begin{abstract}
-    Developing complex, real world graphics applications which utilize multiple
-    GPUs and computers for interactive 3D rendering tasks is a complex task, it
+    Developing complex, real world graphics applications which leverage multiple
+    GPUs and computers for interactive 3D rendering tasks is a complex task. It
     requires expertise in distributed systems and parallel rendering in addition
     to the application domain itself. We present a mature parallel rendering
     framework which provides a large set of features, algorithms and system
     integration for a wide range of real-world research and industry
     applications. Based on the basic architecture and implementation of the
     \textsf{Equalizer} parallel rendering framework presented in \cite{EMP:09},
-    we show how a variety of generic algorithms are integrated in the framework
+    we show how a variety of generic algorithms can be integrated in the framework
     to help application scalability and development in many different domains,
-    highlight how concrete applications benefit from the diverse aspects and use
-    cases of \textsf{Equalizer}, and show new experimental results for parallel
+    highlighting how concrete applications benefit from the diverse aspects and use
+    cases of \textsf{Equalizer}, and we present new experimental results for parallel
     rendering and data distribution.
   \end{abstract}
 
@@ -151,7 +151,6 @@ Environments, Display Walls
 
 % make the title area
 \maketitle
-
 
 % To allow for easy dual compilation without having to reenter the
 % abstract/keywords data, the \IEEEtitleabstractindextext text will
@@ -196,7 +195,7 @@ Environments, Display Walls
 % \IEEEraisesectionheading{} command. Note the need to keep any \label that
 % is to refer to the section immediately after \section in the above as
 % \IEEEraisesectionheading puts \section within a raised box.
-\IEEEraisesectionheading{\section{Introduction}\label{sec:introduction}}
+\IEEEraisesectionheading{\section{Introduction} \label{sec:introduction}}
 %----------------------------------------------------------------------
 
 In this systems paper, we present an overview of the integration of research and
@@ -292,7 +291,7 @@ for visualizing remote sensing data~\cite{LK:09} on large displays and immersive
 installations based on Equalizer.
 
 %------------------------------------------------------------------------------
-\section{Performance}
+\section{Performance Features}
 %------------------------------------------------------------------------------
 
 This section introduces new decomposition modes, runtime adaptations and other
@@ -307,7 +306,7 @@ sort-last (DB), stereo (EYE) and multilevel decompositions \cite{EMP:09}. In the
 following we present the newly added decomposition modes and motivate their use
 case, which bring the overall feature set way beyond the typical sort-first and
 sort-last rendering modes. \fig{fig:compounds} provides an overview of the new
-modes. We describe how to setup compound descriptions in \cite{EMP:09}.
+modes. The way how compounds are setup is still as given in \cite{EMP:09}.
 
 \begin{figure*}[ht]\center
   \begin{subfigure}[b]{0.24\textwidth}
@@ -459,10 +458,10 @@ destination channel may be smoothened using a {\em frame rate equalizer}
 
 Tile (\fig{fig:tiles}) and chunk decompositions are a variant of sort-first and
 sort-last rendering, respectively. They decompose the scene into a predefined
-set of fixed-size image tiles or database ranges. These tasks are queued and
+set of fixed-size image tiles or database ranges. These tasks, or work packages are queued and
 processed by all source channels by polling a server-central queue. Prefetching
 ensures that the task communication overlaps with rendering. As shown in~
-\cite{SPEP:16}, these modes provide better performance due to being inherently
+\cite{SPEP:16}, these modes can provide better performance due to being inherently
 load-balanced, as long as there is an insignificant overhead for the render task
 setup. This mode is transparent to \textsf{Equalizer} applications.
 
@@ -668,7 +667,7 @@ render thread. It is required for using time-multiplex compounds in
 multithreaded rendering.
 
 %------------------------------------------------------------------------------
-\section{Virtual Reality}
+\section{Virtual Reality Features}
 %------------------------------------------------------------------------------
 
 Virtual Reality is an important field for parallel rendering. It does however
@@ -679,6 +678,7 @@ CAVE at the KAUST visualization laboratory, and head-mounted displays
 (\fig{FIG_teaser}). In the following we lay out the features needed to support
 these installations, motivated by application use cases.
 
+%------------------------------------------------------------------------------
 \subsection{Head Tracking}
 
 Head tracking is the minimal feature needed to support immersive installations.
@@ -690,6 +690,7 @@ the transformation from the canvas coordinate system to the observer. Both
 CAVE-like tracking with fixed projection surfaces and HMD tracking with moving
 displays are implemented.
 
+%------------------------------------------------------------------------------
 \subsection{Dynamic Focus Distance}
 
 To our knowledge, all parallel rendering systems have the focal plane coincide
@@ -699,6 +700,7 @@ plane from the observer, based on the current view direction of the user.
 Initial experiments show that this provides better viewing comfort, in
 particular for objects placed in front of the physical displays.
 
+%------------------------------------------------------------------------------
 \subsection{Asymmetric Eye Position}
 
 Traditional head tracking computes the left and right eye positions by using a
@@ -708,6 +710,7 @@ by measuring individual users a more precise frustum can be computed.
 programmatically) of individual 3D translations for all eyes relative to the
 tracking matrix.
 
+%------------------------------------------------------------------------------
 \subsection{Model Unit}
 
 This feature allows applications to specify a scaling factor between the model
@@ -716,6 +719,7 @@ virtual reality. The unit is per view, allowing different scale factors within
 the same application. It scales both the specified projection surface as well
 as the eye position (and therefore separation) to achieve the necessary effect.
 
+%------------------------------------------------------------------------------
 \subsection{Runtime Stereo Switch}
 
 Applications can switch each view between mono and stereo rendering at runtime,
@@ -725,7 +729,7 @@ processes for passive stereo or stereo-dependent task decompositions
 (\sref{sec:reconfig}).
 
 %------------------------------------------------------------------------------
-\section{Usability}
+\section{Usability Features}
 %------------------------------------------------------------------------------
 
 In this section we present features motivated by real-world application use
@@ -1162,7 +1166,7 @@ distribution with minimal application logic. It is used by \textsf{Sequel}
 (\sref{sec:sequel}) and other \textsf{Collage} applications.
 
 %----------------------------------------------------------------------
-\section{Applications\label{sApplications}}
+\section{Example Applications} \label{sApplications}
 %----------------------------------------------------------------------
 
 In this section, we present some major applications built using
@@ -1170,6 +1174,7 @@ In this section, we present some major applications built using
 show how they interact with the framework to solve complex parallel rendering
 problems.
 
+%------------------------------------------------------------------------------
 \subsection{Livre}
 
 Livre (Large-scale Interactive Volume Rendering Engine) is a GPU ray-casting based parallel
@@ -1185,6 +1190,7 @@ through \textsf{Collage} objects between the parallel applications and rendering
 Sort-first decomposition is efficiently supported through octree traversal and culling both
 for scalability as well as for driving large-scale tiled display walls.
 
+%------------------------------------------------------------------------------
 \subsection{RTT Deltagen}
 
 RTT Deltagen (now Dassault 3D Excite) is a commercial application for
@@ -1213,6 +1219,7 @@ high-quality rendering, primarily for interactive raytracing, both based on CPUs
 and GPUs. For CPU-based raytracing, often Linux-based rendering clients are used
 with a Windows-based application node.
 
+%------------------------------------------------------------------------------
 \subsection{RTNeuron}
 
 RTNeuron \cite{HBBES:13} is a scalable real-time rendering tool for the
@@ -1226,7 +1233,8 @@ basis (full neuron vs. soma only, branch pruning depending on the branch level,
 \dots). RTNeuron implements both sort-first and sort-last rendering with order
 independent transparency.
 
-\subsection{Raster}
+%------------------------------------------------------------------------------
+\subsection{RASTeR}
 
 RASTeR~\cite{BGP:09} is an out-of-core and view-dependent real-time multiresolution
 terrain rendering approach using a patch-based restricted quadtree triangulation.
@@ -1239,6 +1247,7 @@ constituting a view-dependent cut or \emph{front of activated nodes} through the
 Assigning and distributing equally sized segments of this active LOD front to the concurrent
 rendering threads results in a near-optimal sort-last decomposition for each frame.
 
+%------------------------------------------------------------------------------
 \subsection{Bino}
 
 Bino is a stereoscopic 3D video player capable of running on very large display
@@ -1248,6 +1257,7 @@ thanks to its flexibility of configuration. Bino decodes the video on each
 Equalizer rendering process, and only synchronizes the time step globally,
 therefore providing a scalable solution to video playback.
 
+%------------------------------------------------------------------------------
 \subsection{Omegalib}
 
 Omegalib \cite{Omegalib} is a software framework built on top of Equalizer that
@@ -1277,12 +1287,14 @@ analyses data distribution performance, in particular how the various
 optimizations in \textsf{Collage} effect complex operations in realistic
 scenarios.
 
+%------------------------------------------------------------------------------
 \subsection{Decomposition Modes}
 
 Two graphs: Time to render a 4k, 32-step MSAA image of the 1mm David model and
 Livre using 1 to 10 nodes with all modes (2D, 2D LB, DB, DPlex (over AA steps),
 tiles, chunks, pixel, subpixel) (+DFR for Livre). The experiments were performed on a cluster using hexacore Intel Xeon E5-2620v3 CPUs (2.4GHz), 16 GB main memory, 4 GBit/s Ethernet and QDR Infiniband. GCC 4.8 has been used with CMake 3.7 release mode settings to compile the software stack.	\FIXME{Not sure about Ethernet.}
 
+%------------------------------------------------------------------------------
 \subsection{Object Distribution}
 
 The data distribution benchmarks have been performed on a cluster using
@@ -1528,9 +1540,13 @@ Sequel abstraction layer for ease of use.
 We would like to thank and acknowledge the following institutions and projects
 for providing the 3D geometry and volume test data sets: the Digital
 Michelangelo Project, Stanford 3D Scanning Repository, Cyberware Inc.,
-volvis.org and the Visual Human Project.  This work was partially supported by
-the Swiss National Science Foundation Grant 200021-116329/1.\FIXME{SNF and
-Hasler as well as EU grants}
+volvis.org and the Visual Human Project. 
+%
+This work was partially supported by
+the Swiss National Science Foundation Grants 200021-116329 and 200020-129525,
+the Swiss Commission for Technology and Innovation CTI/KTI Project 9394.2 PFES-ES,
+the EU FP7 People Programme (Marie Curie Actions) under REA Grant Agreement n$^{\circ}290227$ and
+a Hasler Stiftung grant (project number $12097$).
 
 We would also like to thank all supporters and contributors of
 \textsf{Equalizer}, most notably RTT, the Blue Brain Project, the University of
@@ -1572,7 +1588,7 @@ Visualization and MultiMedia Lab at the University of Zurich.
 \end{IEEEbiography}
 
 % if you will not have a photo at all:
-\begin{IEEEbiographynophoto}{John Doe}
+\begin{IEEEbiographynophoto}{David Steiner}
 Biography text here.
 \end{IEEEbiographynophoto}
 
@@ -1580,9 +1596,9 @@ Biography text here.
 % biographies
 %\newpage
 
-\begin{IEEEbiographynophoto}{Jane Doe}
-Biography text here.
-\end{IEEEbiographynophoto}
+\begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{images/renato}}]{Prof. Dr. Renato Pajarola}
+has been a Professor in computer science at the University of Zurich since 2005, leading the Visualization and MultiMedia Lab (VMML). He has previously been an Assistant Professor at the University of California Irvine and a Postdoc at Georgia Tech. He has received his Dipl. Inf-Ing. ETH and Dr. sc. techn. degrees in computer science from the Swiss Federal Institute of Technology (ETH) Zurich in 1994 and 1998 respectively. He is a Fellow of the Eurographics Association and a Senior Member of both ACM and IEEE. His research interests include real-time 3D graphics, interactive data visualization and geometry processing.
+\end{IEEEbiography}
 
 \bibliographystyle{abbrv}
 \bibliography{references}
