@@ -22,6 +22,7 @@ Folders with data:
 eqPly
 eVolve
 eVolve_het (eVolve with heterogeneous load)
+eVolve_frame_het (eVolve with heterogeneous load varying every frame)
 
 
 Heterogeneous load per node:
