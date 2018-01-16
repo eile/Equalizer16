@@ -3,8 +3,7 @@ Plot Data Sources
 --------------------
 
 *.dat files are generated from raw log file data;
-they're summing up the per-frame time of 800 frames for each test run.
-Currently calculated from the input files for the individual plots, which are a moving average of these 800 frames, discarding the first 121 frames.
+they're summing up the per-frame time of 790 frames (the first 10 frames are discarded) for each test run.
 The number of nodes is stored in the first column, the time in milliseconds in the second.
 
 
