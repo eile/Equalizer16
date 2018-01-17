@@ -204,27 +204,34 @@ Environments, Display Walls
 \IEEEraisesectionheading{\section{Introduction} \label{sec:introduction}}
 %----------------------------------------------------------------------
 
-In this systems paper, we present an overview of the integration of research and
-commercial developments into the Equalizer parallel rendering framework first
-presented in \cite{EMP:09}. While individual research using the system has been
-presented since, many important features have not previously been published and
-are presented here. In particular, the integration of parallel rendering
-research, APIs for developing complex distributed applications, and many
+The Equalizer parallel rendering framework as first presented in~\cite{EMP:09} has
+demonstrated its general versatility and the usefulness of its minimally-intrusive 
+programming design in a variety of applications and projects.
+In particular, the integration of large-scale parallel rendering algorithms,
+APIs for developing complex distributed applications, and many
 individual features make Equalizer a unique, open source framework to develop
-visualization applications for any type of setup and use case.
+visualization applications for virtually any type of setup and use case.
+While individual applications and case studies using the framework, as well as
+new algorithms and system components extending it have been presented
+since the initial release of Equalizer, many important features and functionalities
+have not previously been published and are presented here.
+In this report, we thus present an updated comprehensive review of the
+integration of research, application use cases and commercial developments
+with respect to Equalizer as well as novel comparative experimental results
+of its scalability features.
 
-We do present novel algorithms for parallel rendering which did not warrant a
-separate publication: pixel and subpixel decompositions, dynamic frame
-resolution, tunable sort-first load-balancing parameters, frame rate
+In particular, we present novel algorithms for parallel rendering which did not yet
+appear in a separate publication, including pixel and sub-pixel decompositions,
+dynamic frame resolution, tunable sort-first load-balancing parameters, frame-rate
 equalization, thread synchronization modes for multi-threaded rendering, a
 powerful abstraction for multi-view rendering on arbitrary display setups,
-dynamic focus distance and asymmetric eye positions for Virtual Reality,
+dynamic focus distance and asymmetric eye positions for VR,
 parallel pixel streaming to tiled display walls, as well as a fully-fledged data
 distribution API with compression and reliable multicast.
 
-The rest of this paper is structured as follows: First we introduce new related
-work since the introduction of \textsf{Equalizer}. The main body of this paper
-presents new performance features, virtual reality algorithms, usability
+The remainder of this paper is structured as follows: First we provide an update
+on related work since the introduction of \textsf{Equalizer}. The main body of this paper
+then presents new performance features, VR algorithms, usability
 features to build complex applications, main novel features of the underlying
 \textsf{Collage} network library and a quick overview of the main
 \textsf{Equalizer}-based applications. A result section presents new experiments
