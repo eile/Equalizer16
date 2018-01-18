@@ -1,4 +1,4 @@
- 
+
 Plot Data Sources
 --------------------
 
@@ -27,13 +27,13 @@ eVolve_frame_het (eVolve with heterogeneous load varying every frame)
 
 Heterogeneous load per node:
 
-Channel     Node    Load
-channel_9   node01  6x
-channel_1   node02  5x
-channel_2   node03  1x
-channel_3   node04  6x
-channel_4   node05  7x
-channel_5   node06  1x
-channel_6   node07  4x
-channel_7   node08  1x
-channel_8   node09  4x
+Channel     Node    Load Power
+channel_9   node01  6x   0.17
+channel_1   node02  5x   0.2
+channel_2   node03  1x   1.0
+channel_3   node04  6x   0.17
+channel_4   node05  7x   0.14
+channel_5   node06  1x   1.0
+channel_6   node07  4x   0.25
+channel_7   node08  1x   1.0
+channel_8   node09  4x   0.25
