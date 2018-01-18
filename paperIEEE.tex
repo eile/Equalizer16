@@ -1316,7 +1316,7 @@ Ethernet and QDR Infiniband. Intel ICC 2017 has been used with CMake 3.2 release
 mode settings to compile the software stack.
 
 To benchmark the data distribution we used two datasets: The david statue at 2mm
-resolution (\fig{fDavid2mm}) and 3D volumes of a spike frequencies of an
+resolution (\fig{fDavid2mm}) and 3D volumes of spike frequencies of an
 electrical simulation of three million neurons (\fig{fVolumes}).
 
 \begin{figure}[ht]\center
@@ -1358,8 +1358,9 @@ node.
   \caption{\label{fCompressor}Data compression for generic binary data}
 \end{figure}
 
-RLE compression has a very low overhead, but does not compress the data, since
-it only removes ``blank space'' in the data. The Snappy compression, used as
+RLE compression has a very low overhead but
+% does not compress the data, since it only
+merely removes ``blank space'' in the data. The Snappy compression, used as
 default in \textsf{Collage}, achieves the same compression ratio as the LZ
 variants at a much higher speed. The ZStandard compressor has roughly the same
 speed as the LZ variants at the lowest compression level, but provides
@@ -1378,15 +1379,15 @@ for the triangle and volume data.
 
 The ply data is little compressible, the default compressor achieves a 10\%
 reduction. This is due to a high entropy in the data and the dominant use of
-floating point values. Overall the profile is similar to the generic benchmark,
+floating point values. Overall, the profile is similar to the generic benchmark,
 at a smaller compression rate.
 
 The volume data on the other hand is sparsely populated and using integer (byte
 and short) values, which is easier to compress. The naive RLE implementation
-already achieves a good compression, showing that the smaller volume contains at
+already achieves a good compression rate, showing that the smaller volume contains at
 most 28\% empty space and the bigger volume at most 43\%. Snappy and ZStandard
 can reduce the spike data much further, reducing the data to a few megabytes.
-Surprisingly, the beechnut data set does not yield significant higher
+Surprisingly, the beechnut data set does not yield significantly higher
 compression with the modern Snappy and ZStandard libraries.
 
 
@@ -1400,14 +1401,14 @@ and to perform a commit-sync of the full data set after mapping has been
 established. All figures observe a noticable measurement jitter due to other
 services running on the cluster. The details of the benchmark algorithm can be
 found in the implementation~\cite{eqObjectBench}. We used the same data sets as
-in the previous section. After eight processes, a nodes start to run two
-processes per node, which share CPU, memory and network interface bandwidth.
+in the previous section. After eight processes, a node starts to run two
+processes per node, which share CPU, memory and network interface bandwidth \FIXME{unclear}.
 
 Object mapping is measured using the following settings: \textbf{none}
 distributes the raw, uncompressed, and unbuffered data, \textbf{compression}
 uses the Snappy compressor to distribute unbuffered data, \textbf{buffered}
 reuses uncompressed, serialized data for mappings of other nodes, and
-\textbf{compression buffered} compresses this buffer. Unbuffered operations need
+\textbf{compression buffered} compresses the buffer holding the data \FIXME{unclear}. Unbuffered operations need
 to reserialize, and potentially recompress, the master object data for each
 slave node. Each slave instance needs to deserialize and decompress the data.
 
@@ -1422,7 +1423,7 @@ The David statue at 2mm resolution is organized in a kD-tree for rendering. Each
 node is a separate distributed object, which has two child node objects. A
 total of $1023$ objects is distributed and synchronized. \fig{fDavidDist} shows
 the distribution times for this data set. Due to limited compressibility of the
-data, the results are relative similar. Compressing the data repeatedly for
+data, the results are relatively similar. Compressing the data repeatedly for
 each client leads to decreased performance, since the compression overhead
 cannot be amortized by the decreased transmission time. Buffering data slightly
 improves performance by reducing the CPU and copy overhead. Combining
@@ -1433,22 +1434,22 @@ During synchronization, data is pushed from the master process to all mapped
 slaves using a unicast connection to each slave. While the results in the
 \fig{fDavidDist} (middle) are relatively close to each other, we can still
 observe how the tradeoff between compression ratio and speed influences overall
-performance. Better, slower compression algorithms lead to better overall better
+performance. Better, slower compression algorithms lead to improved overall
 performance when amortized over many send operations.
 
 The volume data sets are distributed in a single object, serializing the
-raw volume buffer. The spike volume data set has a significant compression
-ratio, which reflects in the results in \fig{fSpikesDist}. Compression for this
-data is benefitial for transmitting data over a 10~Gb/s link even for a single
-slave process only (970 MB/s vs 570 MB/s raw data transfer). Buffering has
+raw volume buffer. The Spike volume data set has a significant compression
+ratio, which is reflected by the results in \fig{fSpikesDist}. Compression for this
+data is beneficial for transmitting data over a 10~Gb/s link even for a single
+slave process only (970 MB/s vs 570 MB/s raw data transfer) \FIXME{unclear}. Buffering has
 little benefit since the serialization of volume data is trivial. Buffered
-compression makes a huge difference, since the compression cost can be amortized
+compression makes a significant difference, since the compression cost can be amortized
 over $n$ nodes, reaching raw data transmission rates of 3.7 GB/s with the
 default Snappy compressor and at best 4.4 GB/s with ZStandard at level 1.
 
 The distribution of the beechnut data set also behaves as expected
 (\fig{fBeechnutDist}). Due to the larger object size, uncompressed transmission
-is slightly faster compared to the spike data set at 700 MB/s, and compressed
+is slightly faster compared to the Spike data set at 700 MB/s, and compressed
 transmission does not improve the mapping performance, likely due to increased
 memory pressure caused by the large data size. The comparison of the various
 compression engines is consistent with the benchmarks in
@@ -1457,7 +1458,7 @@ other, and ZSTD1 can provide better performance after four nodes due to the
 better compression ratio.
 
 Finally, we compare data distribution speed using different protocols. In this
-benchmark, data synchronization time of the spike volume data set is measured,
+benchmark, data synchronization time of the Spike volume data set is measured,
 as in \fig{fSpikesDist} (middle). Buffering is enabled, and compression is
 disabled to focus on the raw network performance. \fig{fIFDist} shows the
 performance using various protocols.
@@ -1497,7 +1498,7 @@ profiling analysis.
 \begin{figure*}[p!]\center
   \includegraphics[height=.19\textheight]{images/spikesdist}
   \caption{\label{fSpikesDist}Object mapping (left) and data synchronization
-    time (middle, detail view right) for the spike data set in
+    time (middle, detail view right) for the Spike data set in
     \fig{fVolumes}, left}
 \end{figure*}
 \begin{figure*}[p!]\center
