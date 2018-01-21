@@ -1319,16 +1319,6 @@ Two graphs: Time to render a 4k, 32-step MSAA image of the 1mm David model and
 Livre using 1 to 10 nodes with all modes (2D, 2D LB, DB, DPlex (over AA steps),
 tiles, chunks, pixel, subpixel) (+DFR for Livre). The experiments were performed on a cluster using hexacore Intel Xeon E5-2620v3 CPUs (2.4GHz), 16 GB main memory, 4 GBit/s Ethernet and QDR Infiniband. GCC 4.8 has been used with CMake 3.7 release mode settings to compile the software stack.	\FIXME{Not sure about Ethernet.}
 
-\begin{figure*}[ht]\center
-  \includegraphics[width=\textwidth]{images/compounds}
-  \caption{\label{fCompounds}Compound scalability for polygonal and volume data}
-\end{figure*}
-
-\begin{figure*}[ht]\center
-  \includegraphics[width=\textwidth]{images/equalizers}
-  \caption{\label{fEqualizers}Scalability with heterogenous rendering resources}
-\end{figure*}
-
 %------------------------------------------------------------------------------
 \subsection{Object Distribution}
 
@@ -1392,12 +1382,6 @@ the compression ratio slightly, but at a high cost for the compression speed.
 The compression ratio for the models used in the following section deviate from
 this averaged distribution. \fig{fCompressorDetail} shows the compression ratios
 for the triangle and volume data.
-
-\begin{figure*}[ht]\center
-  \includegraphics[width=\textwidth]{images/compressorDetail}
-  \caption{\label{fCompressorDetail}Data compression for ply data (left, David
-    statue 2mm) and raw volumes shown in \fig{fVolumes} (middle and right)}
-\end{figure*}
 
 The ply data is little compressible, the default compressor achieves a 10\%
 reduction. This is due to a high entropy in the data and the dominant use of
@@ -1511,30 +1495,6 @@ but is largely limited by the RSP implementation throughput of preparing and
 queueing the datagrams to and from the protocol thread, which we observed in a
 profiling analysis.
 
-\begin{figure*}[p!]\center
-  \includegraphics[height=.19\textheight]{images/daviddist}
-  \caption{\label{fDavidDist}Object mapping (left) and data synchronization
-    time (middle, detail view right) for the David 2mm data set in
-    \fig{fDavid2mm}}
-\end{figure*}
-\begin{figure*}[p!]\center
-  \includegraphics[height=.19\textheight]{images/spikesdist}
-  \caption{\label{fSpikesDist}Object mapping (left) and data synchronization
-    time (middle, detail view right) for the Spike data set in
-    \fig{fVolumes}, left}
-\end{figure*}
-\begin{figure*}[p!]\center
-  \includegraphics[height=.19\textheight]{images/beechnutdist}
-  \caption{\label{fBeechnutDist}Object mapping (left) and data synchronization
-    time (middle, detail view right) for the beechnut data set in
-    \fig{fVolumes}, right}
-\end{figure*}
-\begin{figure*}[p!]\center
-  \includegraphics[height=.19\textheight]{images/ifdist}
-  \caption{\label{fIFDist}Object synchronization using different network
-    transports}
-\end{figure*}
-
 %----------------------------------------------------------------------
 \section{Discussion and Conclusion}
 %----------------------------------------------------------------------
@@ -1638,6 +1598,47 @@ has been a Professor in computer science at the University of Zurich since 2005,
 
 \bibliographystyle{abbrv}
 \bibliography{references}
+
+\begin{figure*}[ht]\center
+  \includegraphics[width=\textwidth]{images/compounds}
+  \caption{\label{fCompounds}Compound scalability for polygonal and volume data}
+\end{figure*}
+
+\begin{figure*}[ht]\center
+  \includegraphics[width=\textwidth]{images/equalizers}
+  \caption{\label{fEqualizers}Scalability with heterogenous rendering resources}
+\end{figure*}
+
+\begin{figure*}[ht]\center
+  \includegraphics[width=\textwidth]{images/compressorDetail}
+  \caption{\label{fCompressorDetail}Data compression for ply data (left, David
+    statue 2mm) and raw volumes shown in \fig{fVolumes} (middle and right)}
+\end{figure*}
+
+\begin{figure*}[p!]\center
+  \includegraphics[height=.19\textheight]{images/daviddist}
+  \caption{\label{fDavidDist}Object mapping (left) and data synchronization
+    time (middle, detail view right) for the David 2mm data set in
+    \fig{fDavid2mm}}
+\end{figure*}
+\begin{figure*}[p!]\center
+  \includegraphics[height=.19\textheight]{images/spikesdist}
+  \caption{\label{fSpikesDist}Object mapping (left) and data synchronization
+    time (middle, detail view right) for the Spike data set in
+    \fig{fVolumes}, left}
+\end{figure*}
+\begin{figure*}[p!]\center
+  \includegraphics[height=.19\textheight]{images/beechnutdist}
+  \caption{\label{fBeechnutDist}Object mapping (left) and data synchronization
+    time (middle, detail view right) for the beechnut data set in
+    \fig{fVolumes}, right}
+\end{figure*}
+\begin{figure*}[p!]\center
+  \includegraphics[height=.19\textheight]{images/ifdist}
+  \caption{\label{fIFDist}Object synchronization using different network
+    transports}
+\end{figure*}
+
 
 % that's all folks
 \end{document}
