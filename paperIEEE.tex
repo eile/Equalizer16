@@ -1319,6 +1319,16 @@ Two graphs: Time to render a 4k, 32-step MSAA image of the 1mm David model and
 Livre using 1 to 10 nodes with all modes (2D, 2D LB, DB, DPlex (over AA steps),
 tiles, chunks, pixel, subpixel) (+DFR for Livre). The experiments were performed on a cluster using hexacore Intel Xeon E5-2620v3 CPUs (2.4GHz), 16 GB main memory, 4 GBit/s Ethernet and QDR Infiniband. GCC 4.8 has been used with CMake 3.7 release mode settings to compile the software stack.	\FIXME{Not sure about Ethernet.}
 
+\begin{figure*}[ht]\center
+  \includegraphics[width=\textwidth]{images/compounds}
+  \caption{\label{fCompounds}Compound scalability for polygonal and volume data}
+\end{figure*}
+
+\begin{figure*}[ht]\center
+  \includegraphics[width=\textwidth]{images/equalizers}
+  \caption{\label{fEqualizers}Scalability with heterogenous rendering resources}
+\end{figure*}
+
 %------------------------------------------------------------------------------
 \subsection{Object Distribution}
 
