@@ -535,19 +535,31 @@ component for scalable parallel rendering, and therefore the eponym for the
   \label{fig:equalizers}
 \end{figure*}
 
-\subsubsection{Sort-First and Sort-Last Load Equalizer}
+\subsubsection{Sort-First and Sort-Last Load Balancing}
 
-Sort-first (\fig{fig:loadeq}) and sort-last load balancing is the most obvious
-optimization for these parallel rendering modes. Our load equalizer is fully
-transparent for application developers; that is, it uses a reactive approach
+Sort-first (\fig{fig:loadeq}) and sort-last load balancing are the most obvious
+optimizations for these parallel rendering modes. Our load equalizers are fully
+transparent for application developers; that is, they use a reactive approach
 based on past rendering times. This assumes a reasonable frame-to-frame
-coherency. Our implementation stores a 2D or 1D grid of the load, mapping the
+coherency. Equalizer implements two different algorithms, a
+\textsf{load\_equalizer} and a \textsf{tree\_equalizer}. The result section
+provides some evidence on the strengths and weaknesses of both algorithms.
+
+The \textsf{load\_equalizer} stores a 2D or 1D grid of the load, mapping the
 load of each channel. The load is stored in normalized 2D/1D coordinates using
 $\frac{time}{area}$ as the load, the contributing source channels are organized
 in a binary tree, and then the algorithm balances the two branches of each level
-by equalizing the integral over the area on each side. We have implemented
-various tunable parameters allowing application developers to optimize the load
-balancing based on the characteristics of their rendering algorithm:
+by equalizing the integral over the cost area map on each side.
+
+The \textsf{tree\_equalizer} also uses a binary tree for recursive load
+balancing. It computes the accumulated render time on all nodes of the tree, and
+uses this to allocate an equal render time to each subtree. It makes no
+assumption of the load distribution in 2D or 1D space, it only tries to correct
+the imbalance in render time.
+
+We have implemented various tunable parameters for both equalizers allowing
+application developers to optimize the load balancing based on the
+characteristics of their rendering algorithm:
 
 \begin{compactdesc}
 \item[Split Mode] configures the tile layout: horizontal or vertical stripes,
