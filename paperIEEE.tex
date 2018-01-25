@@ -1370,14 +1370,13 @@ node.
   \caption{\label{fCompressor}Data compression for generic binary data}
 \end{figure}
 
-RLE compression has a very low overhead but
-% does not compress the data, since it only
-merely removes ``blank space'' in the data. The Snappy compression, used as
-default in \textsf{Collage}, achieves the same compression ratio as the LZ
-variants at a much higher speed. The ZStandard compressor has roughly the same
-speed as the LZ variants at the lowest compression level, but provides
-significantly better compression. At higher compression levels it can improve
-the compression ratio slightly, but at a high cost for the compression speed.
+RLE compression has a very low overhead but merely removes ``blank space'' in
+the data. The Snappy compression, used as default in \textsf{Collage}, achieves
+the same compression ratio as the LZ variants at a much higher speed. The
+ZStandard compressor has roughly the same speed as the LZ variants at the lowest
+compression level, but provides significantly better compression. At higher
+compression levels it can improve the compression ratio slightly, but at a high
+cost for the compression speed.
 
 The compression ratio for the models used in the following section deviate from
 this averaged distribution. \fig{fCompressorDetail} shows the compression ratios
@@ -1399,24 +1398,26 @@ compression with the modern Snappy and ZStandard libraries.
 
 \subsubsection{Model Distribution and Update}
 
-In this section we present how data distribution and synchronization performs in
-real-world applications. We extracted the existing data distribution code in a
-PLY (eqPly) and a volume renderer (Livre) into a benchmark application to
-measure the time to initially map all the objects on the render client nodes,
+In this section we analyse how data distribution and synchronization performs in
+real-world applications. We extracted the existing data distribution code from a
+mesh renderer (eqPly) and a volume renderer (Livre) into a benchmark application
+to measure the time to initially map all the objects on the render client nodes,
 and to perform a commit-sync of the full data set after mapping has been
 established. All figures observe a noticable measurement jitter due to other
 services running on the cluster. The details of the benchmark algorithm can be
-found in the implementation~\cite{eqObjectBench}. We used the same data sets as
-in the previous section. After eight processes, a node starts to run two
-processes per node, which share CPU, memory and network interface bandwidth \FIXME{unclear}.
+found in the implementation~\cite{eqObjectBench}. used the same data sets as in
+the previous section. We ran the benchmark on up to eight physical nodes, that
+is, after eight processes nodes start to run two processes per node, which share
+CPU, memory and network interface bandwidth.
 
 Object mapping is measured using the following settings: \textbf{none}
 distributes the raw, uncompressed, and unbuffered data, \textbf{compression}
 uses the Snappy compressor to distribute unbuffered data, \textbf{buffered}
-reuses uncompressed, serialized data for mappings of other nodes, and
-\textbf{compression buffered} compresses the buffer holding the data \FIXME{unclear}. Unbuffered operations need
-to reserialize, and potentially recompress, the master object data for each
-slave node. Each slave instance needs to deserialize and decompress the data.
+reuses uncompressed, serialized data for mappings from multiple nodes, and
+\textbf{compression buffered} reused the compressed buffer for multiple nodes.
+Unbuffered operations need to reserialize, and potentially recompress, the
+master object data for each slave node. Each slave instance needs to deserialize
+and decompress the data.
 
 During data synchronization, the master instance commits the object data to all
 mapped slave instances simultaneously. This is a ``push'' operation, whereas the
@@ -1443,15 +1444,15 @@ observe how the tradeoff between compression ratio and speed influences overall
 performance. Better, slower compression algorithms lead to improved overall
 performance when amortized over many send operations.
 
-The volume data sets are distributed in a single object, serializing the
-raw volume buffer. The Spike volume data set has a significant compression
-ratio, which is reflected by the results in \fig{fSpikesDist}. Compression for this
+The volume data sets are distributed in a single object, serializing the raw
+volume buffer. The Spike volume data set has a significant compression ratio,
+which is reflected by the results in \fig{fSpikesDist}. Compression for this
 data is beneficial for transmitting data over a 10~Gb/s link even for a single
-slave process only (970 MB/s vs 570 MB/s raw data transfer) \FIXME{unclear}. Buffering has
-little benefit since the serialization of volume data is trivial. Buffered
-compression makes a significant difference, since the compression cost can be amortized
-over $n$ nodes, reaching raw data transmission rates of 3.7 GB/s with the
-default Snappy compressor and at best 4.4 GB/s with ZStandard at level 1.
+slave process only. Buffering has little benefit since the serialization of
+volume data is trivial. Buffered compression makes a significant difference,
+since the compression cost can be amortized over $n$ nodes, reaching raw data
+transmission rates of 3.7 GB/s with the default Snappy compressor and at best
+4.4 GB/s with ZStandard at level 1.
 
 The distribution of the beechnut data set also behaves as expected
 (\fig{fBeechnutDist}). Due to the larger object size, uncompressed transmission
@@ -1638,7 +1639,6 @@ has been a Professor in computer science at the University of Zurich since 2005,
   \caption{\label{fIFDist}Object synchronization using different network
     transports}
 \end{figure*}
-
 
 % that's all folks
 \end{document}
