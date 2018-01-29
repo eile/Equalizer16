@@ -1315,9 +1315,21 @@ scenarios.
 %------------------------------------------------------------------------------
 \subsection{Decomposition Modes}
 
-Two graphs: Time to render a 4k, 32-step MSAA image of the 1mm David model and
-Livre using 1 to 10 nodes with all modes (2D, 2D LB, DB, DPlex (over AA steps),
-tiles, chunks, pixel, subpixel) (+DFR for Livre). The experiments were performed on a cluster using hexacore Intel Xeon E5-2620v3 CPUs (2.4GHz), 16 GB main memory, 4 GBit/s Ethernet and QDR Infiniband. GCC 4.8 has been used with CMake 3.7 release mode settings to compile the software stack.	\FIXME{Not sure about Ethernet.}
+% Time to render a 4k, 32-step MSAA image of the 1mm David model and Livre using 1 to 10 nodes with all modes (2D, 2D LB, DB, DPlex (over AA steps), tiles, chunks, pixel, subpixel) (+DFR for Livre).
+
+We conducted performance benchmarks for the decomposition modes on a cluster using hexacore Intel Xeon E5-2620v3 CPUs (2.4GHz), 16 GB main memory, 4 GBit/s Ethernet and QDR Infiniband. GCC 4.8 has been used with CMake 3.7 release mode settings to compile the software stack.
+
+We tested the decomposition modes with both volume (\fig{fBenchmarkEVolve}) and polygonal data  (\fig{fBenchmarkEqPly}) and used test scenes that allowed us to finely adjust the rendering load the system has to cope with. In both cases the scene comprised of two rows of identical models (the 1mm David model when rendering polygonal data, the $1024^3$ Flower model when rendering volumes), with 30 models in total. Rendering is performed at 2560x1440 pixels and the camera is initially placed in the center of the scene and slowly moved backward over the duration of 800 frames, steadily increasing the rendering load by revealing more and more model instances.
+
+\begin{figure}[ht]\center
+  \includegraphics[width=.9\columnwidth]{images/benchmark_eVolve}
+  \caption{\label{fBenchmarkEVolve} Benchmarking decomposition modes with Flower volume model at $1024^3$ unsigned byte (1GB).}
+\end{figure}
+
+\begin{figure}[ht]\center
+  \includegraphics[width=.9\columnwidth]{images/benchmark_eqPly2}
+  \caption{\label{fBenchmarkEqPly} Benchmarking decomposition modes with David statue at 1mm resolution (988MB).}
+\end{figure}
 
 %------------------------------------------------------------------------------
 \subsection{Object Distribution}
@@ -1327,7 +1339,7 @@ dual processor Intel Xeon X5690 CPUs (3.47GHz), 24 GB main memory, 10GBit/s
 Ethernet and QDR Infiniband. Intel ICC 2017 has been used with CMake 3.2 release
 mode settings to compile the software stack.
 
-To benchmark the data distribution we used two datasets: The david statue at 2mm
+To benchmark the data distribution we used two datasets: The David statue at 2mm
 resolution (\fig{fDavid2mm}) and 3D volumes of spike frequencies of an
 electrical simulation of three million neurons (\fig{fVolumes}).
 
