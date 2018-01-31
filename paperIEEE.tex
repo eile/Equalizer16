@@ -1319,7 +1319,13 @@ scenarios.
 
 We conducted performance benchmarks for the decomposition modes on a cluster using hexacore Intel Xeon E5-2620v3 CPUs (2.4GHz), 16 GB main memory, 4 GBit/s Ethernet and QDR Infiniband. GCC 4.8 has been used with CMake 3.7 release mode settings to compile the software stack.
 
-We tested the decomposition modes with both volume (\fig{fBenchmarkEVolve}) and polygonal data  (\fig{fBenchmarkEqPly}) and used test scenes that allowed us to finely adjust the rendering load the system has to cope with. In both cases the scene comprised of two rows of identical models (the 1mm David model when rendering polygonal data, the $1024^3$ Flower model when rendering volumes), with 30 models in total. Rendering is performed at 2560x1440 pixels and the camera is initially placed in the center of the scene and slowly moved backward over the duration of 800 frames, steadily increasing the rendering load by revealing more and more model instances.
+We tested the decomposition modes with both volume (\fig{fBenchmarkEVolve}) and polygonal data  (\fig{fBenchmarkEqPly}) and used test scenes that allowed us to finely adjust the rendering load the system has to cope with. In both cases the scene comprised of two rows of instantiated, identical models (the 1mm David model when rendering polygonal data, the $1024^3$ Flower model when rendering volumes), with 30 models in total. Rendering was performed
+% with the \textsf{Equalizer} example applications eqPly (for meshes) and eVolve (for volumes)
+at 2560x1440. The camera is initially placed in the center of the scene, between the two rows. It is then moved backward over the duration of 800 frames, steadily increasing the rendering load by revealing more and more model instances.
+
+We investigated the scalability of individual compounds by running the same experiment using a varying number of render nodes (2-9), as well as one dedicated application/display node. We subsequently summed up the duration of all rendered frames for each run (\fig{fCompounds}).
+
+In the case of volume rendering we also measured the performance of compounds under heterogeneous load, which was easily achievable by varying the number of volume samples used for each fragment (1-8), while rendering. This allowed for a consistent linear scaling of rendering load, which was randomly varied (\fig{fEqualizers}) either per frame or per node. Such a linear scaling of load per node corresponds to a scaling of resources, e.g., doubling the rendering load on a specific node corresponds to halving the available rendering resources. This node would then only contribute the value 0.5 in terms of {\em normalized compute resources} to the system, as illustrated by \fig{fEqualizers}.
 
 \begin{figure}[ht]\center
   \includegraphics[width=.9\columnwidth]{images/benchmark_eVolve}
@@ -1596,18 +1602,17 @@ Science from EPFL in 2015, and his Engineering Diploma in Computer Science in
 Visualization and MultiMedia Lab at the University of Zurich.
 \end{IEEEbiography}
 
-% if you will not have a photo at all:
-\begin{IEEEbiographynophoto}{David Steiner}
-Biography text here.
-\end{IEEEbiographynophoto}
-
-% insert where needed to balance the two columns on the last page with
-% biographies
-%\newpage
+\begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{images/david_steiner_picture2}}]{David Steiner}
+received MSc degrees from the University of Applied Sciences Upper Austria (Digital Media) and the University of Zurich (Computer Science). He joined the Visualization and MultiMedia Lab (VMML) in 2012 and is currently pursuing his doctorate. His research interests include interactive large-scale data visualization, distributed parallel rendering, and load balancing.
+\end{IEEEbiography}
 
 \begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{images/renato}}]{Prof. Dr. Renato Pajarola}
 has been a Professor in computer science at the University of Zurich since 2005, leading the Visualization and MultiMedia Lab (VMML). He has previously been an Assistant Professor at the University of California Irvine and a Postdoc at Georgia Tech. He has received his Dipl. Inf-Ing. ETH and Dr. sc. techn. degrees in computer science from the Swiss Federal Institute of Technology (ETH) Zurich in 1994 and 1998 respectively. He is a Fellow of the Eurographics Association and a Senior Member of both ACM and IEEE. His research interests include real-time 3D graphics, interactive data visualization and geometry processing.
 \end{IEEEbiography}
+
+% insert where needed to balance the two columns on the last page with
+% biographies
+% \newpage
 
 \bibliographystyle{abbrv}
 \bibliography{references}
