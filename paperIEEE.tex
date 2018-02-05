@@ -563,7 +563,7 @@ characteristics of their rendering algorithm:
 
 \begin{compactdesc}
 \item[Split Mode] configures the tile layout: horizontal or vertical stripes,
-and 2D, an binary tree split alternating the split axis on each level, resulting
+and 2D, a binary tree split alternating the split axis on each level, resulting
 in compact 2D tiles.
 \item[Damping] reduces frame-to-frame oscillations. The equal load distribution
 within the region of interest assumed by the load equalizer is in reality not
@@ -1327,7 +1327,7 @@ We investigated the scalability of individual decomposition modes by running the
 
 In the case of volume rendering we also measured the performance of decomposition modes under heterogeneous load, which was easily achievable by varying the number of volume samples used for each fragment (1-7), while rendering. This allowed for a consistent linear scaling of rendering load, which was randomly varied (\fig{fEqualizers}) either per frame or per node. Such a linear scaling of load per node corresponds to a scaling of resources, e.g., doubling the rendering load on a specific node corresponds to halving its available rendering resources. To the system this node would then contribute the value 0.5 in terms of {\em normalized compute resources}, as illustrated by \fig{fEqualizers} (left).
 
-This figure gives an impression of how individual modes perform on heterogeneous systems. In this case the tree equalizer performs best (\fig{fEqualizers} (left)), as it allows us to a priori define how much {\em usage} it should make of individual rendering nodes, in accordance with the expected load / the available compute resources. \fig{fEqualizers} (right), on the other hand, illustrates how decomposition modes perform on a system where compute resources fluctuate randomly every frame, as can arguably be the case for cloud-based applications. For this scenario tile equalizer seems best suited, as it performs load balancing implicitly and does not assume coherence of available resources between frames.
+This figure gives an impression of how individual modes perform on heterogeneous systems. In this case the tree equalizer performs best (\fig{fEqualizers} (left)), as it allows us to a priori define how much {\em usage} it should make of individual nodes, i.e., bias the allocation of rendering time, in accordance with the expected load / the available compute resources. \fig{fEqualizers} (right), on the other hand, illustrates how the tested decomposition modes perform on a system where compute resources fluctuate randomly every frame, as can arguably be the case for, e.g., cloud-based applications. \FIXME{Should we only mention this in discussion?} For this scenario tile equalizer seems best suited, as it performs load balancing implicitly and does not assume coherence of available resources between frames.
 
 \begin{figure}[ht]\center
   \includegraphics[width=.9\columnwidth]{images/benchmark_eVolve}
