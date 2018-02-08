@@ -1425,10 +1425,11 @@ to measure the time to initially map all the objects on the render client nodes,
 and to perform a commit-sync of the full data set after mapping has been
 established. All figures observe a noticable measurement jitter due to other
 services running on the cluster. The details of the benchmark algorithm can be
-found in the implementation~\cite{eqObjectBench}. used the same data sets as in
-the previous section. We ran the benchmark on up to eight physical nodes, that
-is, after eight processes nodes start to run two processes per node, which share
-CPU, memory and network interface bandwidth.
+found in the
+implementation\footnote{\htmladdnormallink{https://github.com/Eyescale/Equalizer/tree/paper2018/tools/eqObjectBench}}.
+used the same data sets as in the previous section. We ran the benchmark on up
+to eight physical nodes, that is, after eight processes nodes start to run two
+processes per node, which share CPU, memory and network interface bandwidth.
 
 Object mapping is measured using the following settings: \textbf{none}
 distributes the raw, uncompressed, and unbuffered data, \textbf{compression}
