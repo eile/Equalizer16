@@ -795,8 +795,8 @@ barrier, which will synchronize the rendering of all contributing GPUs. The
 software barrier executes a \textsf{glFinish} to ensure the GPU is ready to
 swap, a \textsf{Collage} barrier (\sref{sec:barrier}) to synchronize all
 segments, the swap buffers call followed by a \textsf{glFlush} to ensure timely
-execution of the swap command. The hardware swap barrier is implemented using a
-\textsf{NV\_swap\_group} extension.
+execution of the swap command. The hardware swap barrier is implemented using
+the \textsf{NV\_swap\_group} extension.
 
 On each canvas, the application can display one or more views. A view is used in
 the sense of the MVC pattern. The view class is available to applications to
@@ -833,7 +833,7 @@ control host synchronizes its content (model and camera) with one view on the
 display wall through Collage objects. The control host allows full model
 modifications and all workflows supported within the standalone Deltagen
 application, and all changes are synchronized to the corresponding rendering
-nodes. Since this setup is monoscopic, no head tracking or observers are used.
+nodes. For this monoscopic setup no head tracking or observers are used.
 
 %------------------------------------------------------------------------------
 \subsection{Runtime Reconfiguration}\label{sec:reconfig}
@@ -877,13 +877,13 @@ be selected through activating the corresponding layout.
 This versatile mechanism allows non-experts to configure and profit from
 multi-GPU workstations and visualization clusters, as well as to provide system
 administrators with the tools to implement easy to use integration with cluster
-schedulers. This feature is transparent to application developers.
+schedulers.
 
 %------------------------------------------------------------------------------
 \subsection{Qt Windowing}
 
-Qt is a popular window system with many application developers. Unfortunately,
-it imposes a different threading model for window creation and event handling
+Qt is a popular window system with application developers. Unfortunately, it
+imposes a different threading model for window creation and event handling
 compared to \textsf{Equalizer}. In \textsf{Equalizer}, each GPU rendering thread
 is independently responsible for creating its windows, receiving the events and
 eventually dispatching them to the application process main thread. This design
@@ -956,8 +956,8 @@ main primitives in \textsf{Collage} and their relation are shown in
   a reliable, UDP-based protocol is discussed in \sref{sec:RSP}.
 \item[DataI/OStream] Abstracts the input and output of C++ data types from or to
   a set of connections by implementing output stream operators. Uses buffering
-  to aggregate data for network transmission. Performs endian swapping during
-  input if the endianness differs between the originating and local node.
+  to aggregate data for network transmission. Performs byte swapping during
+  input if the endianness differs between the remote and local node.
 \item[Node and LocalNode] The abstraction of a process in the cluster. Nodes
   communicate with each other using connections. A LocalNode listens on various
   connections and processes requests for a given process. Received data is
@@ -977,7 +977,7 @@ LocalNode.
 \subsection{Reliable Stream Protocol}\label{sec:RSP}
 
 RSP is an implementation of a reliable multicast protocol over unreliable UDP
-transport. RSP behaves similarly to TCP, it provides full reliability and
+transport. RSP behaves similarly to TCP; it provides full reliability and
 ordering of the data, and slow receivers will eventually throttle the sender
 through a sliding window algorithm. This behavior is needed to guarantee
 delivery of data in all situations. Pragmatic generic multicast (PGM~\cite{pgm})
@@ -993,34 +993,33 @@ Linux or OS X, the Windows UDP stack requires different default values which can
 be found in the implementation.
 
 Our RSP implementation uses a separate protocol thread for each RSP group, which
-handles all reads and writes on the multicast group. This thread implements the
-protocol handling and communicates with the application threads through
-thread-safe queues. These queues contain datagrams of the application byte
-stream, prefixed by a type-specific header of at most eight bytes. Each
-connection has a configurable number of buffers, (1024 by default) of a
-configurable MTU (1470 bytes default) which are either free for use or in
-transmission.
+handles all reads and writes on the multicast socket. It implements the protocol
+handling and communicates with the application threads through thread-safe
+queues. The queues contain datagrams of the application byte stream, prefixed by
+a header of at most eight bytes. Each connection has a configurable number of
+buffers (1024 by default) of a configurable MTU (1470 bytes default), which are
+either free or in transmission.
 
 Handling a smooth packet flow is critical for performance. RSP uses active flow
 control to advance the byte stream buffered by the implementation. Each incoming
 connection actively acknowledges every $n$ (17 by default) packets fully
-received. The incoming connections temporarily offset this acknowledgment by
-their connection identifier to avoid bursts of acks. Any missed datagram is
-actively nack'ed as soon as it is detected. Write connections continuously
-retransmit packets from nack datagrams, and advance their window upon reception
-of acks from all readers. Furthermore, the writer will explicitly request an ack
-or nack when it runs out of empty buffers or finishes its write queue. Nack
-datagrams may contain multiple ranges of missed datagrams, which is motivated by
-the observation that UDP implementations often drop multiple packets at once.
+received. The incoming connections offset this acknowledgment by their
+connection identifier to avoid bursts of acks. Any missed datagram is actively
+nack'ed as soon as detected. Write connections continuously retransmit packets
+for nack datagrams, and advance their window upon reception of all acks from the
+group. The writer will explicitly request an ack or nack when it runs out of
+empty buffers or finishes its write queue. Nack datagrams may contain multiple
+ranges of missed datagrams, which is motivated by the observation that UDP
+implementations often drop multiple contiguous packets.
 
 Congestion control is necessary to optimize bandwidth usage. While TCP uses the
-well-known AIMD (additive increase, multiplicative decrease) algorithm, we have
-chosen a more aggressive congestion control algorithm of additive increase and
-additive decrease. This has proven experimentally to be more optimal: UDP is
-often rate-limited by switches; that is, packets are discarded regularly and not
+well-known additive increase, multiplicative decrease algorithm, we have chosen
+a more aggressive congestion control algorithm of additive increase and additive
+decrease. This has proven experimentally to be more optimal: UDP is often
+rate-limited by switches; that is, packets are discarded regularly and not
 exceptionally. Only slowly backing of the current send rate helps to stay close
 to this limit. Furthermore, our RSP traffic is limited to the local subnet,
-making cooparation between multiple data stream less of an issue. Send rate
+making cooperation between multiple data stream less of an issue. Send rate
 limiting uses a bucket algorithm, where over time the bucket fills with send
 credits, from which sends are substracted. If there are no available credits,
 the sender sleeps until sufficient credits are available.
@@ -1035,16 +1034,14 @@ poorly, at best they rely on MPI to distribute data. Real-world, interactive
 visualization applications are typically written in C++ and have complex data
 models and class hierarchies to represent their application state. As outlined
 in \cite{EMP:09}, the parallel rendering code in an \textsf{Equalizer}
-application only
-needs access to the data needed for rendering, as all application logic is
-centralized in the application main thread. We have encountered two main
-approaches to address this distribution: Using a shared filesystem for static
-data, or using data distribution for static and dynamic data.
-
-Distributed objects are not required to build \textsf{Equalizer} applications.
-While most
-developers choose to use this abstraction for convenience, we have seen
-applications using other means for data distribution, e.g., MPI.
+application only needs access to the data needed for rendering, as all
+application logic is centralized in the application main thread. We have
+encountered two main approaches to address this distribution: Using a shared
+filesystem for static data, or using data distribution for static and dynamic
+data. Distributed objects are not required to build \textsf{Equalizer}
+applications. While most developers choose to use this abstraction for
+convenience, we have seen applications using other means for data distribution,
+e.g., MPI.
 
 \subsubsection{Programming Interface}
 
@@ -1052,14 +1049,13 @@ Distributed objects in \textsf{Collage} provide powerful, object-oriented data
 distribution for C++ objects. They facilitate the implementation of data
 distribution in a cluster environment. Distributed objects are created by
 subclassing from \textsf{co::Serializable} or \textsf{co::Object}. The
-application programmer implements serialization and deserialization of the
-distributed data. Distributed objects can be static (immutable) or
-dynamic. Objects have a universally unique identifier (UUID) to address them
-cluster-wide. A master-slave model is used to establish mapping and data
-synchronization across processes. Typically, the application main loop registers
-a master instance and communicates the UUID to the render clients, which map
-their instance to the given identifier. The following object types are
-available:
+application programmer implements serialization and deserialization. Distributed
+objects can be static (immutable) or dynamic. Objects have an universally unique
+identifier (UUID) as cluster-wide addresses. A master-slave model is used to
+establish mapping and data synchronization across processes. Typically, the
+application main loop registers a master instance and communicates the UUID to
+the render clients, which map their instance to the given identifier. The
+following object types are available:
 
 \begin{compactdesc}
 \item[Static] The object is not versioned nor buffered. The instance data is
@@ -1077,26 +1073,21 @@ available:
   additional data is stored.
 \end{compactdesc}
 
-All distributed objects have to implement \textsf{getInstanceData} and
-\textsf{applyInstanceData} to serialize and deserialize the object's distributed
-data. These methods provide an output or input stream as a parameter, which
-abstracts the data transmission and can be used like a \textsf{std::stream}.
-The data streams implement efficient buffering and compression, and
-automatically select the best connection for data transport. Custom data type
-serializers can be implemented by providing the appropriate serialization
-functions. No pointers should be directly transmitted through the data
-streams. For pointers, the corresponding object is typically a distributed
-object as well, and its identifier and potentially version is transmitted in
-place of the memory address.
+Serialization is facilitated using output or input streams, which abstract the
+data transmission and are used like a \textsf{std::stream}. The data streams
+implement efficient buffering and compression, and automatically select the best
+connection for data transport. Custom data type serializers can be implemented
+by providing the appropriate serialization functions. No pointers should be
+directly transmitted through the data streams. For pointers, the corresponding
+object is typically a distributed object as well, and its UUID and version are
+transmitted in place of a pointer.
 
-Dynamic objects are versioned, and have to override \textsf{getChangeType} to
-indicate how they want to have changes to be handled. Upon \textsf{commit} the
-delta data from the previous version is sent, if available using multicast, to
-all mapped slave instances. The data is queued on the remote node, and is
-applied when the application calls \textsf{sync} to synchronize the object to a
-new version. The \textsf{sync} method might block if a version has not yet been
-committed or is still in transmission. All versioned objects the following
-characteristics:
+Dynamic objects are versioned, and on \textsf{commit} the delta data from the
+previous version is sent, if available using multicast, to all mapped slave
+instances. The data is queued on the remote node, and is applied when the
+application calls \textsf{sync} to synchronize the object to a new version. The
+\textsf{sync} method might block if a version has not yet been committed or is
+still in transmission. All versioned objects the following characteristics:
 
 \begin{compactitem}
 \item The master instance of the object generates new versions for all
@@ -1110,31 +1101,27 @@ characteristics:
   \textsf{mapObject}.
 \end{compactitem}
 
-Besides the instance data serialization methods used to map an object, delta and
-unbuffered objects may implement \textsf{pack} and \textsf{unpack} to serialize
-or deserialize the changes since the last version.
-
 \label{sec:Serializable}The \textsf{Collage} Serializable implements one
-convenient usage
-pattern for object data distribution. The \textsf{co::Serializable} data
-distribution is based on the concept of dirty bits, allowing inheritance with
-data distribution. Dirty bits form a 64-bit mask which marks the parts of the
-object to be distributed during the next commit. For serialization, the
-application developer implements \textsf{serialize} or \textsf{deserialize},
-which are called with the bit mask specifying which data has to be transmitted
-or received. During a commit or sync, the current dirty bits are given, whereas
-during object mapping all dirty bits are passed to the serialization methods.
+convenient usage pattern for object data distribution. The
+\textsf{co::Serializable} data distribution is based on the concept of dirty
+bits, allowing inheritance with data distribution. Dirty bits form a 64-bit mask
+which marks the parts of the object to be distributed during the next commit.
+For serialization, the application developer implements \textsf{serialize} or
+\textsf{deserialize}, which are called with the bit mask specifying which data
+has to be transmitted or received. During a commit or sync, the current dirty
+bits are given, whereas during object mapping all dirty bits are passed to the
+serialization methods.
 
 Blocking commits allow to limit the number of outstanding, queued versions on
 the slave nodes. A token-based protocol will block the commit on the master
-instance if to many unsynchronized versions exist.
+instance if too many unsynchronized versions exist.
 
 \subsubsection{Optimizations}
 
 The API presented in the previous section provides sufficient abstraction to
 implement various optimizations for faster mapping and synchronization of data:
 compression, chunking, caching, preloading and multicast. The results section
-evaluates these optimizations.
+evaluates some of these optimizations.
 
 The most obvious one is compression. Recently, many new compression algorithms
 have been developed which exploit modern CPU architectures and deliver
@@ -1147,19 +1134,19 @@ decompression using data decomposition. This compression is generic, and
 implemented transparently for the application. Applications can also use
 data-specific compression.
 
-The data streaming interface also implements chunking, which aims to pipeline
-the serialization code with the network transmission. After a configurable
-number of bytes has been serialized to the internal buffer, it is transmitted
-and serialization continues. This is used both for the initial mapping data and
-for commit data.
+The data streaming interface implements chunking, which pipelines the
+serialization code with the network transmission. After a configurable number of
+bytes has been serialized to the internal buffer, it is transmitted and
+serialization continues. This is used both for the initial mapping data and for
+commit data.
 
-Caching retains instance data of objects in a cache, and reuses this data to
-accelarate mapping of objects. The instance cache is either filled by
+Caching retains instance data of objects in a client-side cache, and reuses this
+data to accelerate mapping of objects. The instance cache is either filled by
 ``snooping'' on multicast transmissions or by an explicit preloading when the
-master objects are registered. The preloading (``send on register'') sends
-instance data of recently registered master objects while the correspinding node
-is idle to all connected nodes. These nodes simply enter the received data to
-their cache. Preloading uses multicast when available.
+master objects are registered. The preloading sends instance data of recently
+registered master objects while the corresponding node is idle to all connected
+nodes. These nodes simply enter the received data to their cache. Preloading
+uses multicast when available.
 
 Due to the master-slave model of data distribution, multicast can be used to
 optimize the transmission time of data. If the contributing nodes share a
@@ -1475,12 +1462,11 @@ Unbuffered operations need to reserialize, and potentially recompress, the
 master object data for each slave node. Each slave instance needs to deserialize
 and decompress the data.
 
-During data synchronization, the master instance commits the object data to all
-mapped slave instances simultaneously. This is a ``push'' operation, whereas the
-mapping is a slave-triggered ``pull'' operation with additional synchronization
-points. Slave nodes queue this data and consume it during synchronization. We
-test the time to commit and sync the data using different compression engines.
-
+During data synchronization, the master commits the object data to all mapped
+slave instances simultaneously. This is a ``push'' operation, whereas the
+mapping is a slave-triggered ``pull'' operation. Slave nodes queue this data and
+consume it during synchronization. We test the time to commit and sync the data
+using different compression engines.
 
 The David statue at 2mm resolution is organized in a kD-tree for rendering. Each
 node is a separate distributed object, which has two child node objects. A
@@ -1504,11 +1490,11 @@ The volume data sets are distributed in a single object, serializing the raw
 volume buffer. The Spike volume data set has a significant compression ratio,
 which is reflected by the results in \fig{fSpikesDist}. Compression for this
 data is beneficial for transmitting data over a 10~Gb/s link even for a single
-slave process only. Buffering has little benefit since the serialization of
-volume data is trivial. Buffered compression makes a significant difference,
-since the compression cost can be amortized over $n$ nodes, reaching raw data
-transmission rates of 3.7 GB/s with the default Snappy compressor and at best
-4.4 GB/s with ZStandard at level 1.
+slave process. Buffering has little benefit since the serialization of volume
+data is trivial. Buffered compression makes a significant difference, since the
+compression cost can be amortized over $n$ nodes, reaching raw data transmission
+rates of 3.7 GB/s with the default Snappy compressor and at best 4.4 GB/s with
+ZStandard at level 1.
 
 The distribution of the beechnut data set also behaves as expected
 (\fig{fBeechnutDist}). Due to the larger object size, uncompressed transmission
@@ -1531,26 +1517,24 @@ gigabit ethernet link by more than a factor of two. Unexpectedly, the native
 RDMA connection performs worse, even though it outperforms IPoIB in a simple
 peer-to-peer connection benchmark. This needs further investigation, but we
 suspect the abstraction of a byte stream connection chosen by \textsf{Collage}
-for historical reasons is not well suited for remote DMA semantics; that is,
-one needs to design the network API around zero-copy semantics with managed
-memory for modern high-speed transports. Both Infiniband connections show
-significant measurement jitter.
+is not well suited for remote DMA semantics; that is, one needs to design the
+network API around zero-copy semantics with managed memory for modern high-speed
+transports. Both Infiniband connections show significant measurement jitter.
 
-Our RSP multicast implementation performs as expected. \textsf{Collage} starts
-using multicast to commit new object versions when two or more clients are
-mapped, since the transmission to a single client is better done using unicast.
-RSP consistently outperforms unicast on the same physical interface and shows
-good scaling behavior (2.5 times slower on 16 vs 2 clients on ethernet, 1.8
-times slower on InfiniBand). The scaling is significantly better when only one
-process per node is used (\fig{fIFDist}, middle: 30\% slower on ethernet,
-nearly flat on InfiniBand). The increased transmission time with multiple
-clients is caused by a higher probability of packet loss, which increases
-significantly when using more than one process per node, as shown in
-\fig{fIFDist}, right. This figure plots the number of retransmissions
-divided by the number of datagrams. Infiniband outperforms ethernet slightly,
-but is largely limited by the RSP implementation throughput of preparing and
-queueing the datagrams to and from the protocol thread, which we observed in a
-profiling analysis.
+RSP multicast performs as expected. \textsf{Collage} starts using multicast to
+commit new object versions when two or more clients are mapped, since the
+transmission to a single client is faster using unicast. RSP consistently
+outperforms unicast on the same physical interface and shows good scaling
+behavior (2.5 times slower on 16 vs 2 clients on ethernet, 1.8 times slower on
+InfiniBand). The scaling is significantly better when only one process per node
+is used (\fig{fIFDist}, middle: 30\% slower on ethernet, nearly flat on
+InfiniBand). The increased transmission time with multiple clients is caused by
+a higher probability of packet loss, which increases significantly when using
+more than one process per node. \fig{fIFDist} (right) plots the number of
+retransmissions divided by the number of datagrams. Infiniband outperforms
+ethernet slightly, but is largely limited by the RSP implementation throughput
+of preparing and queueing the datagrams to and from the protocol thread, which
+we observed in profiling.
 
 %----------------------------------------------------------------------
 \section{Discussion and Conclusion}
@@ -1571,7 +1555,7 @@ applications, from advanced Virtual Reality support to advanced display system
 setup for 2D/3D integration, auto-configuration and runtime reconfiguration, and
 an advanced network data synchronization library tailored to parallel rendering
 applications. We highlight a few commercial and research applications
-underlining the generic and versatile system implemenation.
+underlining the generic and versatile system implementation.
 
 With respect to the feature set implemented, we believe that Equalizer now
 covers almost any scenario within its scope. For future work, we would like to
@@ -1595,11 +1579,11 @@ for providing the 3D geometry and volume test data sets: the Digital
 Michelangelo Project, Stanford 3D Scanning Repository, Cyberware Inc.,
 volvis.org and the Visual Human Project.
 %
-This work was partially supported by
-the Swiss National Science Foundation Grants 200021-116329 and 200020-129525,
-the Swiss Commission for Technology and Innovation CTI/KTI Project 9394.2 PFES-ES,
-the EU FP7 People Programme (Marie Curie Actions) under REA Grant Agreement n$^{\circ}290227$ and
-a Hasler Stiftung grant (project number $12097$).
+This work was partially supported by the Swiss National Science Foundation
+Grants 200021-116329 and 200020-129525, the Swiss Commission for Technology and
+Innovation CTI/KTI Project 9394.2 PFES-ES, the EU FP7 People Programme (Marie
+Curie Actions) under REA Grant Agreement n$^{\circ}290227$ and a Hasler Stiftung
+grant (project number $12097$).
 
 We would also like to thank all supporters and contributors of
 \textsf{Equalizer}, most notably RTT, the Blue Brain Project, the University of
