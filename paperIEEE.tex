@@ -1297,23 +1297,24 @@ publications~\cite{EP:07, EMP:09, MEP:10, EEP:11, EBAHMP:12, HBBES:13, deflect,
   SPEP:16}. The first part summarizes rendering performance over all
 decomposition modes with a few representative workloads. The second part
 analyses data distribution performance, in particular how the various
-optimizations in \textsf{Collage} effect complex operations in realistic
+optimizations in \textsf{Collage} affect complex operations in realistic
 scenarios.
 
 %------------------------------------------------------------------------------
 \subsection{Decomposition Modes}
 
-% Time to render a 4k, 32-step MSAA image of the 1\,mm David model and Livre using 1 to 10 nodes with all modes (2D, 2D LB, DB, DPlex (over AA steps), tiles, chunks, pixel, subpixel) (+DFR for Livre).
+% Time to render a 4k, 32-step MSAA image of the 1mm David model and Livre using 1 to 10 nodes with all modes (2D, 2D LB, DB, DPlex (over AA steps), tiles, chunks, pixel, subpixel) (+DFR for Livre).
 
-We conducted performance benchmarks for the decomposition modes on a
-rendering cluster using hexacore Intel Xeon E5-2620v3 CPUs (2.4\,GHz), 16\,GB DDR4 RAM per node, nVidia GTX 970 GPUs with 4\,GB VRAM each, and QDR Infiniband.
-GCC 4.8 has been used with CMake 3.7 release mode settings to compile the software stack.
+We conducted new performance benchmarks for various decomposition modes on a cluster
+using hexacore Intel Xeon E5-2620v3 CPUs (2.4GHz), \FIXME{GPUs}, 16 GB main
+memory, 4 GBit/s Ethernet and QDR Infiniband. GCC 4.8 has been used with CMake
+3.7 release mode settings to compile the software stack.
 
 We tested the decomposition modes with both volume data (\fig{fBenchmarkEVolve})
 and polygonal data  (\fig{fBenchmarkEqPly}) and used test scenes that allowed us
-to finely adjust the rendering load the system has to cope with. In both cases
+to continuously modify the rendering load the system has to cope with. In both cases
 the scene comprised of two rows of instantiated, identical models with 30 models
-in total. Rendering was performed at a resolution of 2560x1440. The camera is
+in total. Rendering was performed at an output resolution of $2560\times1440$. The camera is
 initially placed in the center of the scene, between the two rows
 (\fig{fBenchmarkEVolve} and \fig{fBenchmarkEqPly}), rendering only half of the
 model instances. It is then moved backward over the duration of 800 frames,
@@ -1323,13 +1324,16 @@ instances are visible.
 We investigated the scalability of individual decomposition modes by running the
 same experiment using a varying number of render nodes (2-9), as well as one
 dedicated application/display node. We subsequently summed up the duration of
-all rendered frames for each run (\fig{fCompounds}). We provide the results of
-the load balancer providing the better result for each application and compound.
+all rendered frames for each run (\fig{fCompounds}), backing up along the alley of models.
+We provide the results of the load balancer providing the better result for each application and compound.\FIXME{what does this last sentence mean?}
 The simpler \textsf{tree\_equalizer} outperforms in almost all cases the
 load-grid-driven \textsf{load\_equalizer}, except for sort-first volume
 rendering where the load in the region of interest is relatively uniform. This
 counterintuitive result once more proves that simple algorithms often outperform
 theoretically better, but more complex implementations.
+
+\FIXME{oscillation, pixel, clearer}
+\FIXME{I'm not sure I read Fig.10 the same way. Left it seems that tile\_equalizer is the best for polygonal rendering, it's constantly faster than the tree\_equalizer mentioned in the paragraph above.}
 
 For volume rendering we also measured the performance of decomposition modes
 under heterogeneous load, which was easily achievable by varying the number of
@@ -1349,35 +1353,35 @@ of individual nodes, i.e., bias the allocation of rendering time in accordance
 with the (simulated) compute resources. \fig{fEqualizers} (right), on the other
 hand, illustrates how the tested decomposition modes perform on a system where
 compute resources fluctuate randomly every frame, as can arguably be the case
-for virtualized enviroments. For this scenario tile equalizer seems best suited,
+for virutalized enviroments. For this scenario tile equalizer seems best suited,
 as it performs load balancing implicitly and does not assume coherence of
 available resources between frames. The simpler tree equalizer also outperforms
 the load equalizer in this experiment.
 
 \begin{figure}[ht]\center
   \includegraphics[width=.9\columnwidth]{images/benchmark_eVolve}
-  \caption{\label{fBenchmarkEVolve} Flower volume model at $1024^3$ unsigned byte (1\,GB).}
+  \caption{\label{fBenchmarkEVolve} Flower alley with 30 volume models of $1024^3$ unsigned bytes (1GB) each.}
 \end{figure}
 
 \begin{figure}[ht]\center
   \includegraphics[width=.9\columnwidth]{images/benchmark_eqPly2}
-  \caption{\label{fBenchmarkEqPly} David statue at 1\,mm resolution (988\,MB).}
+  \caption{\label{fBenchmarkEqPly} David alley with 30 statues of 56m triangles (988MB) each.\FIXME{check the triangle count}}
 \end{figure}
 
 %------------------------------------------------------------------------------
 \subsection{Object Distribution}
 
 The data distribution benchmarks have been performed on a cluster using
-dual processor Intel Xeon X5690 CPUs (3.47\,GHz), 24\,GB main memory per node, 10\,GBit/s
+dual processor Intel Xeon X5690 CPUs (3.47GHz), 24 GB main memory, 10GBit/s
 Ethernet and QDR Infiniband. Intel ICC 2017 has been used with CMake 3.2 release
 mode settings to compile the software stack.
 
-To benchmark the data distribution we used two datasets: The David statue at 2\,mm
-resolution (as in \fig{fBenchmarkEqPly}, but in 2\,mm resolution) and 3D volumes
+To benchmark the data distribution we used two datasets: The David statue at 2mm
+resolution (as in \fig{fBenchmarkEqPly}, but in 2mm resolution) and 3D volumes
 of spike frequencies of an electrical simulation of three million neurons
 (\fig{fVolumes}).
 
-The PLY file is converted into a k-d tree for fast view frustum culling and
+The ply file is converted into a kd-Tree for fast view frustum culling and
 rendering, and the resulting data structure is serialized in binary form for
 data transmission.
 
@@ -1386,8 +1390,8 @@ data transmission.
   \includegraphics[height=.44\columnwidth]{images/beechnut}
   \caption{\label{fVolumes}Volumes used for object distribution benchmarks:
     spike frequencies of a three million neuron electrical simulation at
-    512x437x240 unsigned byte (51\,MB, left) and an MicroCT scan of a beechnut at
-    1024x1024x1546 unsigned short (3\,GB, right) resolution}
+    512x437x240 unsigned byte (51MB, left) and an MicroCT scan of a beechnut at
+    1024x1024x1546 unsigned short (3GB, right) resolution}
 \end{figure}
 
 The spike frequency volumes aggregate the number of spikes which happened within
@@ -1423,7 +1427,7 @@ The compression ratio for the models used in the following section deviate from
 this averaged distribution. \fig{fCompressorDetail} shows the compression ratios
 for the triangle and volume data.
 
-The PLY data is little compressible, the default compressor achieves a 10\%
+The ply data is little compressible, the default compressor achieves a 10\%
 reduction. This is due to a high entropy in the data and the dominant use of
 floating point values. Overall, the profile is similar to the generic benchmark,
 at a smaller compression rate.
@@ -1467,7 +1471,7 @@ mapping is a slave-triggered ``pull'' operation. Slave nodes queue this data and
 consume it during synchronization. We test the time to commit and sync the data
 using different compression engines.
 
-The David statue at 2\,mm resolution is organized in a k-d tree for rendering. Each
+The David statue at 2mm resolution is organized in a kD-tree for rendering. Each
 node is a separate distributed object, which has two child node objects. A
 total of $1023$ objects is distributed and synchronized. \fig{fDavidDist} shows
 the distribution times for this data set. Due to limited compressibility of the
@@ -1488,17 +1492,16 @@ performance when amortized over many send operations.
 The volume data sets are distributed in a single object, serializing the raw
 volume buffer. The Spike volume data set has a significant compression ratio,
 which is reflected by the results in \fig{fSpikesDist}. Compression for this
-data is beneficial for transmitting data over a 10\,Gb/s %why was there a tilde inbetween? Should this be ~10Gb/s instead?
-link even for a single
+data is beneficial for transmitting data over a 10~Gb/s link even for a single
 slave process. Buffering has little benefit since the serialization of volume
 data is trivial. Buffered compression makes a significant difference, since the
 compression cost can be amortized over $n$ nodes, reaching raw data transmission
-rates of 3.7\,GB/s with the default Snappy compressor and at best 4.4\,GB/s with
+rates of 3.7 GB/s with the default Snappy compressor and at best 4.4 GB/s with
 ZStandard at level 1.
 
 The distribution of the beechnut data set also behaves as expected
 (\fig{fBeechnutDist}). Due to the larger object size, uncompressed transmission
-is slightly faster compared to the Spike data set at 700\,MB/s, and compressed
+is slightly faster compared to the Spike data set at 700 MB/s, and compressed
 transmission does not improve the mapping performance, likely due to increased
 memory pressure caused by the large data size. The comparison of the various
 compression engines is consistent with the benchmarks in
@@ -1647,14 +1650,14 @@ has been a Professor in computer science at the University of Zurich since 2005,
 
 \begin{figure*}[ht]\center
   \includegraphics[width=\textwidth]{images/compressorDetail}
-  \caption{\label{fCompressorDetail}Data compression for PLY data (left, David
-    statue 2\,mm) and raw volumes shown in \fig{fVolumes} (middle and right)}
+  \caption{\label{fCompressorDetail}Data compression for ply data (left, David
+    statue 2mm) and raw volumes shown in \fig{fVolumes} (middle and right)}
 \end{figure*}
 
 \begin{figure*}[p!]\center
   \includegraphics[height=.19\textheight]{images/daviddist}
   \caption{\label{fDavidDist}Object mapping (left) and data synchronization
-    time (middle, detail view right) for the David 2\,mm data set}
+    time (middle, detail view right) for the David 2mm data set}
 \end{figure*}
 \begin{figure*}[p!]\center
   \includegraphics[height=.19\textheight]{images/spikesdist}
