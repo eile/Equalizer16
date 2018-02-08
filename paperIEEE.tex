@@ -1306,7 +1306,7 @@ scenarios.
 % Time to render a 4k, 32-step MSAA image of the 1\,mm David model and Livre using 1 to 10 nodes with all modes (2D, 2D LB, DB, DPlex (over AA steps), tiles, chunks, pixel, subpixel) (+DFR for Livre).
 
 We conducted performance benchmarks for the decomposition modes on a
-rendering cluster using hexacore Intel Xeon E5-2620v3 CPUs ($2.4$\,GHz), $16$\,GB DDR4 RAM per node, and nVidia GTX $970$ GPUs with $4$\,GB VRAM each. The nodes are connected via a $40$\,Gbit/s {\em Infiniband} network.
+rendering cluster using hexacore Intel Xeon E5-2620v3 CPUs (2.4\,GHz), 16\,GB DDR4 RAM per node, nVidia GTX 970 GPUs with 4\,GB VRAM each, and QDR Infiniband.
 GCC 4.8 has been used with CMake 3.7 release mode settings to compile the software stack.
 
 We tested the decomposition modes with both volume data (\fig{fBenchmarkEVolve})
