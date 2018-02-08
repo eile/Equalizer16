@@ -220,14 +220,14 @@ integration of research, application use cases and commercial developments
 with respect to Equalizer as well as novel comparative experimental results
 of its scalability features.
 
-In particular, we present novel algorithms for parallel rendering which did not yet
-appear in a separate publication, including pixel and sub-pixel decompositions,
-dynamic frame resolution, tunable sort-first load-balancing parameters, frame-rate
-equalization, thread synchronization modes for multi-threaded rendering, a
-powerful abstraction for multi-view rendering on arbitrary display setups,
-dynamic focus distance and asymmetric eye positions for VR,
-parallel pixel streaming to tiled display walls, as well as a fully-fledged data
-distribution API with compression and reliable multicast.
+We present novel algorithms for parallel rendering which did not appear in a
+separate publication, including pixel and sub-pixel decompositions, dynamic
+frame resolution, tunable sort-first load-balancing parameters, frame-rate
+equalization, thread synchronization modes for multi-GPU rendering, a powerful
+abstraction for multi-view rendering on arbitrary display setups, dynamic focus
+distance and asymmetric eye positions for VR, parallel pixel streaming to tiled
+display walls, as well as a fully-fledged data distribution API with compression
+and reliable multicast.
 
 The remainder of this paper is structured as follows: First we provide an update
 on related work since the introduction of \textsf{Equalizer}. The main body of this paper
@@ -273,7 +273,7 @@ has received significant attention, including \textsf{Sage}~\cite{Sage} and
 \textsf{Sage~2}~\cite{Sage2} in particular. \textsf{Sage} was built entirely
 around the concept of a shared framebuffer where all content windows are
 separate applications using pixel streaming. It is no longer actively supported.
-\textsf{Sage 2} is a complete, browser-centric reimplementation where each
+\textsf{Sage~2} is a complete, browser-centric reimplementation where each
 application is a web application distributed across browser instances.
 \textsf{DisplayCluster}~\cite{DC}, and its continuation
 \textsf{Tide}~\cite{tide}, also implement the shared framebuffer concept of
@@ -301,15 +301,15 @@ framework side, \textsf{Omegalib}~\cite{Omegalib}, a framework used in the
 Cave2, made significant progress in integrating 2D collaborative workspaces like
 \textsf{Sage~2} with 3D immersive content. Lambers et.al. developed a framework
 for visualizing remote sensing data~\cite{LK:09} on large displays and immersive
-installations based on Equalizer.
+installations.
 
 %------------------------------------------------------------------------------
 \section{Performance Features}
 %------------------------------------------------------------------------------
 
-This section introduces new decomposition modes, runtime adaptations and other
-optimizations to increase the rendering performance for a wide variety of
-algorithms and use cases.
+% This section introduces new decomposition modes, runtime adaptations and other
+% optimizations to increase the rendering performance for a wide variety of
+% algorithms and use cases.
 
 %------------------------------------------------------------------------------
 \subsection{New Decomposition Modes}
@@ -319,7 +319,8 @@ sort-last (DB), stereo (EYE) and multilevel decompositions \cite{EMP:09}. In the
 following we present the newly added decomposition modes and motivate their use
 case, which bring the overall feature set way beyond the typical sort-first and
 sort-last rendering modes. \fig{fig:compounds} provides an overview of the new
-modes. The way how compounds are setup is still as given in \cite{EMP:09}.
+modes. The compound concept to set up scalable rendering is presented in
+\cite{EMP:09}.
 
 \begin{figure*}[ht]\center
   \begin{subfigure}[b]{0.24\textwidth}
@@ -471,12 +472,13 @@ destination channel may be smoothened using a {\em frame rate equalizer}
 
 Tile (\fig{fig:tiles}) and chunk decompositions are a variant of sort-first and
 sort-last rendering, respectively. They decompose the scene into a predefined
-set of fixed-size image tiles or database ranges. These tasks, or work packages are queued and
-processed by all source channels by polling a server-central queue. Prefetching
-ensures that the task communication overlaps with rendering. As shown in~
-\cite{SPEP:16}, these modes can provide better performance due to being inherently
-load-balanced, as long as there is an insignificant overhead for the render task
-setup. This mode is transparent to \textsf{Equalizer} applications.
+set of fixed-size image tiles or database ranges. These tasks, or work packages,
+are queued and processed by all source channels by polling a server-central
+queue. Prefetching ensures that the task communication overlaps with rendering.
+As shown in~ \cite{SPEP:16}, these modes can provide better performance due to
+being inherently load-balanced, as long as there is an insignificant overhead
+for the render task setup. This mode is transparent to \textsf{Equalizer}
+applications.
 
 
 \subsubsection{Pixel}
@@ -499,9 +501,11 @@ decompose the work for a single pixel, for example with Monte-Carlo ray tracing,
 FSAA or depth of field rendering. Composition typically uses accumulation and
 averaging of all computed fragments for a pixel. This feature is not fully
 transparent to the application, since it needs to adapt (jitter or tilt) the
-frustum based on the iteration executed. Furthermore, subpixel compounds
-interact with idle image refinements, e.g., they can accelerate idle
-anti-aliasing of a scene when the camera and scene are not changed.
+frustum based on the iteration executed.
+
+% Furthermore, subpixel compounds interact with idle image refinements, e.g., they
+% can accelerate idle anti-aliasing of a scene when the camera and scene are not
+% changed.
 
 %------------------------------------------------------------------------------
 \subsection{Equalizers}
@@ -557,9 +561,9 @@ uses this to allocate an equal render time to each subtree. It makes no
 assumption of the load distribution in 2D or 1D space, it only tries to correct
 the imbalance in render time.
 
-We have implemented various tunable parameters for both equalizers allowing
-application developers to optimize the load balancing based on the
-characteristics of their rendering algorithm:
+Both equalizers implement tuneable parameters allowing application developers to
+optimize the load balancing based on the characteristics of their rendering
+algorithm:
 
 \begin{compactdesc}
 \item[Split Mode] configures the tile layout: horizontal or vertical stripes,
@@ -617,27 +621,28 @@ algorithms.
 
 \subsubsection{Monitoring}
 
-The monitor equalizer (\fig{fig:monitor}) allows to reuse the rendering on
-another channel, typically for monitoring a larger setup on a control
-workstation. Output frames on the display channels are connected to input frames
-on a single monitoring channel. The monitor equalizer changes the scaling factor
-and offset between the output and input, so that the monitor channel has the
-same, but typically downscaled view, as the originating segments.
+The monitor equalizer (\fig{fig:monitor}, \fig{fLayout}) allows to reuse the
+rendering on another channel, typically for monitoring a larger setup on a
+control workstation. Output frames on the display channels are connected to
+input frames on a single monitoring channel. The monitor equalizer changes the
+scaling factor and offset between the output and input, so that the monitor
+channel has the same, but typically downscaled view, as the originating
+segments.
 
 %------------------------------------------------------------------------------
 \subsection{Optimizations}
 
 \subsubsection{Region of Interest}
 
-The region of interest is the screen-space 2D bounding box enclosing the
-geometry rendered by a single resource. We have extended the core parallel
-rendering framework to use an application-provided ROI to optimize the load
-equalizer as well as image compositing performance. The load equalizer uses the
-ROI to refine its load grid to the regions containing data. The compositing code
-uses the ROI to minimize image readback and network transmission. In
-\cite{MEP:10} and \cite{EBAHMP:12}, we provide the details of the algorithm, and
-show that using ROI can quadruple the rendering performance, in particular for
-the costly compositing step in sort-last rendering.
+The region of interest is the screen-space 2D bounding box enclosing the data
+rendered by a single resource. We have extended the core parallel rendering
+framework to use an application-provided ROI to optimize the
+\texsf{load\_equalizer} as well as the image compositing. The load equalizer
+uses the ROI to refine its load grid to the regions containing data. The
+compositing code uses the ROI to minimize image readback and network
+transmission. In \cite{MEP:10} and \cite{EBAHMP:12}, we provide the details of
+the algorithm, and show that using ROI can quadruple the rendering performance,
+in particular for the costly compositing step in sort-last rendering.
 
 \subsubsection{Asynchronous Compositing}
 
@@ -649,23 +654,21 @@ of the rendering performance of over 25\% for large node counts.
 
 \subsubsection{Download and Compression Plugins}
 
-Compression for the compositing step in parallel rendering is critical for
-performance. This not only applies to the well-researched network transfer step,
-but also for the transfer between GPU and CPU. \textsf{Equalizer} supports a
-variety of
-compression algorithms, from very fast RLE encoding, YUV
-subsampling on the GPU to JPEG compression. These algorithms are implemented as
-runtime-loaded
-plugins, allowing easy extension and customization to application-specific
-compression. In \cite{MEP:10}, we show this to be a critical step for
-interactive performance at scale.
+Compression for the compositing step is critical for performance. This not only
+applies to the well-researched network transfer step, but also for the transfer
+between GPU and CPU. \textsf{Equalizer} supports a variety of compression
+algorithms, from very fast RLE encoding, YUV subsampling on the GPU to JPEG
+compression. These algorithms are implemented as runtime-loaded plugins,
+allowing easy extension and customization to application-specific compression.
+In \cite{MEP:10}, we show this to be a critical step for interactive performance
+at scale.
 
 \subsubsection{Thread Synchronization Modes}\label{sec:threading}
 
 Different applications have different degrees on how decoupled and thread-safe
 the rendering code is from the application logic. For full decoupling all
 mutable data has to have a copy in each render thread, which is not feasible in
-many complex applications and large data scenarios. To easily customize the
+most applications and large data scenarios. To easily customize the
 synchronization of all threads on a single process, \textsf{Equalizer}
 implements three threading modes:  Full synchronization, draw synchronization
 and asynchronous. Note that the execution between node processes is always
@@ -681,15 +684,15 @@ In draw synchronization, the node thread and all render threads are synchronized
 for all \textsf{frameDraw} operations; that is, \textsf{Node::frameFinish} is
 executed after the last channel is done drawing. This allows the render threads
 to read shared data during their draw operation, but not during compositing.
-Since compositing is typically independent of the rendered data, this is the
-default mode. This mode allows to overlap compositing with rendering and data
+Since compositing is often independent of the rendered data, this is the default
+mode. This mode allows to overlap compositing with rendering and data
 synchronization on multi-GPU machines.
 
 In asynchronous execution, all threads run asynchronously. Render threads may
 work on different frames at any given time. This mode is the fastest, and
 requires the application to have one instance of each mutable object in each
-render thread. It is required for using time-multiplex compounds in
-multithreaded rendering.
+render thread. It is required for scaling time-multiplex compounds on multi-GPU
+machines.
 
 %------------------------------------------------------------------------------
 \section{Virtual Reality Features}
@@ -710,8 +713,7 @@ Head tracking is the minimal feature needed to support immersive installations.
 \textsf{Equalizer} does support multiple, independent tracked views through the
 observer abstraction (\sref{sec:observer}). Built-in VRPN support enables the
 direct, application-transparent configuration of a VRPN tracker device.
-Alternatively, an application can provide a $4\times 4$ tracking matrix defining
-the transformation from the canvas coordinate system to the observer. Both
+Alternatively, applications can provide a $4\times 4$ tracking matrix. Both
 CAVE-like tracking with fixed projection surfaces and HMD tracking with moving
 displays are implemented.
 
@@ -721,19 +723,18 @@ displays are implemented.
 To our knowledge, all parallel rendering systems have the focal plane coincide
 with the physical display surface. For better viewing comfort, we introduce a
 new dynamic focus mode, where the application defines the distance of the focal
-plane from the observer, based on the current view direction of the user.
-Initial experiments show that this provides better viewing comfort, in
-particular for objects placed in front of the physical displays.
+plane from the observer, based on the current \textit{lookat} distance. Initial
+experiments show that this provides better viewing comfort, in particular for
+objects placed in front of the physical displays.
 
 %------------------------------------------------------------------------------
 \subsection{Asymmetric Eye Position}
 
-Traditional head tracking computes the left and right eye positions by using a
-configurable interocular distance. However, human heads are not symmetric, and
-by measuring individual users a more precise frustum can be computed.
-\textsf{Equalizer} supports this through the optional configuration (file or
-programmatically) of individual 3D translations for all eyes relative to the
-tracking matrix.
+Traditional head tracking computes the left and right eye positions by using an
+interocular distance. However, human heads are not symmetric, and by measuring
+individual users a more precise frustum can be computed. \textsf{Equalizer}
+supports this through the optional configuration of individual 3D eye
+translations relative to the tracking matrix.
 
 %------------------------------------------------------------------------------
 \subsection{Model Unit}
@@ -906,9 +907,9 @@ input events and send pixel streams using the \textsf{Deflect} client library.
 integration with \textsf{Tide}. When a \textsf{Tide} server is configured, all
 output channels of a view stream in parallel to one window on the wall. In
 \cite{deflect}, we have shown interactive framerates for a 24 megapixel
-resolution over a WAN link. Events received are translated into
-\textsf{Equalizer} events and injected into the normal event flow, allowing
-seamless application integration.
+resolution over a WAN link. \textsf{Deflect} events are translated and injected
+into the \textsf{Equalizer} event flow, allowing seamless application
+integration.
 
 %------------------------------------------------------------------------------
 \subsection{\textsf{Sequel}}\label{sec:sequel}
@@ -1333,7 +1334,16 @@ model instances. It is then moved backward over the duration of 800 frames,
 steadily increasing the rendering load by revealing more models, until all 30
 instances are visible.
 
-We investigated the scalability of individual decomposition modes by running the same experiment using a varying number of render nodes (2-9), as well as one dedicated application/display node. We subsequently summed up the duration of all rendered frames for each run (\fig{fCompounds}).
+We investigated the scalability of individual decomposition modes by running the
+same experiment using a varying number of render nodes (2-9), as well as one
+dedicated application/display node. We subsequently summed up the duration of
+all rendered frames for each run (\fig{fCompounds}). We provide the results of
+the load balancer providing the better result for each application and compound.
+The simpler \textsf{tree\_equalizer} outperforms in almost all cases the
+load-grid-driven \textsf{load\_equalizer}, except for sort-first volume
+rendering where the load in the region of interest is relatively uniform. This
+counterintuitive result once more proves that simple algorithms often outperform
+theoretically better, but more complex implementations.
 
 For volume rendering we also measured the performance of decomposition modes
 under heterogeneous load, which was easily achievable by varying the number of
@@ -1353,9 +1363,10 @@ of individual nodes, i.e., bias the allocation of rendering time in accordance
 with the (simulated) compute resources. \fig{fEqualizers} (right), on the other
 hand, illustrates how the tested decomposition modes perform on a system where
 compute resources fluctuate randomly every frame, as can arguably be the case
-for, e.g., cloud-based applications. For this scenario tile equalizer seems best
-suited, as it performs load balancing implicitly and does not assume coherence
-of available resources between frames.
+for virutalized enviroments. For this scenario tile equalizer seems best suited,
+as it performs load balancing implicitly and does not assume coherence of
+available resources between frames. The simpler tree equalizer also outperforms
+the load equalizer in this experiment.
 
 \begin{figure}[ht]\center
   \includegraphics[width=.9\columnwidth]{images/benchmark_eVolve}
@@ -1614,16 +1625,16 @@ and Dardo Kleiner.
 
 \begin{IEEEbiography}[{
 \includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{images/stefan}}]{
-Stefan Eilemann} Stefan was the technical manager of the Visualization Team in
-the Blue Brain Project. His work involves working towards large-scale
-visualization for Exascale simulations; interactive integration of simulation,
-analysis and visualization as well as flexible frameworks for data sharing and
-dynamic allocation of heterogenous resources. He is the CEO and founder of
-Eyescale and also the lead developer of the \textsf{Equalizer} parallel
-rendering framework. He received his masters degree in Computer Science from
-EPFL in 2015, and his Engineering Diploma in Computer Science in 1998. He is
-currently working towards a PhD in Computer Science at the Visualization and
-MultiMedia Lab at the University of Zurich. \end{IEEEbiography}
+Stefan Eilemann} works towards large-scale visualization for Exascale
+simulations; interactive integration of simulation, analysis and visualization
+as well as flexible frameworks for data sharing and dynamic allocation of
+heterogenous resources. He was the technical manager of the Visualization Team
+in the Blue Brain Project, is the CEO and founder of Eyescale, and the lead
+developer of the \textsf{Equalizer} parallel rendering framework. He received
+his masters degree in Computer Science from EPFL in 2015, and his Engineering
+Diploma in Computer Science in 1998. He is currently working towards a PhD in
+Computer Science at the Visualization and MultiMedia Lab at the University of
+Zurich. \end{IEEEbiography}
 
 \begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{images/david_steiner_picture2}}]{David Steiner}
 received MSc degrees from the University of Applied Sciences Upper Austria (Digital Media) and the University of Zurich (Computer Science). He joined the Visualization and MultiMedia Lab (VMML) in 2012 and is currently pursuing his doctorate. His research interests include interactive large-scale data visualization, distributed parallel rendering, and load balancing.
