@@ -17,7 +17,7 @@
 \usepackage{times}
 %\usepackage{tabularx}
 \usepackage{amsmath}
-%\usepackage{url}
+\usepackage{hyperref}
 \usepackage{caption,subcaption}
 \usepackage{multirow}
 \usepackage{paralist}
@@ -1317,26 +1317,54 @@ scenarios.
 
 % Time to render a 4k, 32-step MSAA image of the 1mm David model and Livre using 1 to 10 nodes with all modes (2D, 2D LB, DB, DPlex (over AA steps), tiles, chunks, pixel, subpixel) (+DFR for Livre).
 
-We conducted performance benchmarks for the decomposition modes on a cluster using hexacore Intel Xeon E5-2620v3 CPUs (2.4GHz), 16 GB main memory, 4 GBit/s Ethernet and QDR Infiniband. GCC 4.8 has been used with CMake 3.7 release mode settings to compile the software stack.
+We conducted performance benchmarks for the decomposition modes on a cluster
+using hexacore Intel Xeon E5-2620v3 CPUs (2.4GHz), \FIXME{GPUs}, 16 GB main
+memory, 4 GBit/s Ethernet and QDR Infiniband. GCC 4.8 has been used with CMake
+3.7 release mode settings to compile the software stack.
 
-We tested the decomposition modes with both volume (\fig{fBenchmarkEVolve}) and polygonal data  (\fig{fBenchmarkEqPly}) and used test scenes that allowed us to finely adjust the rendering load the system has to cope with. In both cases the scene comprised of two rows of instantiated, identical models (the 1mm David model when rendering polygonal data, the $1024^3$ Flower model when rendering volumes), with 30 models in total. Rendering was performed
-% with the \textsf{Equalizer} example applications eqPly (for meshes) and eVolve (for volumes)
-at 2560x1440. The camera is initially placed in the center of the scene, between the two rows (\fig{fBenchmarkEVolve} and \fig{fBenchmarkEqPly}), rendering only half of the model instances. It is then moved backward over the duration of 800 frames, steadily increasing the rendering load by revealing more models, until all 30 instances are visible.
+We tested the decomposition modes with both volume data (\fig{fBenchmarkEVolve})
+and polygonal data  (\fig{fBenchmarkEqPly}) and used test scenes that allowed us
+to finely adjust the rendering load the system has to cope with. In both cases
+the scene comprised of two rows of instantiated, identical models with 30 models
+in total. Rendering was performed at a resolution of 2560x1440. The camera is
+initially placed in the center of the scene, between the two rows
+(\fig{fBenchmarkEVolve} and \fig{fBenchmarkEqPly}), rendering only half of the
+model instances. It is then moved backward over the duration of 800 frames,
+steadily increasing the rendering load by revealing more models, until all 30
+instances are visible.
 
 We investigated the scalability of individual decomposition modes by running the same experiment using a varying number of render nodes (2-9), as well as one dedicated application/display node. We subsequently summed up the duration of all rendered frames for each run (\fig{fCompounds}).
 
-In the case of volume rendering we also measured the performance of decomposition modes under heterogeneous load, which was easily achievable by varying the number of volume samples used for each fragment (1-7), while rendering. This allowed for a consistent linear scaling of rendering load, which was randomly varied (\fig{fEqualizers}) either per frame or per node. Such a linear scaling of load per node corresponds to a scaling of resources, e.g., doubling the rendering load on a specific node corresponds to halving its available rendering resources. To the system this node would then contribute the value 0.5 in terms of {\em normalized compute resources}, as illustrated by \fig{fEqualizers} (left).
+For volume rendering we also measured the performance of decomposition modes
+under heterogeneous load, which was easily achievable by varying the number of
+volume samples used for each fragment (1-7) while rendering. This allowed for a
+consistent linear scaling of rendering load, which was randomly varied
+(\fig{fEqualizers}) either per frame or per node. Such a linear scaling of load
+per node corresponds to a scaling of resources, e.g., doubling the rendering
+load on a specific node corresponds to halving its available rendering
+resources. To the system this node would then contribute the value 0.5 in terms
+of {\em normalized compute resources}, as illustrated by \fig{fEqualizers}
+(left).
 
-This figure gives an impression of how individual modes perform on heterogeneous systems. In this case the tree equalizer performs best (\fig{fEqualizers} (left)), as it allows us to a priori define how much {\em usage} it should make of individual nodes, i.e., bias the allocation of rendering time, in accordance with the expected load / the available compute resources. \fig{fEqualizers} (right), on the other hand, illustrates how the tested decomposition modes perform on a system where compute resources fluctuate randomly every frame, as can arguably be the case for, e.g., cloud-based applications. \FIXME{Should we only mention this in discussion?} For this scenario tile equalizer seems best suited, as it performs load balancing implicitly and does not assume coherence of available resources between frames.
+This figure gives an impression of how individual modes perform on heterogeneous
+systems. In this case the tree equalizer performs best (\fig{fEqualizers}
+(left)), as it allows us to a priori define how much {\em usage} it should make
+of individual nodes, i.e., bias the allocation of rendering time in accordance
+with the (simulated) compute resources. \fig{fEqualizers} (right), on the other
+hand, illustrates how the tested decomposition modes perform on a system where
+compute resources fluctuate randomly every frame, as can arguably be the case
+for, e.g., cloud-based applications. For this scenario tile equalizer seems best
+suited, as it performs load balancing implicitly and does not assume coherence
+of available resources between frames.
 
 \begin{figure}[ht]\center
   \includegraphics[width=.9\columnwidth]{images/benchmark_eVolve}
-  \caption{\label{fBenchmarkEVolve} Benchmarking decomposition modes with Flower volume model at $1024^3$ unsigned byte (1GB).}
+  \caption{\label{fBenchmarkEVolve} Flower volume model at $1024^3$ unsigned byte (1GB).}
 \end{figure}
 
 \begin{figure}[ht]\center
   \includegraphics[width=.9\columnwidth]{images/benchmark_eqPly2}
-  \caption{\label{fBenchmarkEqPly} Benchmarking decomposition modes with David statue at 1mm resolution (988MB).}
+  \caption{\label{fBenchmarkEqPly} David statue at 1mm resolution (988MB).}
 \end{figure}
 
 %------------------------------------------------------------------------------
@@ -1348,13 +1376,9 @@ Ethernet and QDR Infiniband. Intel ICC 2017 has been used with CMake 3.2 release
 mode settings to compile the software stack.
 
 To benchmark the data distribution we used two datasets: The David statue at 2mm
-resolution (\fig{fDavid2mm}) and 3D volumes of spike frequencies of an
-electrical simulation of three million neurons (\fig{fVolumes}).
-
-\begin{figure}[ht]\center
-  \includegraphics[width=.49\columnwidth]{images/david2mm}
-  \caption{\label{fDavid2mm}David statue at 2mm resolution (145MB)}
-\end{figure}
+resolution (as in \fig{fBenchmarkEqPly}, but in 2mm resolution) and 3D volumes
+of spike frequencies of an electrical simulation of three million neurons
+(\fig{fVolumes}).
 
 The ply file is converted into a kd-Tree for fast view frustum culling and
 rendering, and the resulting data structure is serialized in binary form for
@@ -1426,7 +1450,7 @@ and to perform a commit-sync of the full data set after mapping has been
 established. All figures observe a noticable measurement jitter due to other
 services running on the cluster. The details of the benchmark algorithm can be
 found in the
-implementation\footnote{\htmladdnormallink{https://github.com/Eyescale/Equalizer/tree/paper2018/tools/eqObjectBench}}.
+\htmladdnormallinkfoot{implementation}{https://github.com/Eyescale/Equalizer/tree/paper2018/tools/eqObjectBench}.
 used the same data sets as in the previous section. We ran the benchmark on up
 to eight physical nodes, that is, after eight processes nodes start to run two
 processes per node, which share CPU, memory and network interface bandwidth.
@@ -1590,20 +1614,16 @@ and Dardo Kleiner.
 
 \begin{IEEEbiography}[{
 \includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{images/stefan}}]{
-Stefan Eilemann} Stefan is the technical manager of the Visualization Team in
-the Blue
-Brain Project. His work involves working towards large-scale visualization for
-Exascale simulations; interactive integration of simulation, analysis and
-visualization as well as flexible frameworks for data sharing and dynamic
-allocation of heterogenous resources. He is the CEO and founder of Eyescale and
-also the lead developer of the \textsf{Equalizer} parallel rendering framework.
-He has worked in SGI's Advanced Graphics Division as the technical lead of
-OpenGL Multipipe SDK - a toolkit for scalable, parallel visualization software
-on shared memory supercomputers. He received his masters degree in Computer
-Science from EPFL in 2015, and his Engineering Diploma in Computer Science in
-1998. He is currently working towards a PhD in Computer Science at the
-Visualization and MultiMedia Lab at the University of Zurich.
-\end{IEEEbiography}
+Stefan Eilemann} Stefan was the technical manager of the Visualization Team in
+the Blue Brain Project. His work involves working towards large-scale
+visualization for Exascale simulations; interactive integration of simulation,
+analysis and visualization as well as flexible frameworks for data sharing and
+dynamic allocation of heterogenous resources. He is the CEO and founder of
+Eyescale and also the lead developer of the \textsf{Equalizer} parallel
+rendering framework. He received his masters degree in Computer Science from
+EPFL in 2015, and his Engineering Diploma in Computer Science in 1998. He is
+currently working towards a PhD in Computer Science at the Visualization and
+MultiMedia Lab at the University of Zurich. \end{IEEEbiography}
 
 \begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{images/david_steiner_picture2}}]{David Steiner}
 received MSc degrees from the University of Applied Sciences Upper Austria (Digital Media) and the University of Zurich (Computer Science). He joined the Visualization and MultiMedia Lab (VMML) in 2012 and is currently pursuing his doctorate. His research interests include interactive large-scale data visualization, distributed parallel rendering, and load balancing.
@@ -1639,8 +1659,7 @@ has been a Professor in computer science at the University of Zurich since 2005,
 \begin{figure*}[p!]\center
   \includegraphics[height=.19\textheight]{images/daviddist}
   \caption{\label{fDavidDist}Object mapping (left) and data synchronization
-    time (middle, detail view right) for the David 2mm data set in
-    \fig{fDavid2mm}}
+    time (middle, detail view right) for the David 2mm data set}
 \end{figure*}
 \begin{figure*}[p!]\center
   \includegraphics[height=.19\textheight]{images/spikesdist}
