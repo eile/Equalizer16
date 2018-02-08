@@ -769,7 +769,7 @@ use this functionality in applications.
 
 Real-world visualization setups can be complex. An abstract representation of
 the display system simplifies the configuration process. Applications often have
-the need to be aware of spatial relationship of the display setup, for example
+the need to be aware of spatial relationships of the display setup, for example
 to render 2D overlays or to configure multiple views on a tiled display wall.
 
 We addressed this need through a new configuration section interspersed between
@@ -794,7 +794,7 @@ installation. \label{sec:swap} A canvas may have a software or hardware swap
 barrier, which will synchronize the rendering of all contributing GPUs. The
 software barrier executes a \textsf{glFinish} to ensure the GPU is ready to
 swap, a \textsf{Collage} barrier (\sref{sec:barrier}) to synchronize all
-segments, the swap buffers call followed by a \textsf{glFlush} to ensure timely
+segments, and the swap buffers call followed by a \textsf{glFlush} to ensure timely
 execution of the swap command. The hardware swap barrier is implemented using
 the \textsf{NV\_swap\_group} extension.
 
@@ -886,7 +886,7 @@ Qt is a popular window system with application developers. Unfortunately, it
 imposes a different threading model for window creation and event handling
 compared to \textsf{Equalizer}. In \textsf{Equalizer}, each GPU rendering thread
 is independently responsible for creating its windows, receiving the events and
-eventually dispatching them to the application process main thread. This design
+eventually dispatching them to the application process' main thread. This design
 is motivated by the natural threading model of X11 and WGL, and allows simple
 sequential semantics between OpenGL rendering and event handling. In contrast,
 Qt requires all windows and QOpenGLContext to be created from the Qt main
