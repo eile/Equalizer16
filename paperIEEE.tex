@@ -1377,7 +1377,7 @@ resolution (as in \fig{fBenchmarkEqPly}, but in 2\,mm resolution) and 3D volumes
 of spike frequencies of an electrical simulation of three million neurons
 (\fig{fVolumes}).
 
-The ply file is converted into a kd-Tree for fast view frustum culling and
+The PLY file is converted into a k-d tree for fast view frustum culling and
 rendering, and the resulting data structure is serialized in binary form for
 data transmission.
 
@@ -1423,7 +1423,7 @@ The compression ratio for the models used in the following section deviate from
 this averaged distribution. \fig{fCompressorDetail} shows the compression ratios
 for the triangle and volume data.
 
-The ply data is little compressible, the default compressor achieves a 10\%
+The PLY data is little compressible, the default compressor achieves a 10\%
 reduction. This is due to a high entropy in the data and the dominant use of
 floating point values. Overall, the profile is similar to the generic benchmark,
 at a smaller compression rate.
@@ -1467,7 +1467,7 @@ mapping is a slave-triggered ``pull'' operation. Slave nodes queue this data and
 consume it during synchronization. We test the time to commit and sync the data
 using different compression engines.
 
-The David statue at 2\,mm resolution is organized in a kD-tree for rendering. Each
+The David statue at 2\,mm resolution is organized in a k-d tree for rendering. Each
 node is a separate distributed object, which has two child node objects. A
 total of $1023$ objects is distributed and synchronized. \fig{fDavidDist} shows
 the distribution times for this data set. Due to limited compressibility of the
@@ -1647,7 +1647,7 @@ has been a Professor in computer science at the University of Zurich since 2005,
 
 \begin{figure*}[ht]\center
   \includegraphics[width=\textwidth]{images/compressorDetail}
-  \caption{\label{fCompressorDetail}Data compression for ply data (left, David
+  \caption{\label{fCompressorDetail}Data compression for PLY data (left, David
     statue 2\,mm) and raw volumes shown in \fig{fVolumes} (middle and right)}
 \end{figure*}
 
