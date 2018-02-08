@@ -1365,7 +1365,7 @@ the load equalizer in this experiment.
 
 \begin{figure}[ht]\center
   \includegraphics[width=.9\columnwidth]{images/benchmark_eqPly2}
-  \caption{\label{fBenchmarkEqPly} David alley with 30 statues of 56m triangles (988\,MB) each.\FIXME{check the triangle count}}
+  \caption{\label{fBenchmarkEqPly} David alley with 30 statues of 56\,M triangles (988\,MB) each.
 \end{figure}
 
 %------------------------------------------------------------------------------
@@ -1492,11 +1492,11 @@ performance when amortized over many send operations.
 The volume data sets are distributed in a single object, serializing the raw
 volume buffer. The Spike volume data set has a significant compression ratio,
 which is reflected by the results in \fig{fSpikesDist}. Compression for this
-data is beneficial for transmitting data over a 10~Gb/s \FIXME{~10\,Gb/s ?} link even for a single
+data is beneficial for transmitting data over a 10\,Gb/s link even for a single
 slave process. Buffering has little benefit since the serialization of volume
 data is trivial. Buffered compression makes a significant difference, since the
 compression cost can be amortized over $n$ nodes, reaching raw data transmission
-rates of 3.7~GB/s \FIXME{~3.7\,GB/s ?} with the default Snappy compressor and at best 4.4~GB/s \FIXME{~4.4\,GB/s ?} with
+rates of 3.7\,GB/s with the default Snappy compressor and at best 4.4\,GB/s with
 ZStandard at level 1.
 
 The distribution of the beechnut data set also behaves as expected
