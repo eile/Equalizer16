@@ -475,10 +475,8 @@ sort-last rendering, respectively. They decompose the scene into a predefined
 set of fixed-size image tiles or database ranges. These tasks, or work packages,
 are queued and processed by all source channels by polling a server-central
 queue. Prefetching ensures that the task communication overlaps with rendering.
-As shown in~ \cite{SPEP:16}, these modes can provide better performance due to
-being inherently load-balanced, as long as there is an insignificant overhead
-for the render task setup. This mode is transparent to \textsf{Equalizer}
-applications.
+As shown in~\cite{SPEP:16}, these modes can provide better performance due to
+being implicitly, i.e., inherently load-balanced, as long as there is an insignificant overhead for the render task setup. This mode is transparent to \textsf{Equalizer} applications.
 
 
 \subsubsection{Pixel}
@@ -628,6 +626,10 @@ input frames on a single monitoring channel. The monitor equalizer changes the
 scaling factor and offset between the output and input, so that the monitor
 channel has the same, but typically downscaled view, as the originating
 segments.
+
+\subsubsection{Implicit Load Balancing}
+
+The package equalizer allows to adjusts the implicit load balancing that results from rendering clients pulling work packages, i.e., tiles and chunks, from a central queue on the server. It is implemented as \textsf{tile\_equalizer} and \textsf{chunk\_equalizer}, respectively, and changes the affinity of work packages to individual nodes, based on an affinity model specified to the equalizer. In~\cite{SPEP:16}, we explore this approach in more detail.
 
 %------------------------------------------------------------------------------
 \subsection{Optimizations}
@@ -1325,15 +1327,14 @@ We investigated the scalability of individual decomposition modes by running the
 same experiment using a varying number of render nodes (2-9), as well as one
 dedicated application/display node. We subsequently summed up the duration of
 all rendered frames for each run (\fig{fCompounds}), backing up along the alley of models.
-We provide the results of the load balancer providing the better result for each application and compound.\FIXME{what does this last sentence mean?}
+% We provide the results of the load balancer providing the better result for each application and compound.\FIXME{what does this last sentence mean?}
 The simpler \textsf{tree\_equalizer} outperforms in almost all cases the
 load-grid-driven \textsf{load\_equalizer}, except for sort-first volume
 rendering where the load in the region of interest is relatively uniform. This
-counterintuitive result once more proves that simple algorithms often outperform
-theoretically better, but more complex implementations.
+counterintuitive result seems to again confirm the idea that simple algorithms often outperform theoretically better, but more complex implementations. On the other hand, \textsf{tile\_equalizer} often outperforms \textsf{tree\_equalizer}. This suggests that the underlying implicit load balancing can be superior to the the explicit methods of \textsf{load\_equalizer} and \textsf{tree\_equalizer} in high load situations, where the additional overhead of tile generation and distribution is more justified.
 
 \FIXME{oscillation, pixel, clearer}
-\FIXME{I'm not sure I read Fig.10 the same way. Left it seems that tile\_equalizer is the best for polygonal rendering, it's constantly faster than the tree\_equalizer mentioned in the paragraph above.}
+% \FIXME{I'm not sure I read Fig.10 the same way. Left it seems that tile\_equalizer is the best for polygonal rendering, it's constantly faster than the tree\_equalizer mentioned in the paragraph above.}
 
 For volume rendering we also measured the performance of decomposition modes
 under heterogeneous load, which was easily achievable by varying the number of
