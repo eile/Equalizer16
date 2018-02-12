@@ -583,6 +583,10 @@ sensitive to cache alignments, which can again be exploited by chosing the
 corresponding boundary.
 \end{compactdesc}
 
+\subsubsection{Dynamic Work Packages}
+
+The package equalizer allows to adjusts the implicit load balancing that results from rendering clients pulling work packages, i.e., tiles and chunks, from a central queue on the server. It is implemented as \textsf{tile\_equalizer} and \textsf{chunk\_equalizer}, respectively, and changes the assignment of work packages to individual nodes, based on an affinity model specified to the equalizer. In~\cite{SPEP:16}, we explore this approach in more detail.
+
 \subsubsection{Cross-Segment Load Balancing}
 
 Cross-segment load balancing (\fig{fig:vieweq}) addresses the optimal resource
@@ -626,10 +630,6 @@ input frames on a single monitoring channel. The monitor equalizer changes the
 scaling factor and offset between the output and input, so that the monitor
 channel has the same, but typically downscaled view, as the originating
 segments.
-
-\subsubsection{Implicit Load Balancing}
-
-The package equalizer allows to adjusts the implicit load balancing that results from rendering clients pulling work packages, i.e., tiles and chunks, from a central queue on the server. It is implemented as \textsf{tile\_equalizer} and \textsf{chunk\_equalizer}, respectively, and changes the affinity of work packages to individual nodes, based on an affinity model specified to the equalizer. In~\cite{SPEP:16}, we explore this approach in more detail.
 
 %------------------------------------------------------------------------------
 \subsection{Optimizations}
