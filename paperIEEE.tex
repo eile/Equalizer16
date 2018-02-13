@@ -475,8 +475,10 @@ sort-last rendering, respectively. They decompose the scene into a predefined
 set of fixed-size image tiles or database ranges. These tasks, or work packages,
 are queued and processed by all source channels by polling a server-central
 queue. Prefetching ensures that the task communication overlaps with rendering.
-As shown in~\cite{SPEP:16}, these modes can provide better performance due to
-being implicitly, i.e., inherently load-balanced, as long as there is an insignificant overhead for the render task setup. This mode is transparent to \textsf{Equalizer} applications.
+As shown in~\cite{SPEP:16} and the results, these modes can provide better
+performance due to being implicitly, i.e., inherently load-balanced, as long as
+there is an insignificant overhead for the render task setup. This mode is
+transparent to \textsf{Equalizer} applications.
 
 
 \subsubsection{Pixel}
@@ -585,7 +587,11 @@ corresponding boundary.
 
 \subsubsection{Dynamic Work Packages}
 
-The package equalizer allows to adjusts the implicit load balancing that results from rendering clients pulling work packages, i.e., tiles and chunks, from a central queue on the server. It is implemented as \textsf{tile\_equalizer} and \textsf{chunk\_equalizer}, respectively, and changes the assignment of work packages to individual nodes, based on an affinity model specified to the equalizer. In~\cite{SPEP:16}, we explore this approach in more detail.
+The package equalizers implement client-affinity models for tile and chunk
+compounds (\sref{sec:tile}). A \textsf{tile\_equalizer} and
+\textsf{chunk\_equalizer} create the packages and change the assignment of them
+to individual nodes, based on an affinity model specified in the equalizer.
+In~\cite{SPEP:16}, we explore this approach in detail.
 
 \subsubsection{Cross-Segment Load Balancing}
 
@@ -1150,24 +1156,22 @@ registered master objects while the corresponding node is idle to all connected
 nodes. These nodes simply enter the received data to their cache. Preloading
 uses multicast when available.
 
-Due to the master-slave model of data distribution, multicast can be used to
+Due to the master-slave model of data distribution, multicast is used to
 optimize the transmission time of data. If the contributing nodes share a
 multicast session, and more than one slave instance is mapped, \textsf{Collage}
-automatically uses the multicast connection to send the new version
-information.
+automatically uses the multicast connection to send the new version information.
 
 %------------------------------------------------------------------------------
 \subsection{Barriers, Queues and Object Maps}\label{sec:barrier}
 
 \textsf{Collage} implements a few generic distributed objects which are used by
-\textsf{Equalizer}
-and applicatons. A barrier is a distributed barrier primitive used for software
-swap barriers in \textsf{Equalizer} (\sref{sec:swap}). Its implementation
-follows a
-simple master-slave approach, which has shown to by sufficient for this use
-case. Queues are single producer, multiple consumer FIFOs. To hide network
-latencies, the consumers use prefetching of queue items into a local queue. They
-are used for tile and chunk compounds (\sref{sec:tile}).
+\textsf{Equalizer} and other applicatons. A barrier is a distributed barrier
+primitive used for software swap barriers in \textsf{Equalizer}
+(\sref{sec:swap}). Its implementation follows a simple master-slave approach,
+which has shown to by sufficient for this use case. Queues are single producer,
+multiple consumer FIFOs. To hide network latencies, consumers prefetch queue
+items into a local queue. They are used for tile and chunk compounds
+(\sref{sec:tile}).
 
 The object map facilitates distribution and synchronization of a collection of
 distributed objects. Master versions can be registered on a central node, e.g.,
@@ -1296,11 +1300,10 @@ and the Visualization Toolkit (VTK).
 
 This section presents new experiments, complementing the results of previous
 publications~\cite{EP:07, EMP:09, MEP:10, EEP:11, EBAHMP:12, HBBES:13, deflect,
-  SPEP:16}. The first part summarizes rendering performance over all
-decomposition modes with a few representative workloads. The second part
-analyses data distribution performance, in particular how the various
-optimizations in \textsf{Collage} affect complex operations in realistic
-scenarios.
+SPEP:16}. The first part summarizes rendering performance over all decomposition
+modes with a few representative workloads. The second part analyses data
+distribution performance, in particular how the optimizations in
+\textsf{Collage} perform in realistic scenarios.
 
 %------------------------------------------------------------------------------
 \subsection{Decomposition Modes}
@@ -1312,29 +1315,47 @@ using hexacore Intel Xeon E5-2620v3 CPUs (2.4\,GHz), nVidia GTX 970 GPUs with 4\
 memory per node, 4\,GBit/s Ethernet, and QDR Infiniband. GCC 4.8 has been used with CMake
 3.7 release mode settings to compile the software stack.
 
-We tested the decomposition modes with both volume data (\fig{fBenchmarkEVolve})
-and polygonal data  (\fig{fBenchmarkEqPly}) and used test scenes that allowed us
-to continuously modify the rendering load the system has to cope with. In both cases
-the scene comprised of two rows of instantiated, identical models with 30 models
-in total. Rendering was performed at an output resolution of $2560\times1440$. The camera is
-initially placed in the center of the scene, between the two rows
-(\fig{fBenchmarkEVolve} and \fig{fBenchmarkEqPly}), rendering only half of the
-model instances. It is then moved backward over the duration of 800 frames,
-steadily increasing the rendering load by revealing more models, until all 30
-instances are visible.
+We tested the decomposition modes with both polygonal data and volume data
+(\fig{fBenchmarks} (middle and left)), using test scenes that allowed to adapt
+the rendering load the system has to cope with. In both cases the scene is
+comprised of two rows of instantiated, identical models with 30 models in total.
+Rendering was performed at an output resolution of $2560\times1440$. The camera
+is initially placed in the center of the scene, between the two rows, rendering
+only half of the model instances. It is then moved backward over the duration of
+800 frames, steadily increasing the rendering load by revealing more models,
+until all 30 instances are visible.
 
 We investigated the scalability of individual decomposition modes by running the
-same experiment using a varying number of render nodes (2-9), as well as one
-dedicated application/display node. We subsequently summed up the duration of
-all rendered frames for each run (\fig{fCompounds}), backing up along the alley of models.
-% We provide the results of the load balancer providing the better result for each application and compound.\FIXME{what does this last sentence mean?}
+same experiment using a varying number of render nodes (2-9) and one dedicated
+application/display node. We subsequently summed up the duration of all rendered
+frames for each run (\fig{fCompounds}).
+
+For sort-first and sort-last rendering we present static and load-balanced task
+decomposition. For readability, we only present the results of the equalizer
+(load or tree) providing the better performance for each application.
+Unsurprisingly, static decompositions perform worse over load-balanced
+compounds. Sort-first polygon rendering exhibits oscillations in performance as
+nodes are added to the task, due to unfavorable assignment of a tile with a high
+work load on odd node counts. Static sort-last volume rendering has a similar
+oscillation behaviour \FIXME{due to @David?}.
+
 The simpler \textsf{tree\_equalizer} outperforms in almost all cases the
 load-grid-driven \textsf{load\_equalizer}, except for sort-first volume
 rendering where the load in the region of interest is relatively uniform. This
-counterintuitive result seems to again confirm the idea that simple algorithms often outperform theoretically better, but more complex implementations. On the other hand, \textsf{tile\_equalizer} often outperforms \textsf{tree\_equalizer}. This suggests that the underlying implicit load balancing can be superior to the the explicit methods of \textsf{load\_equalizer} and \textsf{tree\_equalizer} in high load situations, where the additional overhead of tile generation and distribution is more justified.
+counterintuitive result seems to again confirm that simple algorithms often
+outperform theoretically better, but more complex implementations. On the other
+hand, the \textsf{tile\_equalizer} often outperforms \textsf{tree\_equalizer}.
+This suggests that the underlying implicit load balancing can be superior to the
+explicit methods of \textsf{load\_equalizer} and \textsf{tree\_equalizer} in
+high load situations, where the additional overhead of tile generation and
+distribution is more justified. The relative simple nature of our benchmark
+application's rendering algorithms is also favoring work packages, since it has
+a near-zero static overhead per rendering pass.
 
-\FIXME{oscillation, pixel, clearer}
-% \FIXME{I'm not sure I read Fig.10 the same way. Left it seems that tile\_equalizer is the best for polygonal rendering, it's constantly faster than the tree\_equalizer mentioned in the paragraph above.}
+Last, but not least, we also provide scalability results for pixel compounds.
+While naturally load-balanced, pixel compounds only scale fill rate and not
+geometry processing. Consequently, pixel compounds provide better performance
+for volume rendering, and a predictable scaling behaviour for both.
 
 For volume rendering we also measured the performance of decomposition modes
 under heterogeneous load, which was easily achievable by varying the number of
@@ -1359,46 +1380,37 @@ as it performs load balancing implicitly and does not assume coherence of
 available resources between frames. The simpler tree equalizer also outperforms
 the load equalizer in this experiment.
 
-\begin{figure}[ht]\center
-  \includegraphics[width=.9\columnwidth]{images/benchmark_eVolve}
-  \caption{\label{fBenchmarkEVolve} Flower alley with 30 volume models of $1024^3$ unsigned bytes (1\,GB) each.}
-\end{figure}
-
-\begin{figure}[ht]\center
-  \includegraphics[width=.9\columnwidth]{images/benchmark_eqPly2}
-  \caption{\label{fBenchmarkEqPly} David alley with 30 statues of 56\,M triangles (988\,MB) each.}
-\end{figure}
+\begin{figure*}[ht]\center
+    \includegraphics[height=.17\textwidth]{images/benchmark_eVolve}
+    \includegraphics[height=.17\textwidth]{images/benchmark_eqPly2}
+    \includegraphics[height=.17\textwidth]{images/spikes512}
+    \includegraphics[height=.17\textwidth]{images/beechnut}
+  \caption{\label{fBenchmarks}Benchmark data: Flower alley with 30 volume models
+  of $1024^3$ unsigned bytes (1\,GB) each (left); David alley with 30 statues of
+  56\,M triangles (988\,MB) each (middle); Volumes used for object distribution
+  benchmarks (right): spike frequencies of a three million neuron electrical
+  simulation at 512x437x240 unsigned byte (51\,MB) and an MicroCT scan of a
+  beechnut at 1024x1024x1546 unsigned short (3\,GB) resolution}
+\end{figure*}
 
 %------------------------------------------------------------------------------
 \subsection{Object Distribution}
 
-The data distribution benchmarks have been performed on a cluster using
-dual processor Intel Xeon X5690 CPUs (3.47\,GHz), 24\,GB main memory per node, 10\,GBit/s
-Ethernet and QDR Infiniband. Intel ICC 2017 has been used with CMake 3.2 release
-mode settings to compile the software stack.
-
-To benchmark the data distribution we used two datasets: The David statue at 2\,mm
-resolution (as in \fig{fBenchmarkEqPly}, but in 2\,mm resolution) and 3D volumes
-of spike frequencies of an electrical simulation of three million neurons
-(\fig{fVolumes}).
+The data distribution benchmarks have been performed on a cluster using dual
+processor Intel Xeon X5690 CPUs (3.47\,GHz), 24\,GB main memory per node,
+10\,GBit/s Ethernet and QDR Infiniband. Intel ICC 2017 has been used with CMake
+3.2 release mode settings to compile the software stack. To benchmark the data
+distribution we used two datasets: The David statue at 2\,mm resolution (as in
+\fig{fBenchmarks (middle)}, but in 2\,mm resolution) and 3D volumes of spike
+frequencies of an electrical simulation of three million neurons
+(\fig{fBenchmarks} (right)).
 
 The PLY file is converted into a k-d tree for fast view frustum culling and
 rendering, and the resulting data structure is serialized in binary form for
-data transmission.
-
-\begin{figure}[ht]\center
-  \includegraphics[height=.44\columnwidth]{images/spikes512}\hfil
-  \includegraphics[height=.44\columnwidth]{images/beechnut}
-  \caption{\label{fVolumes}Volumes used for object distribution benchmarks:
-    spike frequencies of a three million neuron electrical simulation at
-    512x437x240 unsigned byte (51\,MB, left) and an MicroCT scan of a beechnut at
-    1024x1024x1546 unsigned short (3\,GB, right) resolution}
-\end{figure}
-
-The spike frequency volumes aggregate the number of spikes which happened within
-a given voxel over a given time. The absolute spike count is renormalized to an
-unsigned byte value during creation. Higher densities in the volume represent
-higher spiking activity in the voxel.
+data transmission. The spike frequency volumes aggregate the number of spikes
+which happened within a given voxel over a given time. The absolute spike count
+is renormalized to an unsigned byte value during creation. Higher densities in
+the volume represent higher spiking activity in the voxel.
 
 \subsubsection{Data Compression Engines}
 
@@ -1407,9 +1419,8 @@ the data compression algorithm. Our microbenchmark compresses a set of binary
 files, precalculating the speed and compression ratio of the various engines.
 \fig{fCompressor} shows the compression and decompression speed in gigabyte per
 second as well as the size of the compressed data relative to the uncompressed
-data. The different ZSTD$x$ engines use the ZStandard compression library at
-compression level $x$. The measurements were performed on a single, isolated
-node.
+data. The ZSTD$x$ engines use the ZStandard compression library at compression
+level $x$. The measurements were performed on a single, isolated node.
 
 \begin{figure}[ht]\center
   \includegraphics[width=\columnwidth]{images/compressor}
@@ -1514,16 +1525,15 @@ Finally, we compare data distribution speed using different protocols. In this
 benchmark, data synchronization time of the Spike volume data set is measured,
 as in \fig{fSpikesDist} (middle). Buffering is enabled, and compression is
 disabled to focus on the raw network performance. \fig{fIFDist} shows the
-performance using various protocols.
-
-Unsurprisingly, TCP over the faster InfiniBand link outperforms the cheaper ten
-gigabit ethernet link by more than a factor of two. Unexpectedly, the native
-RDMA connection performs worse, even though it outperforms IPoIB in a simple
-peer-to-peer connection benchmark. This needs further investigation, but we
-suspect the abstraction of a byte stream connection chosen by \textsf{Collage}
-is not well suited for remote DMA semantics; that is, one needs to design the
-network API around zero-copy semantics with managed memory for modern high-speed
-transports. Both Infiniband connections show significant measurement jitter.
+performance using various protocols. TCP over the faster InfiniBand link
+outperforms the cheaper ten gigabit ethernet link by more than a factor of two.
+Unexpectedly, the native RDMA connection performs worse, even though it
+outperforms IPoIB in a simple peer-to-peer connection benchmark. This needs
+further investigation, but we suspect the abstraction of a byte stream
+connection chosen by \textsf{Collage} is not well suited for remote DMA
+semantics; that is, one needs to design the network API around zero-copy
+semantics with managed memory for modern high-speed transports. Both Infiniband
+connections show significant measurement jitter.
 
 RSP multicast performs as expected. \textsf{Collage} starts using multicast to
 commit new object versions when two or more clients are mapped, since the
@@ -1652,7 +1662,7 @@ has been a Professor in computer science at the University of Zurich since 2005,
 \begin{figure*}[ht]\center
   \includegraphics[width=\textwidth]{images/compressorDetail}
   \caption{\label{fCompressorDetail}Data compression for PLY data (left, David
-    statue 2\,mm) and raw volumes shown in \fig{fVolumes} (middle and right)}
+    statue 2\,mm) and raw volumes shown in \fig{fBenchmarks} (right)}
 \end{figure*}
 
 \begin{figure*}[p!]\center
@@ -1664,13 +1674,13 @@ has been a Professor in computer science at the University of Zurich since 2005,
   \includegraphics[height=.19\textheight]{images/spikesdist}
   \caption{\label{fSpikesDist}Object mapping (left) and data synchronization
     time (middle, detail view right) for the Spike data set in
-    \fig{fVolumes}, left}
+    \fig{fBenchmarks} (right)}
 \end{figure*}
 \begin{figure*}[p!]\center
   \includegraphics[height=.19\textheight]{images/beechnutdist}
   \caption{\label{fBeechnutDist}Object mapping (left) and data synchronization
     time (middle, detail view right) for the beechnut data set in
-    \fig{fVolumes}, right}
+    \fig{fBenchmarks} (right)}
 \end{figure*}
 \begin{figure*}[p!]\center
   \includegraphics[height=.19\textheight]{images/ifdist}
