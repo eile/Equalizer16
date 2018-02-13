@@ -286,7 +286,7 @@ community. Various algorithms to improve the parallel rendering performance have
 been proposed: compression and region of interest during
 compositing~\cite{MEP:10}; load-balancing resources for multi-display
 installations~\cite{EEP:11}; asynchronous compositing and NUMA
-optimizations~\cite{EBAHMP:12}; as well as work queueing~\cite{SPEP:16}.
+optimizations~\cite{EBAHMP:12}; as well as work queueing~\cite{SPEP:16}. \FIXME{Why ; instead of , ?}
 Additionally, complex large scale and out-of-core multiresolution
 rendering approaches have been parallelized and implemented with
 Equalizer~\cite{GMBP:10, GEMPG:13}, demonstrating the feasibility of
@@ -545,7 +545,7 @@ Sort-first (\fig{fig:loadeq}) and sort-last load balancing are the most obvious
 optimizations for these parallel rendering modes. Our load equalizers are fully
 transparent for application developers; that is, they use a reactive approach
 based on past rendering times. This assumes a reasonable frame-to-frame
-coherency. Equalizer implements two different algorithms, a
+coherency \FIXME{Shouldn't that be frame-to-frame {\em coherence}?}. Equalizer implements two different algorithms, a
 \textsf{load\_equalizer} and a \textsf{tree\_equalizer}. The result section
 provides some evidence on the strengths and weaknesses of both algorithms.
 
@@ -588,8 +588,8 @@ corresponding boundary.
 \subsubsection{Dynamic Work Packages}
 
 The package equalizers implement client-affinity models for tile and chunk
-compounds (\sref{sec:tile}). A \textsf{tile\_equalizer} and
-\textsf{chunk\_equalizer} create the packages and change the assignment of them
+compounds (\sref{sec:tile}). A \textsf{tile\_equalizer} or
+\textsf{chunk\_equalizer} creates the packages and changes the assignment of them
 to individual nodes, based on an affinity model specified in the equalizer.
 In~\cite{SPEP:16}, we explore this approach in detail.
 
@@ -613,7 +613,7 @@ a FBO) separate to the destination channel, and then scaling the rendering
 during the transfer (typically through an on-GPU texture) to the destination
 channel. The DFR equalizer monitors the rendering performance and accordingly
 adapts the resolution of the source channel and zoom factor for the source to
-destination transfer. If the performance and source channel resolutions allows,
+destination transfer. If the performance and source channel resolutions allow,
 this will not only subsample, but also supersample the destination channel to
 reduce aliasing artefacts.
 
@@ -654,6 +654,7 @@ in particular for the costly compositing step in sort-last rendering.
 
 \subsubsection{Asynchronous Compositing}
 
+\FIXME{Sentence incomplete.}
 Asynchronous compositing pipelines rendering with compositing operations, by
 executing the image readback, network transfer and image assembly from threads
 running in parallel to the rendering threads. In \cite{EBAHMP:12}, we provide
@@ -665,7 +666,7 @@ of the rendering performance of over 25\% for large node counts.
 Compression for the compositing step is critical for performance. This not only
 applies to the well-researched network transfer step, but also for the transfer
 between GPU and CPU. \textsf{Equalizer} supports a variety of compression
-algorithms, from very fast RLE encoding, YUV subsampling on the GPU to JPEG
+algorithms, from very fast run-length encoding and YUV subsampling on the GPU to JPEG
 compression. These algorithms are implemented as runtime-loaded plugins,
 allowing easy extension and customization to application-specific compression.
 In \cite{MEP:10}, we show this to be a critical step for interactive performance
