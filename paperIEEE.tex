@@ -545,7 +545,7 @@ Sort-first (\fig{fig:loadeq}) and sort-last load balancing are the most obvious
 optimizations for these parallel rendering modes. Our load equalizers are fully
 transparent for application developers; that is, they use a reactive approach
 based on past rendering times. This assumes a reasonable frame-to-frame
-coherency \FIXME{Shouldn't that be frame-to-frame {\em coherence}?}. Equalizer implements two different algorithms, a
+coherency. \FIXME{Shouldn't that be frame-to-frame {\em coherence}?} Equalizer implements two different algorithms, a
 \textsf{load\_equalizer} and a \textsf{tree\_equalizer}. The result section
 provides some evidence on the strengths and weaknesses of both algorithms.
 
@@ -666,7 +666,7 @@ of the rendering performance of over 25\% for large node counts.
 Compression for the compositing step is critical for performance. This not only
 applies to the well-researched network transfer step, but also for the transfer
 between GPU and CPU. \textsf{Equalizer} supports a variety of compression
-algorithms, from very fast run-length encoding and YUV subsampling on the GPU to JPEG
+algorithms, from very fast run-length encoding (RLE) and YUV subsampling on the GPU to JPEG
 compression. These algorithms are implemented as runtime-loaded plugins,
 allowing easy extension and customization to application-specific compression.
 In \cite{MEP:10}, we show this to be a critical step for interactive performance
@@ -898,7 +898,7 @@ is independently responsible for creating its windows, receiving the events and
 eventually dispatching them to the application process' main thread. This design
 is motivated by the natural threading model of X11 and WGL, and allows simple
 sequential semantics between OpenGL rendering and event handling. In contrast,
-Qt requires all windows and QOpenGLContext to be created from the Qt main
+Qt requires all windows and each QOpenGLContext to be created from the Qt main
 thread. An existing Qt window or context may subsequently be moved to a
 different thread, and events are signalled from the main thread. For Qt windows,
 Equalizer will internally dispatch and handle the window creation from the
@@ -930,7 +930,7 @@ learning to fully understand and exploit. In reality, a higher abstraction of
 only \textsf{Application} and \textsf{Renderer} is sufficient for many use
 cases. In \textsf{Sequel}, the application class drives the configuration, and
 one renderer instance is created for each (pipe) render thread. They also
-provide the natural place to store and distribute data. Last, but not least,
+provide the natural place to store and distribute data. Finally,
 \textsf{ViewData} provides a convenient way to manage multiple views by storing
 the camera, model or any other view-specific information.
 
@@ -1059,8 +1059,8 @@ distribution for C++ objects. They facilitate the implementation of data
 distribution in a cluster environment. Distributed objects are created by
 subclassing from \textsf{co::Serializable} or \textsf{co::Object}. The
 application programmer implements serialization and deserialization. Distributed
-objects can be static (immutable) or dynamic. Objects have an universally unique
-identifier (UUID) as cluster-wide addresses. A master-slave model is used to
+objects can be static (immutable) or dynamic. Objects have a universally unique
+identifier (UUID) as cluster-wide address. A master-slave model is used to
 establish mapping and data synchronization across processes. Typically, the
 application main loop registers a master instance and communicates the UUID to
 the render clients, which map their instance to the given identifier. The
@@ -1078,12 +1078,12 @@ following object types are available:
   instances for synchronization. Previous instance and delta data is saved to be
   able to map and sync old versions.
 \item[Unbuffered] The object is versioned and unbuffered. No data is stored, and
-  no previous versions can be mapped. No old versions can be mapped and no
+  no previous versions can be mapped. \FIXME{Redundant.} No old versions can be mapped and no
   additional data is stored.
 \end{compactdesc}
 
 Serialization is facilitated using output or input streams, which abstract the
-data transmission and are used like a \textsf{std::stream}. The data streams
+data transmission and are used like an \textsf{std::stream}. The data streams
 implement efficient buffering and compression, and automatically select the best
 connection for data transport. Custom data type serializers can be implemented
 by providing the appropriate serialization functions. No pointers should be
@@ -1096,7 +1096,7 @@ previous version is sent, if available using multicast, to all mapped slave
 instances. The data is queued on the remote node, and is applied when the
 application calls \textsf{sync} to synchronize the object to a new version. The
 \textsf{sync} method might block if a version has not yet been committed or is
-still in transmission. All versioned objects the following characteristics:
+still in transmission. All versioned objects have the following characteristics:
 
 \begin{compactitem}
 \item The master instance of the object generates new versions for all
@@ -1104,9 +1104,9 @@ still in transmission. All versioned objects the following characteristics:
   instances, but special care has to be taken to handle possible
   conflicts.
 \item Slave instance versions can only be advanced; that is, \textsf{sync(
-  version )} with a version smaller than the current version will fail.
+  version)} with a version smaller than the current version will fail.
 \item Newly mapped slave instances are mapped to the oldest available
-  version by default, or to the version specified when calling
+  version by default \FIXME{Is this correct?}, or to the version specified when calling
   \textsf{mapObject}.
 \end{compactitem}
 
@@ -1135,7 +1135,7 @@ evaluates some of these optimizations.
 The most obvious one is compression. Recently, many new compression algorithms
 have been developed which exploit modern CPU architectures and deliver
 compression rates well above one gigabyte per second. \textsf{Collage} uses the
-Pression library~\cite{pression}, which provides an unified interface for a
+Pression library~\cite{pression}, which provides a unified interface for a
 number of compression libraries, such as FastLZ~\cite{jesperfast},
 Snappy~\cite{snappy} and ZStandard~\cite{zstd}. It also contains a custom,
 virtually zero-cost RLE compressor. Pression parallelizes the compression and
@@ -1153,8 +1153,8 @@ Caching retains instance data of objects in a client-side cache, and reuses this
 data to accelerate mapping of objects. The instance cache is either filled by
 ``snooping'' on multicast transmissions or by an explicit preloading when the
 master objects are registered. The preloading sends instance data of recently
-registered master objects while the corresponding node is idle to all connected
-nodes. These nodes simply enter the received data to their cache. Preloading
+registered master objects to all connected
+nodes, while the corresponding node is idle. These nodes simply enter the received data to their cache. Preloading
 uses multicast when available.
 
 Due to the master-slave model of data distribution, multicast is used to
@@ -1376,7 +1376,7 @@ of individual nodes, i.e., bias the allocation of rendering time in accordance
 with the (simulated) compute resources. \fig{fEqualizers} (right), on the other
 hand, illustrates how the tested decomposition modes perform on a system where
 compute resources fluctuate randomly every frame, as can arguably be the case
-for virtualized enviroments. For this scenario tile equalizer seems best suited,
+for shared rendering nodes in virtualized enviroments. For this scenario tile equalizer seems best suited,
 as it performs load balancing implicitly and does not assume coherence of
 available resources between frames. The simpler tree equalizer also outperforms
 the load equalizer in this experiment.
@@ -1417,7 +1417,7 @@ the volume represent higher spiking activity in the voxel.
 
 A critical piece for data distribution performance are the characteristics of
 the data compression algorithm. Our microbenchmark compresses a set of binary
-files, precalculating the speed and compression ratio of the various engines.
+files \FIXME{What are these files? Fig. 7 only speaks of "generic" binary data...}, precalculating the speed and compression ratio of the various engines.
 \fig{fCompressor} shows the compression and decompression speed in gigabyte per
 second as well as the size of the compressed data relative to the uncompressed
 data. The ZSTD$x$ engines use the ZStandard compression library at compression
@@ -1465,6 +1465,8 @@ established. All figures observe a noticable measurement jitter due to other
 services running on the cluster. The details of the benchmark algorithm can be
 found in the
 \htmladdnormallinkfoot{implementation}{https://github.com/Eyescale/Equalizer/tree/paper2018/tools/eqObjectBench}.
+
+\FIXME{Sentence incomplete.}
 used the same data sets as in the previous section. We ran the benchmark on up
 to eight physical nodes, that is, after eight processes nodes start to run two
 processes per node, which share CPU, memory and network interface bandwidth.
