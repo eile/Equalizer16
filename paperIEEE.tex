@@ -284,9 +284,9 @@ are a target display platform for scalable 3D graphics applications.
 \textsf{Equalizer} itself has received significant attention within the research
 community. Various algorithms to improve the parallel rendering performance have
 been proposed: compression and region of interest during
-compositing~\cite{MEP:10}; load-balancing resources for multi-display
-installations~\cite{EEP:11}; asynchronous compositing and NUMA
-optimizations~\cite{EBAHMP:12}; as well as work queueing~\cite{SPEP:16}. \FIXME{Why ; instead of , ?}
+compositing~\cite{MEP:10}, load-balancing resources for multi-display
+installations~\cite{EEP:11}, asynchronous compositing and NUMA
+optimizations~\cite{EBAHMP:12}, as well as work queueing~\cite{SPEP:16}.
 Additionally, complex large scale and out-of-core multiresolution
 rendering approaches have been parallelized and implemented with
 Equalizer~\cite{GMBP:10, GEMPG:13}, demonstrating the feasibility of
@@ -545,7 +545,7 @@ Sort-first (\fig{fig:loadeq}) and sort-last load balancing are the most obvious
 optimizations for these parallel rendering modes. Our load equalizers are fully
 transparent for application developers; that is, they use a reactive approach
 based on past rendering times. This assumes a reasonable frame-to-frame
-coherency. \FIXME{Shouldn't that be frame-to-frame {\em coherence}?} Equalizer implements two different algorithms, a
+coherence. Equalizer implements two different algorithms, a
 \textsf{load\_equalizer} and a \textsf{tree\_equalizer}. The result section
 provides some evidence on the strengths and weaknesses of both algorithms.
 
@@ -654,8 +654,7 @@ in particular for the costly compositing step in sort-last rendering.
 
 \subsubsection{Asynchronous Compositing}
 
-\FIXME{Sentence incomplete.}
-Asynchronous compositing pipelines rendering with compositing operations, by
+Asynchronous compositing is pipelining the rendering with compositing operations, by
 executing the image readback, network transfer and image assembly from threads
 running in parallel to the rendering threads. In \cite{EBAHMP:12}, we provide
 the details of the implementation and experimental data showing an improvement
@@ -1078,12 +1077,11 @@ following object types are available:
   instances for synchronization. Previous instance and delta data is saved to be
   able to map and sync old versions.
 \item[Unbuffered] The object is versioned and unbuffered. No data is stored, and
-  no previous versions can be mapped. \FIXME{Redundant.} No old versions can be mapped and no
-  additional data is stored.
+  no previous versions can be mapped.
 \end{compactdesc}
 
 Serialization is facilitated using output or input streams, which abstract the
-data transmission and are used like an \textsf{std::stream}. The data streams
+data transmission and are used like a \textsf{std::stream}. The data streams
 implement efficient buffering and compression, and automatically select the best
 connection for data transport. Custom data type serializers can be implemented
 by providing the appropriate serialization functions. No pointers should be
@@ -1106,7 +1104,7 @@ still in transmission. All versioned objects have the following characteristics:
 \item Slave instance versions can only be advanced; that is, \textsf{sync(
   version)} with a version smaller than the current version will fail.
 \item Newly mapped slave instances are mapped to the oldest available
-  version by default \FIXME{Is this correct?}, or to the version specified when calling
+  version by default, or to the version specified when calling
   \textsf{mapObject}.
 \end{compactitem}
 
@@ -1166,11 +1164,11 @@ automatically uses the multicast connection to send the new version information.
 \subsection{Barriers, Queues and Object Maps}\label{sec:barrier}
 
 \textsf{Collage} implements a few generic distributed objects which are used by
-\textsf{Equalizer} and other applicatons. A barrier is a distributed barrier
-primitive used for software swap barriers in \textsf{Equalizer}
-(\sref{sec:swap}) \FIXME{Using the word barrier three times in one short sentence}. Its implementation follows a simple master-slave approach,
-which has shown to by sufficient for this use case. The used distributed data structures are single producer,
-multiple consumer FIFO queues. To hide network latencies, consumers prefetch stored
+\textsf{Equalizer} and other applications. A barrier is a distributed barrier
+primitive used for software swap synchronization in \textsf{Equalizer}
+(\sref{sec:swap}). Its implementation follows a simple master-slave approach,
+which has shown to by sufficient for this use case. Queues are distrbuted, single producer,
+multiple consumer FIFO queues. To hide network latencies, consumers prefetch
 items into a local queue. Queues are used for tile and chunk compounds
 (\sref{sec:tile}).
 
@@ -1292,7 +1290,7 @@ makes it possible to have multiple immersive applications running on a
 cluster-controlled display system, have different input sources dynamically
 routed to applications, and have rendering results optionally redirected to a
 distributed compositing manager. Omegalib supports pluggable front-ends, to
-simplify the integration of third-party libraries like OpenGL \FIXME{But if it's based on Equalizer then OpenGL should already be part of the backend?}, OpenSceneGraph,
+simplify the integration of third-party libraries like OpenGL, OpenSceneGraph,
 and the Visualization Toolkit (VTK).
 
 %----------------------------------------------------------------------
@@ -1417,7 +1415,7 @@ the volume represent higher spiking activity in the voxel.
 
 A critical piece for data distribution performance are the characteristics of
 the data compression algorithm. Our microbenchmark compresses a set of binary
-files \FIXME{What are these files? Fig. 7 only speaks of "generic" binary data...}, precalculating the speed and compression ratio of the various engines.
+files, precalculating the speed and compression ratio of the various engines.
 \fig{fCompressor} shows the compression and decompression speed in gigabyte per
 second as well as the size of the compressed data relative to the uncompressed
 data. The ZSTD$x$ engines use the ZStandard compression library at compression
@@ -1466,8 +1464,7 @@ services running on the cluster. The details of the benchmark algorithm can be
 found in the
 \htmladdnormallinkfoot{implementation}{https://github.com/Eyescale/Equalizer/tree/paper2018/tools/eqObjectBench}.
 
-\FIXME{Sentence incomplete.}
-used the same data sets as in the previous section. We ran the benchmark on up
+We used the same data sets as in the previous section, and ran the benchmark on up
 to eight physical nodes, that is, after eight processes nodes start to run two
 processes per node, which share CPU, memory and network interface bandwidth.
 
