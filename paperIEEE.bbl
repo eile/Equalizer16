@@ -1,0 +1,197 @@
+\begin{thebibliography}{10}
+
+\bibitem{adamson2004negative}
+B.~Adamson, C.~Bormann, M.~Handley, and J.~Macker.
+\newblock Negative-acknowledgment ({NACK})-oriented reliable multicast ({NORM})
+  protocol.
+\newblock Memo RFC 3940, The Internet Society, 2004.
+
+\bibitem{BRE:05}
+P.~Bhaniramka, P.~C.~D. Robert, and S.~Eilemann.
+\newblock {OpenGL Multipipe SDK}: A toolkit for scalable parallel rendering.
+\newblock In {\em Proceedings IEEE Visualization}, pages 119--126, 2005.
+
+\bibitem{tide}
+{Blue Brain Project}.
+\newblock {Tide: Tiled Interactive Display Environment}.
+\newblock https://github.com/BlueBrain/Tide, 2016.
+
+\bibitem{BGP:09}
+J.~B{\"o}sch, P.~Goswami, and R.~Pajarola.
+\newblock {RASTeR}: Simple and efficient terrain rendering on the {GPU}.
+\newblock In {\em Proceedings EUROGRAPHICS Areas Papers, Scientific
+  Visulization}, pages 35--42, 2009.
+
+\bibitem{DK:11}
+K.-U. Doerr and F.~Kuester.
+\newblock {CGLX}: A scalable, high-performance visualization framework for
+  networked display environments.
+\newblock {\em IEEE Transactions on Visualization and Computer Graphics},
+  17(2):320--332, March 2011.
+
+\bibitem{Eilemann:13}
+S.~Eilemann.
+\newblock {Equalizer Programming and User Guide}.
+\newblock Technical report, Eyescale Software GmbH, 2013.
+
+\bibitem{EBAHMP:12}
+S.~Eilemann, A.~Bilgili, M.~Abdellah, J.~Hernando, M.~Makhinya, R.~Pajarola,
+  and F.~Sch{\"u}rmann.
+\newblock {Parallel Rendering on Hybrid Multi-GPU Clusters.}
+\newblock In {\em EGPGV}, pages 109--117, 2012.
+
+\bibitem{EMP:09}
+S.~Eilemann, M.~Makhinya, and R.~Pajarola.
+\newblock Equalizer: A scalable parallel rendering framework.
+\newblock {\em IEEE Transactions on Visualization and Computer Graphics},
+  15(3):436--452, May/June 2009.
+
+\bibitem{EP:07}
+S.~Eilemann and R.~Pajarola.
+\newblock Direct send compositing for parallel sort-last rendering.
+\newblock In {\em Proceedings Eurographics Symposium on Parallel Graphics and
+  Visualization}, 2007.
+
+\bibitem{EHKRW:06}
+K.~Engel, M.~Hadwiger, J.~M. Kniss, C.~Rezk-Salama, and D.~Weiskopf.
+\newblock {\em Real-Time Volume Graphics}.
+\newblock AK Peters, 2006.
+
+\bibitem{EEP:11}
+F.~Erol, S.~Eilemann, and R.~Pajarola.
+\newblock Cross-segment load balancing in parallel rendering.
+\newblock In {\em Proceedings Eurographics Symposium on Parallel Graphics and
+  Visualization}, pages 41--50, 2011.
+
+\bibitem{zstd}
+I.~Facebook.
+\newblock {Fast real-time compression algorithm}.
+\newblock https://github.com/facebook/zstd, 2016.
+
+\bibitem{Omegalib}
+A.~Febretti, A.~Nishimoto, V.~Mateevitsi, L.~Renambot, A.~Johnson, and
+  J.~Leigh.
+\newblock {Omegalib: A multi-view application framework for hybrid reality
+  display environments}.
+\newblock In {\em 2014 IEEE Virtual Reality (VR)}, pages 9--14, March 2014.
+
+\bibitem{FNTTL:13}
+A.~Febretti, A.~Nishimoto, T.~Thigpen, J.~Talandis, L.~Long, J.~Pirtle,
+  T.~Peterka, A.~Verlo, M.~Brown, D.~Plepys, et~al.
+\newblock Cave2: a hybrid reality environment for immersive simulation and
+  information analysis.
+\newblock In {\em IS\&T/SPIE Electronic Imaging}, pages 864903--864903.
+  International Society for Optics and Photonics, 2013.
+
+\bibitem{Gau:2002:MFC:506824.506832}
+R.-H. Gau, Z.~J. Haas, and B.~Krishnamachari.
+\newblock On multicast flow control for heterogeneous receivers.
+\newblock {\em IEEE/ACM Trans. Netw.}, 10(1):86--101, Feb. 2002.
+
+\bibitem{pgm}
+J.~Gemmell, T.~Montgomery, T.~Speakman, and J.~Crowcroft.
+\newblock {The PGM reliable multicast protocol}.
+\newblock {\em IEEE Network}, 17(1):16--22, Jan 2003.
+
+\bibitem{pression}
+E.~S. GmbH and B.~B. Project.
+\newblock {Compression and data transfer plugins}.
+\newblock https://github.com/Eyescale/Pression, 2016.
+
+\bibitem{GEMPG:13}
+P.~Goswami, F.~Erol, R.~Mukhi, R.~Pajarola, and E.~Gobbetti.
+\newblock An efficient multiresolution framework for high quality interactive
+  rendering of massive point clouds using multi-way kd-trees.
+\newblock {\em The Visual Computer}, 29(1):69--83, 2013.
+
+\bibitem{GMBP:10}
+P.~Goswami, M.~Makhinya, J.~B{\"o}sch, and R.~Pajarola.
+\newblock Scalable parallel out-of-core terrain rendering.
+\newblock In {\em Proceedings Eurographics Symposium on Parallel Graphics and
+  Visualization}, pages 63--71, 2010.
+
+\bibitem{HBBES:13}
+J.~B. Hernando, J.~Biddiscombe, B.~Bohara, S.~Eilemann, and F.~Sch\"{u}rmann.
+\newblock {Practical Parallel Rendering of Detailed Neuron Simulations}.
+\newblock In {\em Proceedings of the 13th Eurographics Symposium on Parallel
+  Graphics and Visualization}, EGPGV, pages 49--56, Aire-la-Ville, Switzerland,
+  Switzerland, 2013. Eurographics Association.
+
+\bibitem{HHNFAKK:02}
+G.~Humphreys, M.~Houston, R.~Ng, R.~Frank, S.~Ahern, P.~D. Kirchner, and J.~T.
+  Klosowski.
+\newblock Chromium: A stream-processing framework for interactive rendering on
+  clusters.
+\newblock {\em ACM Transactions on Graphics}, 21(3):693--702, 2002.
+
+\bibitem{jesperfast}
+J.~Jesper, K.~Sadakane, and W.-K. Sung.
+\newblock Fast {LZ}-compression algorithm.
+\newblock Technical report, Department of Computer Science and Communication
+  Engineering, Kyushu. University, Japan.
+
+\bibitem{DC}
+G.~P. Johnson, G.~D. Abram, B.~Westing, P.~Navr'til, and K.~Gaither.
+\newblock {DisplayCluster: An Interactive Visualization Environment for Tiled
+  Displays}.
+\newblock In {\em 2012 IEEE International Conference on Cluster Computing},
+  pages 239--247, Sept 2012.
+
+\bibitem{LK:09}
+M.~Lambers and A.~Kolb.
+\newblock {GPU-based framework for distributed interactive 3D visualization of
+  multimodal remote sensing data}.
+\newblock In {\em 2009 IEEE International Geoscience and Remote Sensing
+  Symposium}, volume~4, pages IV--57--IV--60, July 2009.
+
+\bibitem{MEP:10}
+M.~Makhinya, S.~Eilemann, and R.~Pajarola.
+\newblock {Fast Compositing for Cluster-Parallel Rendering}.
+\newblock In {\em Proceedings of the 10th Eurographics Conference on Parallel
+  Graphics and Visualization}, EGPGV, pages 111--120, Aire-la-Ville,
+  Switzerland, Switzerland, 2010. Eurographics Association.
+
+\bibitem{Sage2}
+T.~Marrinan, J.~Aurisano, A.~Nishimoto, K.~Bharadwaj, V.~Mateevitsi,
+  L.~Renambot, L.~Long, A.~Johnson, and J.~Leigh.
+\newblock {SAGE2: A new approach for data intensive collaboration using
+  Scalable Resolution Shared Displays}.
+\newblock In {\em Collaborative Computing: Networking, Applications and
+  Worksharing}, pages 177--186, 2014.
+
+\bibitem{MBDM:97}
+J.~S. Montrym, D.~R. Baum, D.~L. Dignam, and C.~J. Migdal.
+\newblock {InfiniteReality}: A real-time graphics system.
+\newblock In {\em Proceedings ACM SIGGRAPH}, pages 293--302, 1997.
+
+\bibitem{deflect}
+D.~Nachbaur, R.~Dumusc, A.~Bilgili, J.~Hernando, and S.~Eilemann.
+\newblock {Remote parallel rendering for high-resolution tiled display walls}.
+\newblock In {\em Large Data Analysis and Visualization (LDAV), 2014 IEEE 4th
+  Symposium on}, pages 117--118, Nov 2014.
+
+\bibitem{Sage}
+K.~Naveen, V.~Venkatram, C.~Vaidya, S.~Nicholas, S.~Allan, Z.~Charles,
+  G.~Gideon, L.~Jason, and J.~Andrew.
+\newblock Sage: the scalable adaptive graphics environment.
+
+\bibitem{NHM:11}
+B.~Neal, P.~Hunkin, and A.~McGregor.
+\newblock Distributed {OpenGL} rendering in network bandwidth constrained
+  environments.
+\newblock In T.~Kuhlen, R.~Pajarola, and K.~Zhou, editors, {\em Proceedings
+  Eurographics Conference on Parallel Graphics and Visualization}, pages
+  21--29. Eurographics Association, 2011.
+
+\bibitem{snappy}
+opensource@google.com.
+\newblock {A fast compressor/decompressor}.
+\newblock https://github.com/google/snappy, 2016.
+
+\bibitem{SPEP:16}
+D.~Steiner, E.~G. Paredes, S.~Eilemann, and R.~Pajarola.
+\newblock Dynamic work packages in parallel rendering.
+\newblock In {\em Proceedings Eurographics Symposium on Parallel Graphics and
+  Visualization}, pages 89--98, 2016.
+
+\end{thebibliography}
