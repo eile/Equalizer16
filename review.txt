@@ -36,6 +36,8 @@ I was also confused by what the difference is between object mapping and data sy
 
 A couple of minor fixes. On page 9, "were a single running Deltagen instance" should be "where a single running Deltagen instance". Also, the label on the x-axis of the left plot of Figure 8 is missing.
 
+[addressed in r139]
+
 
 Additional Questions:
 1. Which category describes this manuscript?: Application
