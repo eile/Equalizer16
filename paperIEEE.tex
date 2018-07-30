@@ -839,8 +839,8 @@ configuration provides multiple, run-time configurable layouts. It is driven
 from the control host on the right, which shows four views, each in their own
 canvas and segment windows with a single-view layout each. One view on the
 control host synchronizes its content (model and camera) with one view on the
-display wall through Collage objects. The control host allows full model
-modifications and all workflows supported within the standalone Deltagen
+display wall through \textsf{Collage} objects. The control host allows full
+model modifications and all workflows supported within the standalone Deltagen
 application, and all changes are synchronized to the corresponding rendering
 nodes. For this monoscopic setup no head tracking or observers are used.
 
@@ -941,12 +941,13 @@ the camera, model or any other view-specific information.
 
 An important part of writing a parallel rendering application is the
 communication layer between the individual processes. \textsf{Equalizer} relies
-on the
-\textsf{Collage} network library for its internal operation. \textsf{Collage}
-furthermore provides
-powerful abstractions for writing \textsf{Equalizer} applications, which are
-introduced
-in this section.
+on the \textsf{Collage} network library for its internal operation.
+\textsf{Collage} furthermore provides powerful abstractions for writing
+\textsf{Equalizer} applications, which are introduced in this section.
+\textsf{Collage} is a separate, standalone library heavily influenced by the
+requirements of \textsf{Equalizer}. It is used directly when implementing data
+distribution for parallel rendering applications, and independently by a few
+research projects.
 
 %------------------------------------------------------------------------------
 \subsection{Architecture}
