@@ -24,9 +24,15 @@ The novelty of this paper is fairly low. The paper essentially is reviewing work
 
 The discussion of the Collage network library seems a little off topic. I was a bit confused about whether Collage is a component of Equalizer or its stand alone library. After finding it through Google it appears to be sort of both. You can get and use Collage as an independent library, but it's unclear Collage is used anywhere other than Equalizer. I don't know of any other publications for the work in Collage, so I guess this paper could be that venue, but if for whatever reason the paper needed to be shortened, this is where I would start.
 
+[addressed in r137]
+
 I was a bit confused by some of the details of the experimental results. First, it is not clear to me why the sort-last approaches are better than sort-first for the polygonal rendering and vice-versa the volume rendering. I don't know what is fundamentally different about the two that would exchange the relative sort-first/sort-last behavior, and it would be helpful if the paper clarified why. Also, the paper does not make clear what it means by tile_equalizer. The description in Section 3.2.2 is too terse to be helpful. I looked up the reference it cites, and it is still not clear as the dynamic load balancing can apply to either a sort-first or sort-last approach. I am assuming it is a division of screen space (sort-first) that is being shown here.
 
+[David?]
+
 I was also confused by what the difference is between object mapping and data synchronization. Both involve getting data objects to worker instances. The only differentiation I see in the paper is that one is a pull operation and the other is a push operation, but I don't see how this fundamentally changes the behavior of the network performance.
+
+[addressed in r138]
 
 A couple of minor fixes. On page 9, "were a single running Deltagen instance" should be "where a single running Deltagen instance". Also, the label on the x-axis of the left plot of Figure 8 is missing.
 
