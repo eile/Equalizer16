@@ -1,0 +1,134 @@
+**************
+Associate Editor Comments
+
+Associate Editor
+Comments to the Author:
+The paper was substantially improved, and I am glad to report that all the reviewers concord that the paper it is nearly ready for publication. I recommend that the manuscript goes through a final minor review cycle to address the reaming concerns of reviewers. Note that even the two reviewers who are suggesting publication with no changes are actually recommending modifications that are important before the paper can be published. The authors are therefore strongly engorged to address all the concerns of all three reviewers carefully.
+
+********************
+
+Reviewer Comments
+
+Please note that some reviewers may have included additional comments in a separate file. If a review contains the note "see the attached file" under Section III A - Public Comments, you will need to log on to ScholarOne Manuscripts to view the file. After logging in to ScholarOne Manuscripts, select the Author Center. Then, click on "Submitted Manuscripts," find the correct paper, and click on "View Decision Letter." Scroll down to the bottom of the decision letter and click on the file attachment link.  This will open the file that the reviewer(s) or the Associate Editor included for you along with their review.
+
+Reviewer: 1
+
+Recommendation: Accept With No Changes
+
+Comments:
+Overall, I like this paper. The paper reports on the underlying R&D for a well-established production-ready library (Equalizer). This demonstrates the utility of the work in and of itself, and so summaries of successful projects of this nature are of use to the community.
+
+The language of the paper is well written. I found very few mistakes, and hence my rating is "Accept with No Changes." Apart from some minor tweaks to get this paper camera-ready, I would be fine with it being published as is.
+
+The novelty of this paper is fairly low. The paper essentially is reviewing work already established in previous literature, but scoped more narrowly than I would expect a traditional literature review. I still think this collective reporting of work has value as a publication, but this is by no means groundbreaking.
+
+The discussion of the Collage network library seems a little off topic. I was a bit confused about whether Collage is a component of Equalizer or its stand alone library. After finding it through Google it appears to be sort of both. You can get and use Collage as an independent library, but it's unclear Collage is used anywhere other than Equalizer. I don't know of any other publications for the work in Collage, so I guess this paper could be that venue, but if for whatever reason the paper needed to be shortened, this is where I would start.
+
+I was a bit confused by some of the details of the experimental results. First, it is not clear to me why the sort-last approaches are better than sort-first for the polygonal rendering and vice-versa the volume rendering. I don't know what is fundamentally different about the two that would exchange the relative sort-first/sort-last behavior, and it would be helpful if the paper clarified why. Also, the paper does not make clear what it means by tile_equalizer. The description in Section 3.2.2 is too terse to be helpful. I looked up the reference it cites, and it is still not clear as the dynamic load balancing can apply to either a sort-first or sort-last approach. I am assuming it is a division of screen space (sort-first) that is being shown here.
+
+I was also confused by what the difference is between object mapping and data synchronization. Both involve getting data objects to worker instances. The only differentiation I see in the paper is that one is a pull operation and the other is a push operation, but I don't see how this fundamentally changes the behavior of the network performance.
+
+A couple of minor fixes. On page 9, "were a single running Deltagen instance" should be "where a single running Deltagen instance". Also, the label on the x-axis of the left plot of Figure 8 is missing.
+
+
+Additional Questions:
+1. Which category describes this manuscript?: Application
+
+2. How relevant is this manuscript to the readers of this periodical? Please explain your rating under Public Comments below.: Relevant
+
+1. Please explain how this manuscript advances this field of research and/or contributes something new to the literature. What do you see as the strongest and the weakest aspect of the paper?: This paper summaries a body of work in parallel rendering for scientific visualization under the implementation of the Equalizer library. I would classify this paper somewhere between a literature review and a systems paper, with this paper being scoped more narrowly than typical of the former and less novel than typical of the latter. Still, I think this is an interesting collection of information about the R&D behind a well-used production system, which should be of interest to some readers. I think IEEE CG&A might be a bit better venue for this paper, but I don't have any major arguments against TVCG.
+
+2. Is the manuscript technically sound? Please explain your answer under Public Comments below.: Appears to be - but didn't check completely
+
+1. Are the title, abstract, and keywords appropriate? Please explain under Public Comments below.: Yes
+
+2. Does the manuscript contain sufficient and appropriate references? Please explain and list missing references under Public Comments below.: References are sufficient and appropriate
+
+3. Does the introduction state the objectives of the manuscript in terms that encourage the reader to read on? Please explain your answer under Public Comments below.: Yes
+
+4. How would you rate the organization of the manuscript? Is it focused? Is the length appropriate for the topic? Please explain under Public Comments below.: Satisfactory
+
+5. Please rate the readability of the manuscript. Explain your rating under Public Comments below.: Easy to read
+
+6. Should the supplemental material be included? (Click on the Supplementary Files icon to view files): Does not apply, no supplementary files included
+
+7. If yes to 6, should it be accepted:
+
+Please rate the manuscript. Explain your choice.: Good
+
+
+Reviewer: 2
+
+Recommendation: Author Should Prepare A Minor Revision
+
+Comments:
+The most obvious drawback of the paper is that it doesn't describe any "novelty", and I am sure some will object to that. I personally would argue, though, that a paper's value should be solely judged on whether it "advances the field", and I can well imaging that this paper would prove very valuable for a practitioner to be able to read up on the "state of the art" of a complete and non-trivial system. As such, I find the paper to be perfectly acceptable, in particular for a journal.
+
+For the paper itself, I only have two concerns:
+
+First, in particular in the first half the paper often reads as "section X: we added this and that, more detail is described in [cite x]. Section Y, we added this and that, more detail in [y]". This should be fixed, to at least some degree.
+
+Second: the paper's biggest value would be as a self-contained reference for a novel reader, but it very often makes the assumption that the reader is already (very) familiar with Equalizer, and simply uses terms and concepts from this original paper without explaining them. This makes the paper hard to read in places, and should be fixed. Ideally the authors would add a complete section that first reviews/summarizes the old paper(s)/system before then elaborating on what has been added since then. If that required lengthening the paper I personallly would strongly support giving the authors an extra page to do that; if that in turn was not possible I personally would prefer to completely kill the related work section to make space for such a summary.
+
+Desired Revision: Add a section that (briefly) summarizes the original Equalizer system, that explains the base concepts, and in particular intruduces all the terms that the later sections assume familiarity with.
+
+Additional Questions:
+1. Which category describes this manuscript?: Survey
+
+2. How relevant is this manuscript to the readers of this periodical? Please explain your rating under Public Comments below.: Relevant
+
+1. Please explain how this manuscript advances this field of research and/or contributes something new to the literature. What do you see as the strongest and the weakest aspect of the paper?: The author provides a survey/review of the Equalizer framework, in particular of the 2.0 version of this software package. Though all individual components are already public and/or described in other places, the key contribution of the paper is that it surveys what the title mentions as the "convergence" of a long train of developments, additions, improvements, etc, on top of the original Equalizer framework. Though I am sure others will raise questions regarding the novelty, I do believe it a valuable addition to the literature for have a single paper that nicely summarizes such a system, rather than asking practitioners to try and gather all this information from multiple disparate (and often outdated) sources.
+
+2. Is the manuscript technically sound? Please explain your answer under Public Comments below.: Yes
+
+1. Are the title, abstract, and keywords appropriate? Please explain under Public Comments below.: Yes
+
+2. Does the manuscript contain sufficient and appropriate references? Please explain and list missing references under Public Comments below.: References are sufficient and appropriate
+
+3. Does the introduction state the objectives of the manuscript in terms that encourage the reader to read on? Please explain your answer under Public Comments below.: Yes
+
+4. How would you rate the organization of the manuscript? Is it focused? Is the length appropriate for the topic? Please explain under Public Comments below.: Could be improved
+
+5. Please rate the readability of the manuscript. Explain your rating under Public Comments below.: Readable - but requires some effort to understand
+
+6. Should the supplemental material be included? (Click on the Supplementary Files icon to view files): Does not apply, no supplementary files included
+
+7. If yes to 6, should it be accepted: After revisions.  Please include explanation under Public Comments below.
+
+Please rate the manuscript. Explain your choice.: Good
+
+
+Reviewer: 3
+
+Recommendation: Accept With No Changes
+
+Comments:
+As stated in the summary review, this is an excellent paper with no major technical concerns. The only recommendations I would make are to:
+- describe in more detail how actual rendering algorithms (i.e., image-parallel vs object-parallel ray tracing) use the various compounds described in sections 2 and 3.
+- move some discussion of the compression techniques from section 8 into section 6 (or another technical discussion section outside of Results).
+That said, the paper is sufficiently polished in my opinion as to warrant publication as is.
+
+Additional Questions:
+1. Which category describes this manuscript?: Application
+
+2. How relevant is this manuscript to the readers of this periodical? Please explain your rating under Public Comments below.: Relevant
+
+1. Please explain how this manuscript advances this field of research and/or contributes something new to the literature. What do you see as the strongest and the weakest aspect of the paper?: This paper describes improvements to the original Equalizer framework resulting in the current Equalizer 2 general-purpose distributed rendering framework for cluster-based tiled displays. The strongest contribution is that it summarizes the main new features of the software, provides some examples of how compounds and equalizers are exposed to the developer user, and describes applications using the framework. The weakest aspect is the results section contains some technical discussion of compression used in data distribution -- which is somewhat awkwardly placed given that this is chiefly an applications and not a technique paper. Overall it is a sound follow-up to existing conference publications from this group.
+
+2. Is the manuscript technically sound? Please explain your answer under Public Comments below.: Yes
+
+1. Are the title, abstract, and keywords appropriate? Please explain under Public Comments below.: Yes
+
+2. Does the manuscript contain sufficient and appropriate references? Please explain and list missing references under Public Comments below.: References are sufficient and appropriate
+
+3. Does the introduction state the objectives of the manuscript in terms that encourage the reader to read on? Please explain your answer under Public Comments below.: Yes
+
+4. How would you rate the organization of the manuscript? Is it focused? Is the length appropriate for the topic? Please explain under Public Comments below.: Satisfactory
+
+5. Please rate the readability of the manuscript. Explain your rating under Public Comments below.: Easy to read
+
+6. Should the supplemental material be included? (Click on the Supplementary Files icon to view files): Yes, as part of the digital library for this submission if accepted
+
+7. If yes to 6, should it be accepted: As is
+
+Please rate the manuscript. Explain your choice.: Excellent
