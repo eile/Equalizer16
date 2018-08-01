@@ -78,9 +78,10 @@ First, in particular in the first half the paper often reads as "section X: we a
 
 Second: the paper's biggest value would be as a self-contained reference for a novel reader, but it very often makes the assumption that the reader is already (very) familiar with Equalizer, and simply uses terms and concepts from this original paper without explaining them. This makes the paper hard to read in places, and should be fixed. Ideally the authors would add a complete section that first reviews/summarizes the old paper(s)/system before then elaborating on what has been added since then. If that required lengthening the paper I personallly would strongly support giving the authors an extra page to do that; if that in turn was not possible I personally would prefer to completely kill the related work section to make space for such a summary.
 
-[both addressed in r140]
-
 Desired Revision: Add a section that (briefly) summarizes the original Equalizer system, that explains the base concepts, and in particular intruduces all the terms that the later sections assume familiarity with.
+
+[all addressed in r140]
+
 
 Additional Questions:
 1. Which category describes this manuscript?: Survey
@@ -115,6 +116,9 @@ Recommendation: Accept With No Changes
 Comments:
 As stated in the summary review, this is an excellent paper with no major technical concerns. The only recommendations I would make are to:
 - describe in more detail how actual rendering algorithms (i.e., image-parallel vs object-parallel ray tracing) use the various compounds described in sections 2 and 3.
+
+[addressed in r141]
+
 - move some discussion of the compression techniques from section 8 into section 6 (or another technical discussion section outside of Results).
 That said, the paper is sufficiently polished in my opinion as to warrant publication as is.
 

@@ -519,16 +519,24 @@ descriptions for parallel rendering}
 Time-multiplexing (\fig{fig:dplex}), also called AFR or DPlex, was first
 implemented in \cite{BRE:05} for shared memory machines. It is however a better
 fit for distributed memory systems, since the separate memory space makes
-concurrent rendering of different frames easier to implement. While it increases
-the framerate linearly, it does not decrease the latency between user input and
-the corresponding output. Consequently, this decomposition mode is mostly useful
-for non-interactive movie generation. It is transparent to \textsf{Equalizer}
-applications, but does require the configuration latency to be equal or greater
-than the number of source channels. Furthermore, to work in multi-threaded,
-multi-GPU configurations, the application needs to support running the rendering
-threads asynchronously (\sref{sec:threading}). The output frame rate of the
-destination channel may be smoothened using a {\em frame rate equalizer}
-(\sref{sec:framerateEq}).
+concurrent rendering of different frames easier to implement. While it
+increases the framerate linearly, it does not decrease the latency between user
+input and the corresponding output. Consequently, this decomposition mode is
+mostly useful for non-interactive rendering, e.g., for movie generation. It is
+transparent to \textsf{Equalizer} applications, but does require the
+configuration latency to be equal or greater than the number of source
+channels. Furthermore, to work in multi-threaded, multi-GPU configurations, the
+application needs to support running the rendering threads asynchronously
+(\sref{sec:threading}). The output frame rate of the destination channel may be
+smoothened using a {\em frame rate equalizer} (\sref{sec:framerateEq}).
+
+DPlex is configured by restricting the source compounds to a \textit{phase}
+(offset) of a certain \textit{period} (number of skipped frames) of the
+destination channel's rendering. All output frames of the source channels may
+use the same name, as each output frame only is available at a distinct
+rendered frame for input. The period/phase decomposition may also be used for
+other means, e.g., to have one channel render at half the frame rate on an
+underpowered control workstation for a tiled display wall.
 
 \subsubsection{Tiles and Chunks}\label{sec:tile}
 
@@ -541,6 +549,13 @@ As shown in~\cite{SPEP:16} and the results, these modes can provide better
 performance due to being implicitly, i.e., inherently load-balanced, as long as
 there is an insignificant overhead for the render task setup. This mode is
 transparent to \textsf{Equalizer} applications.
+
+Tile and chunk compounds are configured through output and input queues, which
+behave similarly to compositing frames. A single output queue configures the
+tile or chunk size and generates the work packages on the destination compound.
+Each source has an input queue of the same name, which consumes items from the
+output queue. Each work item generates a separate draw and readback task, and
+one input assemble image on the destination channel.
 
 
 \subsubsection{Pixel}
@@ -556,6 +571,13 @@ pixels. This functionality is transparent to \textsf{Equalizer} applications,
 and the default compositing uses the stencil buffer to blit pixels onto the
 destination channel.
 
+Pixel compounds are configured similarly to sort-first compounds, except that
+instead of decomposing the \textit{viewport}, they decompose a \textit{pixel}
+kernel. The kernel is a 2D structure describing the shape and sampled pixel
+within the shape in the format \textit{[x y width height]}, that is, a source
+compound selects the pixel \textit{x, y} within a decomposition of size
+\textit{width, height}.
+
 \subsubsection{Subpixel}
 
 Subpixel compounds (\fig{fig:subpixel}) are similar to pixel compounds, but they
@@ -565,9 +587,11 @@ averaging of all computed fragments for a pixel. This feature is not fully
 transparent to the application, since it needs to adapt (jitter or tilt) the
 frustum based on the iteration executed.
 
-% Furthermore, subpixel compounds interact with idle image refinements, e.g., they
-% can accelerate idle anti-aliasing of a scene when the camera and scene are not
-% changed.
+Subpixel compounds are configured similarly to pixel compounds, but instead of
+a \textit{pixel} kernel they decompose a \textit{subpixel} kernel in the format
+\textit{[index, size]}, describing which subpixel of \textit{size} samples a
+source produces. By default, the output frames are averaged on the destination
+channel.
 
 %------------------------------------------------------------------------------
 \subsection{Equalizers}
