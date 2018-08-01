@@ -205,21 +205,20 @@ Environments, Display Walls
 \IEEEraisesectionheading{\section{Introduction} \label{sec:introduction}}
 %----------------------------------------------------------------------
 
-The Equalizer parallel rendering framework as first presented in~\cite{EMP:09} has
-demonstrated its general versatility and the usefulness of its minimally-intrusive
-programming design in a variety of applications and projects.
-In particular, the integration of large-scale parallel rendering algorithms,
-APIs for developing complex distributed applications, and many
-individual features make Equalizer a unique, open source framework to develop
-visualization applications for virtually any type of setup and use case.
-While individual applications and case studies using the framework, as well as
-new algorithms and system components extending it have been presented
-since the initial release of Equalizer, many important features and functionalities
-have not previously been published and are presented here.
-In this report, we thus present an updated comprehensive review of the
-integration of research, application use cases and commercial developments
-with respect to Equalizer as well as novel comparative experimental results
-of its scalability features.
+The Equalizer parallel rendering framework, first presented in~\cite{EMP:09},
+has demonstrated its general versatility and the usefulness of its
+minimally-intrusive design in a variety of applications and projects. In
+particular, the integration of large-scale parallel rendering algorithms, APIs
+for developing complex distributed applications, and many individual features
+make Equalizer a unique, open source framework to develop visualization
+applications for virtually any type of setup and use case. While individual
+applications and case studies using the framework, as well as new algorithms
+and system components extending it have been presented since the initial
+release of Equalizer, many features and functionalities have not been published
+yet and are presented here. In this report, we thus present an updated
+comprehensive review of the integration of research, application use cases and
+commercial developments with respect to Equalizer as well as novel comparative
+experimental results of its scalability features.
 
 We present novel algorithms for parallel rendering which did not appear in a
 separate publication, including pixel and sub-pixel decompositions, dynamic
@@ -230,13 +229,13 @@ distance and asymmetric eye positions for VR, parallel pixel streaming to tiled
 display walls, as well as a fully-fledged data distribution API with compression
 and reliable multicast.
 
-The remainder of this paper is structured as follows: First we provide an update
-on related work since the introduction of \textsf{Equalizer}. The main body of this paper
-then presents new performance features, VR algorithms, usability
-features to build complex applications, main novel features of the underlying
-\textsf{Collage} network library and a quick overview of the main
-\textsf{Equalizer}-based applications. A result section presents new experiments
-not previously published, followed by the discussion and conclusion.
+The remainder of this paper is structured as follows: First we provide an
+update on related work since the introduction of \textsf{Equalizer}. The main
+body of this paper then presents new performance features, VR algorithms,
+usability features to build complex applications, an overview of the underlying
+\textsf{Collage} network library and a summary of the main
+\textsf{Equalizer}-based applications. A result section presents new
+experiments, followed by the discussion and conclusion.
 
 %----------------------------------------------------------------------
 \section{Related Work}\label{sec:related}
@@ -246,9 +245,9 @@ In 2009 we presented \textsf{Equalizer}~\cite{EMP:09}, which introduced the
 architecture of a generic parallel rendering framework and summarized our work
 in parallel rendering. Since then, an extensive Programming and User Guide
 provides in-depth documentation on using and programming
-\textsf{Equalizer}~\cite{Eilemann:13}. In the following related work we assume
-these two publications and their references as a starting point, and focus on
-the new work published since 2009.
+\textsf{Equalizer}~\cite{Eilemann:13}. We assume these two publications and
+their references as a starting point, and focus on the new work published since
+2009.
 
 The concept of transparent OpenGL interception popularized by \textsf{WireGL}
 and \textsf{Chromium}~\cite{HHNFAKK:02} has received little attention since
@@ -304,20 +303,82 @@ Cave2, made significant progress in integrating 2D collaborative workspaces like
 for visualizing remote sensing data~\cite{LK:09} on large displays and immersive
 installations.
 
+\section{Fundamentals}
+
+The core task of developing an Equalizer application is to separate the
+rendering code from the application logic. The application main thread will
+execute its main loop as before, but instead of issuing rendering calls it will
+request a frame to be rendered from Equalizer. Depending on the configuration,
+Equalizer will then decompose and synchronize the rendering tasks. The
+application rendering code is executed in parallel under a given render
+context, which is the core entity abstracting the application-specific
+rendering algorithm from the system-specific configuration. This render context
+formalizes the minimal abstraction for parallel rendering, and specifies:
+
+\begin{compactdesc}
+
+ \item[Buffer] OpenGL-style read and draw buffer as well as color mask. These
+ parameters are influenced by the current eye pass, eye separation and
+ anaglyphic stereo settings.
+
+ \item[Viewport] Two-dimensional pixel viewport restricting the rendering area.
+ The pixel viewport is influenced by the destination viewport and viewports set
+ for sort-first decompositions.
+
+ \item[Frustum] Frustum parameters as defined by \textsf{glFrustum}. Typically
+ the frustum is used to set up the OpenGL projection matrix. The frustum is
+ influenced by the destinations view definition, sort-first, pixel and subpixel
+ decomposition, tracking head matrix and the current eye pass.
+
+ \item[Head Transformation] A transformation matrix positioning the frustum.
+ For planar views this is an identity matrix. In immersive rendering, it is
+ normally used to set up the `view' part of the modelview matrix, before static
+ light sources are defined.
+
+ \item[Range] A one-dimensional range with the interval [0..1]. This parameter is
+ optional and should be used by the application to render only the appropriate
+ subset of its data for sort-last rendering.
+
+\item[View] The view object from the logical rendering rendering configuration
+(\sref{sView}). Holds view-specific data, such as camera, model or any other
+application state.
+
+\end{compactdesc}
+
+An Equalizer configuration determines how the application is executed in
+parallel. It has three parts: A resource section describing the physical
+rendering resources (node, pipe, window, channel), a section describing the
+visualization setup (\sref{sView}), and a compound section describing how these
+resources are to be used for rendering. Compounds describe the rendering task
+decomposition and result recomposition, and their algorithm has been introduced
+in \cite{EMP:09}.
+
+Our execution model is fully asynchronuous, and only introduces synchronization
+points when strictly needed. The main synchronization points are: configured
+swap barriers between a set of output channels which have to display
+simultaneously, the availability of input frames for scalable rendering, and a
+task synchronization to prevent runaway of the main loop execution. By default,
+Equalizer keeps up to one frame of latency in execution, that is, some resource
+might render the next frame while others are still finishing the current.
+Nonetheless, resources which are ready will immediately display their result.
+This asynchronous execution architecture, coupled with a frame of latency,
+allows pipelining of many operations, such as the application event processing,
+task computation and load balancing, rendering, image readback, compression,
+network transmission, and compositing. It also hides small imbalances in the
+task distribution, as they can average out over multiple frames. It is
+fundamental to provide optimal performance, in particular for larger cluster
+sizes.
+
 %------------------------------------------------------------------------------
 \section{Performance Features}
 %------------------------------------------------------------------------------
 
-% This section introduces new decomposition modes, runtime adaptations and other
-% optimizations to increase the rendering performance for a wide variety of
-% algorithms and use cases.
-
 %------------------------------------------------------------------------------
 \subsection{New Decomposition Modes}
 
-The initial version of \textsf{Equalizer} implemented the basic sort-first (2D),
-sort-last (DB), stereo (EYE) and multilevel decompositions \cite{EMP:09}. In the
-following we present the newly added decomposition modes and motivate their use
+The initial version of \textsf{Equalizer} implemented the basic sort-first
+(2D), sort-last (DB), stereo (EYE) and multilevel decompositions \cite{EMP:09}.
+In the following we present new decomposition modes and motivate their use
 case, which bring the overall feature set way beyond the typical sort-first and
 sort-last rendering modes. \fig{fig:compounds} provides an overview of the new
 modes. The compound concept to set up scalable rendering is presented in
@@ -547,8 +608,10 @@ optimizations for these parallel rendering modes. Our load equalizers are fully
 transparent for application developers; that is, they use a reactive approach
 based on past rendering times. This assumes a reasonable frame-to-frame
 coherence. Equalizer implements two different algorithms, a
-\textsf{load\_equalizer} and a \textsf{tree\_equalizer}. The result section
-provides some evidence on the strengths and weaknesses of both algorithms.
+\textsf{load\_equalizer} and a \textsf{tree\_equalizer}. Both implementations
+modify the \textsf{viewport} or \textsf{range} of their direct child compounds.
+The result section provides some evidence on the strengths and weaknesses of
+both algorithms.
 
 The \textsf{load\_equalizer} stores a 2D or 1D grid of the load, mapping the
 load of each channel. The load is stored in normalized 2D/1D coordinates using
@@ -596,13 +659,16 @@ In~\cite{SPEP:16}, we explore this approach in detail.
 
 \subsubsection{Cross-Segment Load Balancing}
 
-Cross-segment load balancing (\fig{fig:vieweq}) addresses the optimal resource
-allocation of $n$ rendering resources to $m$ output channels (with $n\geq m$). A
-view equalizer works in conjunction with load equalizers balancing the
+Cross-segment load balancing (CSLB, \fig{fig:vieweq}) optimizes resource
+allocation of $n$ rendering resources to $m$ output channels (with $n\geq m$).
+A view equalizer works in conjunction with load equalizers balancing the
 individual output channels. It monitors the usage of shared source channels
 across outputs and activates them to balance the rendering time of all outputs.
-In \cite{EEP:11}, we provide a detailed description and evaluation of our
-algorithm.
+CSLB is unique in that it supports load balancing for planar and non-planar
+visualization systems, as well as a flexible allocation of rendering resources
+to individual output channels. In \cite{EEP:11}, we provide a detailed
+description and evaluation of our algorithm and show that it significantly
+improve performance over a static allocation.
 
 \subsubsection{Dynamic Frame Resolution}
 
@@ -644,11 +710,10 @@ segments.
 \subsubsection{Region of Interest}
 
 The region of interest is the screen-space 2D bounding box enclosing the data
-rendered by a single resource. We have extended the core parallel rendering
-framework to use an application-provided ROI to optimize the
-\textsf{load\_equalizer} as well as the image compositing. The load equalizer
-uses the ROI to refine its load grid to the regions containing data. The
-compositing code uses the ROI to minimize image readback and network
+rendered by a single resource. We use an application-provided ROI to optimize
+the \textsf{load\_equalizer} as well as image compositing in our framework. The
+load equalizer uses the ROI to refine its load grid to the regions containing
+data. The compositing code uses the ROI to minimize image readback and network
 transmission. In \cite{MEP:10} and \cite{EBAHMP:12}, we provide the details of
 the algorithm, and show that using ROI can quadruple the rendering performance,
 in particular for the costly compositing step in sort-last rendering.
@@ -677,11 +742,10 @@ at scale.
 Different applications have different degrees on how decoupled and thread-safe
 the rendering code is from the application logic. For full decoupling all
 mutable data has to have a copy in each render thread, which is not feasible in
-most applications and large data scenarios. To easily customize the
-synchronization of all threads on a single process, \textsf{Equalizer}
-implements three threading modes:  Full synchronization, draw synchronization
-and asynchronous. Note that the execution between node processes is always
-asynchronous, for up to \textsf{latency} frames.
+most applications and large data scenarios. We implement three threading modes:
+Full synchronization, draw synchronization and asynchronous. Note that the
+execution between node processes is always asynchronous, for up to
+\textsf{latency} frames.
 
 In full synchronization, all threads always execute the same frame; that is, the
 render threads are unlocked after \textsf{Node::frameStart}, and the node is
@@ -704,27 +768,27 @@ render thread. It is required for scaling time-multiplex compounds on multi-GPU
 machines.
 
 %------------------------------------------------------------------------------
-\section{Virtual Reality Features}
+\section{Virtual Reality}
 %------------------------------------------------------------------------------
 
-Virtual Reality is an important field for parallel rendering. It does however
-require special attention to support it as a first-class citizen in a generic
-parallel rendering framework. \textsf{Equalizer} has been used in many virtual
-reality installations, such as the Cave2 \cite{FNTTL:13}, the high-resolution C6
-CAVE at the KAUST visualization laboratory, and head-mounted displays
+Virtual Reality is an important field for parallel rendering, which requires
+special attention to support it as a first-class citizen in a generic parallel
+rendering framework. \textsf{Equalizer} has been used in many virtual reality
+installations, such as the Cave2 \cite{FNTTL:13}, the high-resolution C6 CAVE
+at the KAUST visualization laboratory, and head-mounted displays
 (\fig{FIG_teaser}). In the following we lay out the features needed to support
-these installations, motivated by application use cases.
+these installations.
 
 %------------------------------------------------------------------------------
 \subsection{Head Tracking}
 
-Head tracking is the minimal feature needed to support immersive installations.
-\textsf{Equalizer} does support multiple, independent tracked views through the
-observer abstraction (\sref{sec:observer}). Built-in VRPN support enables the
-direct, application-transparent configuration of a VRPN tracker device.
-Alternatively, applications can provide a $4\times 4$ tracking matrix. Both
-CAVE-like tracking with fixed projection surfaces and HMD tracking with moving
-displays are implemented.
+Head tracking is fundamental to support immersive installations. We support
+multiple, independent tracked views through the observer abstraction
+(\sref{sec:observer}). Built-in VRPN support enables direct,
+application-transparent configuration of a VRPN tracker device. Alternatively,
+applications can provide a $4\times 4$ tracking matrix. Both CAVE-like tracking
+with fixed projection surfaces and HMD tracking with moving displays are
+implemented.
 
 %------------------------------------------------------------------------------
 \subsection{Dynamic Focus Distance}
@@ -774,7 +838,7 @@ parallel rendering framework, and, where applicable, show the steps needed to
 use this functionality in applications.
 
 %------------------------------------------------------------------------------
-\subsection{Physical and Logical Visualization Setup}
+\subsection{Physical and Logical Visualization Setup}\label{sView}
 
 Real-world visualization setups can be complex. An abstract representation of
 the display system simplifies the configuration process. Applications often have
@@ -1185,7 +1249,7 @@ allows data distribution with minimal application logic. It is used by
 \textsf{Sequel} (\sref{sec:sequel}) and other \textsf{Collage} applications.
 
 %----------------------------------------------------------------------
-\section{Example Applications} \label{sApplications}
+\section{Applications} \label{sApplications}
 %----------------------------------------------------------------------
 
 In this section, we present some major applications built using
@@ -1211,10 +1275,11 @@ for scalability as well as for driving large-scale tiled display walls.
 %------------------------------------------------------------------------------
 \subsection{RTT Deltagen}
 
-RTT Deltagen (now Dassault 3D Excite) is a commercial application for
-interactive, high quality rendering of CAD data. The RTT Scale module,
-delivering multi-GPU and distributed execution, is based on \textsf{Equalizer}
-and \textsf{Collage}, and has driven many of the aforementioned features.
+RTT Deltagen (\fig{fLayout}, now Dassault 3D Excite) is a commercial
+application for interactive, high quality rendering of CAD data. The RTT Scale
+module, delivering multi-GPU and distributed execution, is based on
+\textsf{Equalizer} and \textsf{Collage}, and has driven many of the
+aforementioned features.
 
 RTT Scale uses a master-slave execution mode, where a single running Deltagen
 instance can go into ``Scale mode'' at any time by launching an
@@ -1241,15 +1306,15 @@ with a Windows-based application node.
 \subsection{RTNeuron}
 
 RTNeuron \cite{HBBES:13} is a scalable real-time rendering tool for the
-visualisation of neuronal simulations based on cable models. It is based on
-OpenSceneGraph for data management and Equalizer for parallel rendering, and
-focuses not only on fast rendering times, but also on fast loading times with no
-offline preprocessing. It provides level of detail (LOD) rendering, high quality
-anti-aliasing based on jittered frusta and accumulation during still views,
-interactive modification of the visual representation of neurons on a per-neuron
-basis (full neuron vs. soma only, branch pruning depending on the branch level,
-\dots). RTNeuron implements both sort-first and sort-last rendering with order
-independent transparency.
+visualisation of neuronal simulations based on cable models (\fig{FIG_teaser}
+(a)). It is based on OpenSceneGraph for data management and Equalizer for
+parallel rendering, and focuses not only on fast rendering times, but also on
+fast loading times with no offline preprocessing. It provides level of detail
+(LOD) rendering, high quality anti-aliasing based on jittered frusta and
+accumulation during still views, interactive modification of the visual
+representation of neurons on a per-neuron basis (full neuron vs. soma only,
+branch pruning depending on the branch level, \dots). RTNeuron implements both
+sort-first and sort-last rendering with order independent transparency.
 
 %------------------------------------------------------------------------------
 \subsection{RASTeR}

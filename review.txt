@@ -78,6 +78,8 @@ First, in particular in the first half the paper often reads as "section X: we a
 
 Second: the paper's biggest value would be as a self-contained reference for a novel reader, but it very often makes the assumption that the reader is already (very) familiar with Equalizer, and simply uses terms and concepts from this original paper without explaining them. This makes the paper hard to read in places, and should be fixed. Ideally the authors would add a complete section that first reviews/summarizes the old paper(s)/system before then elaborating on what has been added since then. If that required lengthening the paper I personallly would strongly support giving the authors an extra page to do that; if that in turn was not possible I personally would prefer to completely kill the related work section to make space for such a summary.
 
+[both addressed in r140]
+
 Desired Revision: Add a section that (briefly) summarizes the original Equalizer system, that explains the base concepts, and in particular intruduces all the terms that the later sections assume familiarity with.
 
 Additional Questions:
