@@ -1568,9 +1568,9 @@ and decompress the data.
 
 During data synchronization, the master commits the object data to all mapped
 slave instances simultaneously. This is a ``push'' operation, whereas the
-mapping is a slave-triggered ``pull'' operation. Furthermore, the buffers only
-have to be serialized and compressed once, and then can be sent directly to all
-mapped slave nodes. Slave nodes queue this data and consume it during
+mapping is a slave-triggered ``pull'' operation. During commit, the buffers
+only have to be serialized and compressed once, and then can be sent directly
+to all mapped slave nodes. Slave nodes queue this data and consume it during
 synchronization. In contrast, object mapping needs to wait for each slave node
 to request the mapping, and then may need to reserialize and compress the
 object data. We test the time to commit and sync the data using different
@@ -1578,7 +1578,7 @@ compression engines.
 
 The David statue at 2\,mm resolution is organized in a k-d tree for rendering. Each
 node is a separate distributed object, which has two child node objects. A
-total of $1023$ objects is distributed and synchronized. \fig{fDavidDist} shows
+total of $1023$ objects are distributed and synchronized. \fig{fDavidDist} shows
 the distribution times for this data set. Due to limited compressibility of the
 data, the results are relatively similar. Compressing the data repeatedly for
 each client leads to decreased performance, since the compression overhead

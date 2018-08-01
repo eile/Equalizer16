@@ -120,6 +120,9 @@ As stated in the summary review, this is an excellent paper with no major techni
 [addressed in r141]
 
 - move some discussion of the compression techniques from section 8 into section 6 (or another technical discussion section outside of Results).
+
+[not sure which part to extract, since we don't describe the compression algorithms in sec. 8?]
+
 That said, the paper is sufficiently polished in my opinion as to warrant publication as is.
 
 Additional Questions:
