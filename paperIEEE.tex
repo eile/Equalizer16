@@ -541,8 +541,9 @@ underpowered control workstation for a tiled display wall.
 \subsubsection{Tiles and Chunks}\label{sec:tile}
 
 Tile (\fig{fig:tiles}) and chunk decompositions are a variant of sort-first and
-sort-last rendering, respectively. They decompose the scene into a predefined
-set of fixed-size image tiles or database ranges. These tasks, or work packages,
+sort-last rendering, respectively. They are implemented via the \textsf{tile\_equalizer} and \textsf{chunk\_equalizer} compounds, which decompose the scene into a predefined
+set of fixed-size image tiles or database ranges, respectively.
+The resulting tasks, or work packages,
 are queued and processed by all source channels by polling a server-central
 queue. Prefetching ensures that the task communication overlaps with rendering.
 As shown in~\cite{SPEP:16} and the results, these modes can provide better
@@ -1426,7 +1427,7 @@ compounds. Sort-first polygon rendering exhibits oscillations in performance as
 nodes are added to the task, due to unfavorable assignment of a tile with a high
 work load on odd node counts. Static sort-last volume rendering has a similar
 oscillation behaviour, as ranges of scene geometry tend to also get unfavorably
-assigned under such conditions.
+assigned under such conditions. It seems plausible that this is also due to overheads associated with these two rendering scenarios. That is, volume rendering typically benefits less form sort-last decompositions, because of higher costs for compositing. Similarly, polygonal rendering often benefits less from sort-first decomposition, as compositing costs are typically much lower, while culling of geometry can create an additional overhead.
 
 The simpler \textsf{tree\_equalizer} outperforms in almost all cases the
 load-grid-driven \textsf{load\_equalizer}, except for sort-first volume
@@ -1464,10 +1465,9 @@ of individual nodes, i.e., bias the allocation of rendering time in accordance
 with the (simulated) compute resources. \fig{fEqualizers} (right), on the other
 hand, illustrates how the tested decomposition modes perform on a system where
 compute resources fluctuate randomly every frame, as can arguably be the case
-for shared rendering nodes in virtualized enviroments. For this scenario tile
-equalizer seems best suited, as it performs load balancing implicitly and does
+for shared rendering nodes in virtualized enviroments. For this scenario \textsf{tile\_equalizer} seems best suited, as it performs load balancing implicitly and does
 not assume coherence of available resources between frames. The simpler tree
-equalizer also outperforms the load equalizer in this experiment.
+equalizer also outperforms the \textsf{load\_equalizer} in this experiment.
 
 \begin{figure*}[ht]%
 \includegraphics[height=.17\textwidth]{images/benchmark_eVolve}\hfil
