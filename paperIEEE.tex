@@ -541,15 +541,16 @@ underpowered control workstation for a tiled display wall.
 \subsubsection{Tiles and Chunks}\label{sec:tile}
 
 Tile (\fig{fig:tiles}) and chunk decompositions are a variant of sort-first and
-sort-last rendering, respectively. They are implemented via the \textsf{tile\_equalizer} and \textsf{chunk\_equalizer} compounds, which decompose the scene into a predefined
-set of fixed-size image tiles or database ranges, respectively.
-The resulting tasks, or work packages,
-are queued and processed by all source channels by polling a server-central
-queue. Prefetching ensures that the task communication overlaps with rendering.
-As shown in~\cite{SPEP:16} and the results, these modes can provide better
-performance due to being implicitly, i.e., inherently load-balanced, as long as
-there is an insignificant overhead for the render task setup. This mode is
-transparent to \textsf{Equalizer} applications.
+sort-last rendering, respectively. They are implemented via the
+\textsf{tile\_equalizer} and \textsf{chunk\_equalizer} compounds, which
+decompose the scene into a predefined set of fixed-size image tiles or database
+ranges, respectively. The resulting tasks, or work packages, are queued and
+processed by all source channels by polling a server-central queue. Prefetching
+ensures that the task communication overlaps with rendering. As shown
+in~\cite{SPEP:16} and the results, these modes can provide better performance
+due to being implicitly, i.e., inherently load-balanced, as long as there is an
+insignificant overhead for the render task setup. This mode is transparent to
+\textsf{Equalizer} applications.
 
 Tile and chunk compounds are configured through output and input queues, which
 behave similarly to compositing frames. A single output queue configures the
@@ -1424,10 +1425,14 @@ decomposition. For readability, we only present the results of the equalizer
 (load or tree) providing the better performance for each application.
 Unsurprisingly, static decompositions perform worse over load-balanced
 compounds. Sort-first polygon rendering exhibits oscillations in performance as
-nodes are added to the task, due to unfavorable assignment of a tile with a high
-work load on odd node counts. Static sort-last volume rendering has a similar
-oscillation behaviour, as ranges of scene geometry tend to also get unfavorably
-assigned under such conditions. It seems plausible that this is also due to overheads associated with these two rendering scenarios. That is, volume rendering typically benefits less form sort-last decompositions, because of higher costs for compositing. Similarly, polygonal rendering often benefits less from sort-first decomposition, as compositing costs are typically much lower, while culling of geometry can create an additional overhead.
+nodes are added to the task, due to unfavorable assignment of a tile with a
+high work load on odd node counts. Static sort-last volume rendering has a
+similar oscillation behaviour, as ranges of scene geometry tend to also get
+unfavorably assigned under such conditions. For our polygonal rendering setup,
+the amount of data exceeds the GPU memory, therefore sort-last rendering
+exhibits a better scaling behaviour since it reduces the amount of geometry
+data per GPU. For volume rendering, sort-first performs better since it has
+less compositing overhead and is easy to load balance.
 
 The simpler \textsf{tree\_equalizer} outperforms in almost all cases the
 load-grid-driven \textsf{load\_equalizer}, except for sort-first volume
