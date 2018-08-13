@@ -153,14 +153,14 @@
 %% Author and Affiliation (multiple authors with multiple affiliations)
 \author{Stefan~Eilemann\thanks{email: eilemann@gmail.com},
         David~Steiner\thanks{email: steiner@ifi.uzh.ch} \\ %
-        and~Renato~Pajarola\thanks{email:pajarola@acm.org},~\IEEEmembership{Senior Member,~IEEE}%
+        and~Renato~Pajarola\thanks{email: pajarola@ifi.uzh.ch},~\IEEEmembership{Senior Member,~IEEE}%
 \IEEEcompsocitemizethanks{\IEEEcompsocthanksitem All authors are with the
 Visualization and MultiMedia Lab, Department of Informatics, University of
 Z\"urich.}}
 
 %\author{Stefan Eilemann\thanks{email: eilemann@gmail.com} \\ %
 %\and Renato Pajarola~\IEEEmembership{Senior Member,~IEEE}\thanks{email:
-%pajarola@acm.org}}
+%pajarola@ifi.uzh.ch}}
 
 %\author{Stefan~Eilemann, David~Steiner and Renato Pajarola%
 %\IEEEcompsocitemizethanks{All authors are with the
@@ -795,7 +795,7 @@ across outputs and activates them to balance the rendering time of all outputs.
 visualization systems, as well as a flexible allocation of rendering resources
 to individual output channels. }\DIFaddend In \cite{EEP:11}, we provide a detailed
 description and evaluation of our algorithm \DIFaddbegin \DIFadd{and show that it significantly
-improve performance over a static allocation}\DIFaddend .
+improves performance over a static allocation}\DIFaddend .
 
 \subsubsection{Dynamic Frame Resolution}
 
@@ -1537,7 +1537,7 @@ nodes are added to the task, due to unfavorable assignment of a tile with a
 high work load on odd node counts. Static sort-last volume rendering has a
 similar oscillation behaviour, as ranges of scene geometry tend to also get
 unfavorably assigned under such conditions. \DIFaddbegin \DIFadd{For our polygonal rendering setup,
-the amount of data exceeds the GPU memory, therefore sort-last rendering
+the amount of data exceeds the GPU memory, therefore, sort-last rendering
 exhibits a better scaling behaviour since it reduces the amount of geometry
 data per GPU. For volume rendering, sort-first performs better since it has
 less compositing overhead and is easy to load balance.
@@ -1684,7 +1684,7 @@ and decompress the data.
 During data synchronization, the master commits the object data to all mapped
 slave instances simultaneously. This is a ``push'' operation, whereas the
 mapping is a slave-triggered ``pull'' operation. \DIFaddbegin \DIFadd{During commit, the buffers
-only have to be serialized and compressed once, and then can be sent directly
+only have to be serialized and compressed once and can then be sent directly
 to all mapped slave nodes. }\DIFaddend Slave nodes queue this data and consume it during
 synchronization. \DIFaddbegin \DIFadd{In contrast, object mapping needs to wait for each slave node
 to request the mapping, and then may need to reserialize and compress the
