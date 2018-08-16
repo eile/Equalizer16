@@ -1,4 +1,7 @@
 
+%DIF LATEXDIFF DIFFERENCE FILE
+%DIF DEL submission1.tex   Sun Aug 12 12:15:12 2018
+%DIF ADD paperIEEE.tex     Thu Aug 16 11:33:24 2018
 \documentclass[10pt,journal,compsoc]{IEEEtran}
 
 % *** CITATION PACKAGES ***
@@ -38,7 +41,82 @@
 
 % correct bad hyphenation here
 \hyphenation{op-tical net-works semi-conduc-tor}
-
+%DIF PREAMBLE EXTENSION ADDED BY LATEXDIFF
+%DIF CTRADITIONAL PREAMBLE %DIF PREAMBLE
+\RequirePackage{color}\definecolor{RED}{rgb}{1,0,0}\definecolor{BLUE}{rgb}{0,0,1} %DIF PREAMBLE
+\RequirePackage[stable]{footmisc} %DIF PREAMBLE
+\DeclareOldFontCommand{\sf}{\normalfont\sffamily}{\mathsf} %DIF PREAMBLE
+\providecommand{\DIFaddtex}[1]{{\protect\color{blue} \sf #1}} %DIF PREAMBLE
+\providecommand{\DIFdeltex}[1]{{\protect\color{red} [..\footnote{removed: #1} ]}} %DIF PREAMBLE
+%DIF SAFE PREAMBLE %DIF PREAMBLE
+\providecommand{\DIFaddbegin}{} %DIF PREAMBLE
+\providecommand{\DIFaddend}{} %DIF PREAMBLE
+\providecommand{\DIFdelbegin}{} %DIF PREAMBLE
+\providecommand{\DIFdelend}{} %DIF PREAMBLE
+%DIF FLOATSAFE PREAMBLE %DIF PREAMBLE
+\providecommand{\DIFaddFL}[1]{\DIFadd{#1}} %DIF PREAMBLE
+\providecommand{\DIFdelFL}[1]{\DIFdel{#1}} %DIF PREAMBLE
+\providecommand{\DIFaddbeginFL}{} %DIF PREAMBLE
+\providecommand{\DIFaddendFL}{} %DIF PREAMBLE
+\providecommand{\DIFdelbeginFL}{} %DIF PREAMBLE
+\providecommand{\DIFdelendFL}{} %DIF PREAMBLE
+%DIF HYPERREF PREAMBLE %DIF PREAMBLE
+\providecommand{\DIFadd}[1]{\texorpdfstring{\DIFaddtex{#1}}{#1}} %DIF PREAMBLE
+\providecommand{\DIFdel}[1]{\texorpdfstring{\DIFdeltex{#1}}{}} %DIF PREAMBLE
+\newcommand{\DIFscaledelfig}{0.5}
+%DIF HIGHLIGHTGRAPHICS PREAMBLE %DIF PREAMBLE
+\RequirePackage{settobox} %DIF PREAMBLE
+\RequirePackage{letltxmacro} %DIF PREAMBLE
+\newsavebox{\DIFdelgraphicsbox} %DIF PREAMBLE
+\newlength{\DIFdelgraphicswidth} %DIF PREAMBLE
+\newlength{\DIFdelgraphicsheight} %DIF PREAMBLE
+% store original definition of \includegraphics %DIF PREAMBLE
+\LetLtxMacro{\DIFOincludegraphics}{\includegraphics} %DIF PREAMBLE
+\newcommand{\DIFaddincludegraphics}[2][]{{\color{blue}\fbox{\DIFOincludegraphics[#1]{#2}}}} %DIF PREAMBLE
+\newcommand{\DIFdelincludegraphics}[2][]{% %DIF PREAMBLE
+\sbox{\DIFdelgraphicsbox}{\DIFOincludegraphics[#1]{#2}}% %DIF PREAMBLE
+\settoboxwidth{\DIFdelgraphicswidth}{\DIFdelgraphicsbox} %DIF PREAMBLE
+\settoboxtotalheight{\DIFdelgraphicsheight}{\DIFdelgraphicsbox} %DIF PREAMBLE
+\scalebox{\DIFscaledelfig}{% %DIF PREAMBLE
+\parbox[b]{\DIFdelgraphicswidth}{\usebox{\DIFdelgraphicsbox}\\[-\baselineskip] \rule{\DIFdelgraphicswidth}{0em}}\llap{\resizebox{\DIFdelgraphicswidth}{\DIFdelgraphicsheight}{% %DIF PREAMBLE
+\setlength{\unitlength}{\DIFdelgraphicswidth}% %DIF PREAMBLE
+\begin{picture}(1,1)% %DIF PREAMBLE
+\thicklines\linethickness{2pt} %DIF PREAMBLE
+{\color[rgb]{1,0,0}\put(0,0){\framebox(1,1){}}}% %DIF PREAMBLE
+{\color[rgb]{1,0,0}\put(0,0){\line( 1,1){1}}}% %DIF PREAMBLE
+{\color[rgb]{1,0,0}\put(0,1){\line(1,-1){1}}}% %DIF PREAMBLE
+\end{picture}% %DIF PREAMBLE
+}\hspace*{3pt}}} %DIF PREAMBLE
+} %DIF PREAMBLE
+\LetLtxMacro{\DIFOaddbegin}{\DIFaddbegin} %DIF PREAMBLE
+\LetLtxMacro{\DIFOaddend}{\DIFaddend} %DIF PREAMBLE
+\LetLtxMacro{\DIFOdelbegin}{\DIFdelbegin} %DIF PREAMBLE
+\LetLtxMacro{\DIFOdelend}{\DIFdelend} %DIF PREAMBLE
+\DeclareRobustCommand{\DIFaddbegin}{\DIFOaddbegin \let\includegraphics\DIFaddincludegraphics} %DIF PREAMBLE
+\DeclareRobustCommand{\DIFaddend}{\DIFOaddend \let\includegraphics\DIFOincludegraphics} %DIF PREAMBLE
+\DeclareRobustCommand{\DIFdelbegin}{\DIFOdelbegin \let\includegraphics\DIFdelincludegraphics} %DIF PREAMBLE
+\DeclareRobustCommand{\DIFdelend}{\DIFOaddend \let\includegraphics\DIFOincludegraphics} %DIF PREAMBLE
+\LetLtxMacro{\DIFOaddbeginFL}{\DIFaddbeginFL} %DIF PREAMBLE
+\LetLtxMacro{\DIFOaddendFL}{\DIFaddendFL} %DIF PREAMBLE
+\LetLtxMacro{\DIFOdelbeginFL}{\DIFdelbeginFL} %DIF PREAMBLE
+\LetLtxMacro{\DIFOdelendFL}{\DIFdelendFL} %DIF PREAMBLE
+\DeclareRobustCommand{\DIFaddbeginFL}{\DIFOaddbeginFL \let\includegraphics\DIFaddincludegraphics} %DIF PREAMBLE
+\DeclareRobustCommand{\DIFaddendFL}{\DIFOaddendFL \let\includegraphics\DIFOincludegraphics} %DIF PREAMBLE
+\DeclareRobustCommand{\DIFdelbeginFL}{\DIFOdelbeginFL \let\includegraphics\DIFdelincludegraphics} %DIF PREAMBLE
+\DeclareRobustCommand{\DIFdelendFL}{\DIFOaddendFL \let\includegraphics\DIFOincludegraphics} %DIF PREAMBLE
+%DIF LISTINGS PREAMBLE %DIF PREAMBLE
+\lstdefinelanguage{codediff}{ %DIF PREAMBLE
+  moredelim=**[is][\color{red}]{*!----}{----!*}, %DIF PREAMBLE
+  moredelim=**[is][\color{blue}]{*!++++}{++++!*} %DIF PREAMBLE
+} %DIF PREAMBLE
+\lstdefinestyle{codediff}{ %DIF PREAMBLE
+	belowcaptionskip=.25\baselineskip, %DIF PREAMBLE
+	language=codediff, %DIF PREAMBLE
+	basicstyle=\ttfamily, %DIF PREAMBLE
+	columns=fullflexible, %DIF PREAMBLE
+	keepspaces=true, %DIF PREAMBLE
+} %DIF PREAMBLE
+%DIF END PREAMBLE EXTENSION ADDED BY LATEXDIFF
 
 \begin{document}
 %
@@ -75,14 +153,16 @@
 %% Author and Affiliation (multiple authors with multiple affiliations)
 \author{Stefan~Eilemann\thanks{email: eilemann@gmail.com},
         David~Steiner\thanks{email: steiner@ifi.uzh.ch} \\ %
-        and~Renato~Pajarola\thanks{email: pajarola@ifi.uzh.ch},~\IEEEmembership{Senior Member,~IEEE}%
+        and~Renato~Pajarola\DIFdelbegin %DIFDELCMD < \thanks{email:pajarola@acm.org}%%%
+\DIFdelend \DIFaddbegin \thanks{email: pajarola@ifi.uzh.ch}\DIFaddend ,~\IEEEmembership{Senior Member,~IEEE}%
 \IEEEcompsocitemizethanks{\IEEEcompsocthanksitem All authors are with the
 Visualization and MultiMedia Lab, Department of Informatics, University of
 Z\"urich.}}
 
 %\author{Stefan Eilemann\thanks{email: eilemann@gmail.com} \\ %
 %\and Renato Pajarola~\IEEEmembership{Senior Member,~IEEE}\thanks{email:
-%pajarola@ifi.uzh.ch}}
+%DIF < pajarola@acm.org}}
+%DIF > pajarola@ifi.uzh.ch}}
 
 %\author{Stefan~Eilemann, David~Steiner and Renato Pajarola%
 %\IEEEcompsocitemizethanks{All authors are with the
@@ -205,17 +285,18 @@ Environments, Display Walls
 \IEEEraisesectionheading{\section{Introduction} \label{sec:introduction}}
 %----------------------------------------------------------------------
 
-The Equalizer parallel rendering framework, first presented in~\cite{EMP:09},
-has demonstrated its general versatility and the usefulness of its
-minimally-intrusive design in a variety of applications and projects. In
+The Equalizer parallel rendering framework\DIFdelbegin \DIFdel{as }\DIFdelend \DIFaddbegin \DIFadd{, }\DIFaddend first presented in~\cite{EMP:09}\DIFaddbegin \DIFadd{,
+}\DIFaddend has demonstrated its general versatility and the usefulness of its
+minimally-intrusive \DIFdelbegin \DIFdel{programming }\DIFdelend design in a variety of applications and projects. In
 particular, the integration of large-scale parallel rendering algorithms, APIs
 for developing complex distributed applications, and many individual features
 make Equalizer a unique, open source framework to develop visualization
 applications for virtually any type of setup and use case. While individual
 applications and case studies using the framework, as well as new algorithms
 and system components extending it have been presented since the initial
-release of Equalizer, many features and functionalities have not been published
-yet and are presented here. In this report, we thus present an updated
+release of Equalizer, many \DIFdelbegin \DIFdel{important }\DIFdelend features and functionalities have not \DIFdelbegin \DIFdel{previously been published
+}\DIFdelend \DIFaddbegin \DIFadd{been published
+yet }\DIFaddend and are presented here. In this report, we thus present an updated
 comprehensive review of the integration of research, application use cases and
 commercial developments with respect to Equalizer as well as novel comparative
 experimental results of its scalability features.
@@ -232,10 +313,10 @@ and reliable multicast.
 The remainder of this paper is structured as follows: First we provide an
 update on related work since the introduction of \textsf{Equalizer}. The main
 body of this paper then presents new performance features, VR algorithms,
-usability features to build complex applications, an overview of the underlying
-\textsf{Collage} network library and a summary of the main
+usability features to build complex applications, \DIFdelbegin \DIFdel{main novel features }\DIFdelend \DIFaddbegin \DIFadd{an overview }\DIFaddend of the underlying
+\textsf{Collage} network library and a \DIFdelbegin \DIFdel{quick overview }\DIFdelend \DIFaddbegin \DIFadd{summary }\DIFaddend of the main
 \textsf{Equalizer}-based applications. A result section presents new
-experiments, followed by the discussion and conclusion.
+experiments\DIFdelbegin \DIFdel{not previously published}\DIFdelend , followed by the discussion and conclusion.
 
 %----------------------------------------------------------------------
 \section{Related Work}\label{sec:related}
@@ -245,7 +326,7 @@ In 2009 we presented \textsf{Equalizer}~\cite{EMP:09}, which introduced the
 architecture of a generic parallel rendering framework and summarized our work
 in parallel rendering. Since then, an extensive Programming and User Guide
 provides in-depth documentation on using and programming
-\textsf{Equalizer}~\cite{Eilemann:13}. We assume these two publications and
+\textsf{Equalizer}~\cite{Eilemann:13}. \DIFdelbegin \DIFdel{In the following related work we }\DIFdelend \DIFaddbegin \DIFadd{We }\DIFaddend assume these two publications and
 their references as a starting point, and focus on the new work published since
 2009.
 
@@ -303,9 +384,9 @@ Cave2, made significant progress in integrating 2D collaborative workspaces like
 for visualizing remote sensing data~\cite{LK:09} on large displays and immersive
 installations.
 
-\section{Fundamentals}
+\DIFaddbegin \section{\DIFadd{Fundamentals}}
 
-The core task of developing an Equalizer application is to separate the
+\DIFadd{The core task of developing an Equalizer application is to separate the
 rendering code from the application logic. The application main thread will
 execute its main loop as before, but instead of issuing rendering calls it will
 request a frame to be rendered from Equalizer. Depending on the configuration,
@@ -314,46 +395,54 @@ application rendering code is executed in parallel under a given render
 context, which is the core entity abstracting the application-specific
 rendering algorithm from the system-specific configuration. This render context
 formalizes the minimal abstraction for parallel rendering, and specifies:
+}
 
 \begin{compactdesc}
 
- \item[Buffer] OpenGL-style read and draw buffer as well as color mask. These
+ \item[Buffer] \DIFadd{OpenGL-style read and draw buffer as well as color mask. These
  parameters are influenced by the current eye pass, eye separation and
  anaglyphic stereo settings.
+}
 
- \item[Viewport] Two-dimensional pixel viewport restricting the rendering area.
+ \item[Viewport] \DIFadd{Two-dimensional pixel viewport restricting the rendering area.
  The pixel viewport is influenced by the destination viewport and viewports set
  for sort-first decompositions.
+}
 
- \item[Frustum] Frustum parameters as defined by \textsf{glFrustum}. Typically
+ \item[Frustum] \DIFadd{Frustum parameters as defined by \textsf{glFrustum}. Typically
  the frustum is used to set up the OpenGL projection matrix. The frustum is
  influenced by the destinations view definition, sort-first, pixel and subpixel
  decomposition, tracking head matrix and the current eye pass.
+}
 
- \item[Head Transformation] A transformation matrix positioning the frustum.
+ \item[Head Transformation] \DIFadd{A transformation matrix positioning the frustum.
  For planar views this is an identity matrix. In immersive rendering, it is
  normally used to set up the `view' part of the modelview matrix, before static
  light sources are defined.
+}
 
- \item[Range] A one-dimensional range with the interval [0..1]. This parameter is
+ \item[Range] \DIFadd{A one-dimensional range with the interval }[\DIFadd{0..1}]\DIFadd{. This parameter is
  optional and should be used by the application to render only the appropriate
  subset of its data for sort-last rendering.
+}
 
-\item[View] The view object from the logical rendering rendering configuration
+\item[View] \DIFadd{The view object from the logical rendering rendering configuration
 (\sref{sView}). Holds view-specific data, such as camera, model or any other
 application state.
+}
 
 \end{compactdesc}
 
-An Equalizer configuration determines how the application is executed in
+\DIFadd{An Equalizer configuration determines how the application is executed in
 parallel. It has three parts: A resource section describing the physical
 rendering resources (node, pipe, window, channel), a section describing the
 visualization setup (\sref{sView}), and a compound section describing how these
 resources are to be used for rendering. Compounds describe the rendering task
 decomposition and result recomposition, and their algorithm has been introduced
 in \cite{EMP:09}.
+}
 
-Our execution model is fully asynchronuous, and only introduces synchronization
+\DIFadd{Our execution model is fully asynchronuous, and only introduces synchronization
 points when strictly needed. The main synchronization points are: configured
 swap barriers between a set of output channels which have to display
 simultaneously, the availability of input frames for scalable rendering, and a
@@ -368,17 +457,24 @@ network transmission, and compositing. It also hides small imbalances in the
 task distribution, as they can average out over multiple frames. It is
 fundamental to provide optimal performance, in particular for larger cluster
 sizes.
+}
 
-%------------------------------------------------------------------------------
+\DIFaddend %------------------------------------------------------------------------------
 \section{Performance Features}
 %------------------------------------------------------------------------------
 
-%------------------------------------------------------------------------------
+%DIF <  This section introduces new decomposition modes, runtime adaptations and other
+%DIF <  optimizations to increase the rendering performance for a wide variety of
+%DIF <  algorithms and use cases.
+\DIFdelbegin %DIFDELCMD < 
+
+%DIFDELCMD < %%%
+\DIFdelend %------------------------------------------------------------------------------
 \subsection{New Decomposition Modes}
 
 The initial version of \textsf{Equalizer} implemented the basic sort-first
 (2D), sort-last (DB), stereo (EYE) and multilevel decompositions \cite{EMP:09}.
-In the following we present new decomposition modes and motivate their use
+In the following we present \DIFdelbegin \DIFdel{the newly added }\DIFdelend \DIFaddbegin \DIFadd{new }\DIFaddend decomposition modes and motivate their use
 case, which bring the overall feature set way beyond the typical sort-first and
 sort-last rendering modes. \fig{fig:compounds} provides an overview of the new
 modes. The compound concept to set up scalable rendering is presented in
@@ -522,7 +618,7 @@ fit for distributed memory systems, since the separate memory space makes
 concurrent rendering of different frames easier to implement. While it
 increases the framerate linearly, it does not decrease the latency between user
 input and the corresponding output. Consequently, this decomposition mode is
-mostly useful for non-interactive rendering, e.g., for movie generation. It is
+mostly useful for non-interactive \DIFaddbegin \DIFadd{rendering, e.g., for }\DIFaddend movie generation. It is
 transparent to \textsf{Equalizer} applications, but does require the
 configuration latency to be equal or greater than the number of source
 channels. Furthermore, to work in multi-threaded, multi-GPU configurations, the
@@ -530,21 +626,22 @@ application needs to support running the rendering threads asynchronously
 (\sref{sec:threading}). The output frame rate of the destination channel may be
 smoothened using a {\em frame rate equalizer} (\sref{sec:framerateEq}).
 
-DPlex is configured by restricting the source compounds to a \textit{phase}
+\DIFaddbegin \DIFadd{DPlex is configured by restricting the source compounds to a \textit{phase}
 (offset) of a certain \textit{period} (number of skipped frames) of the
 destination channel's rendering. All output frames of the source channels may
 use the same name, as each output frame only is available at a distinct
 rendered frame for input. The period/phase decomposition may also be used for
 other means, e.g., to have one channel render at half the frame rate on an
 underpowered control workstation for a tiled display wall.
+}
 
-\subsubsection{Tiles and Chunks}\label{sec:tile}
+\DIFaddend \subsubsection{Tiles and Chunks}\label{sec:tile}
 
 Tile (\fig{fig:tiles}) and chunk decompositions are a variant of sort-first and
-sort-last rendering, respectively. They are implemented via the
+sort-last rendering, respectively. They \DIFaddbegin \DIFadd{are implemented via the
 \textsf{tile\_equalizer} and \textsf{chunk\_equalizer} compounds, which
-decompose the scene into a predefined set of fixed-size image tiles or database
-ranges, respectively. The resulting tasks, or work packages, are queued and
+}\DIFaddend decompose the scene into a predefined set of fixed-size image tiles or database
+ranges\DIFdelbegin \DIFdel{. These }\DIFdelend \DIFaddbegin \DIFadd{, respectively. The resulting }\DIFaddend tasks, or work packages, are queued and
 processed by all source channels by polling a server-central queue. Prefetching
 ensures that the task communication overlaps with rendering. As shown
 in~\cite{SPEP:16} and the results, these modes can provide better performance
@@ -552,15 +649,16 @@ due to being implicitly, i.e., inherently load-balanced, as long as there is an
 insignificant overhead for the render task setup. This mode is transparent to
 \textsf{Equalizer} applications.
 
-Tile and chunk compounds are configured through output and input queues, which
+\DIFaddbegin \DIFadd{Tile and chunk compounds are configured through output and input queues, which
 behave similarly to compositing frames. A single output queue configures the
 tile or chunk size and generates the work packages on the destination compound.
 Each source has an input queue of the same name, which consumes items from the
 output queue. Each work item generates a separate draw and readback task, and
 one input assemble image on the destination channel.
+}
 
 
-\subsubsection{Pixel}
+\DIFaddend \subsubsection{Pixel}
 
 Pixel compounds (\fig{fig:pixel}) decompose the destination channel by
 interleaving rows or columns in image space. They are a variant of sort-first
@@ -573,14 +671,15 @@ pixels. This functionality is transparent to \textsf{Equalizer} applications,
 and the default compositing uses the stencil buffer to blit pixels onto the
 destination channel.
 
-Pixel compounds are configured similarly to sort-first compounds, except that
+\DIFaddbegin \DIFadd{Pixel compounds are configured similarly to sort-first compounds, except that
 instead of decomposing the \textit{viewport}, they decompose a \textit{pixel}
 kernel. The kernel is a 2D structure describing the shape and sampled pixel
 within the shape in the format \textit{[x y width height]}, that is, a source
 compound selects the pixel \textit{x, y} within a decomposition of size
 \textit{width, height}.
+}
 
-\subsubsection{Subpixel}
+\DIFaddend \subsubsection{Subpixel}
 
 Subpixel compounds (\fig{fig:subpixel}) are similar to pixel compounds, but they
 decompose the work for a single pixel, for example with Monte-Carlo ray tracing,
@@ -589,11 +688,15 @@ averaging of all computed fragments for a pixel. This feature is not fully
 transparent to the application, since it needs to adapt (jitter or tilt) the
 frustum based on the iteration executed.
 
-Subpixel compounds are configured similarly to pixel compounds, but instead of
+%DIF <  Furthermore, subpixel compounds interact with idle image refinements, e.g., they
+%DIF <  can accelerate idle anti-aliasing of a scene when the camera and scene are not
+%DIF <  changed.
+\DIFaddbegin \DIFadd{Subpixel compounds are configured similarly to pixel compounds, but instead of
 a \textit{pixel} kernel they decompose a \textit{subpixel} kernel in the format
 \textit{[index, size]}, describing which subpixel of \textit{size} samples a
 source produces. By default, the output frames are averaged on the destination
 channel.
+}\DIFaddend 
 
 %------------------------------------------------------------------------------
 \subsection{Equalizers}
@@ -634,9 +737,9 @@ optimizations for these parallel rendering modes. Our load equalizers are fully
 transparent for application developers; that is, they use a reactive approach
 based on past rendering times. This assumes a reasonable frame-to-frame
 coherence. Equalizer implements two different algorithms, a
-\textsf{load\_equalizer} and a \textsf{tree\_equalizer}. Both implementations
+\textsf{load\_equalizer} and a \textsf{tree\_equalizer}. \DIFaddbegin \DIFadd{Both implementations
 modify the \textsf{viewport} or \textsf{range} of their direct child compounds.
-The result section provides some evidence on the strengths and weaknesses of
+}\DIFaddend The result section provides some evidence on the strengths and weaknesses of
 both algorithms.
 
 The \textsf{load\_equalizer} stores a 2D or 1D grid of the load, mapping the
@@ -685,16 +788,16 @@ In~\cite{SPEP:16}, we explore this approach in detail.
 
 \subsubsection{Cross-Segment Load Balancing}
 
-Cross-segment load balancing (CSLB, \fig{fig:vieweq}) optimizes resource
+Cross-segment load balancing (\DIFdelbegin \DIFdel{\fig{fig:vieweq}) addresses the optimal }\DIFdelend \DIFaddbegin \DIFadd{CSLB, \fig{fig:vieweq}) optimizes }\DIFaddend resource
 allocation of $n$ rendering resources to $m$ output channels (with $n\geq m$).
 A view equalizer works in conjunction with load equalizers balancing the
 individual output channels. It monitors the usage of shared source channels
 across outputs and activates them to balance the rendering time of all outputs.
-CSLB is unique in that it supports load balancing for planar and non-planar
+\DIFaddbegin \DIFadd{CSLB is unique in that it supports load balancing for planar and non-planar
 visualization systems, as well as a flexible allocation of rendering resources
-to individual output channels. In \cite{EEP:11}, we provide a detailed
-description and evaluation of our algorithm and show that it significantly
-improves performance over a static allocation.
+to individual output channels. }\DIFaddend In \cite{EEP:11}, we provide a detailed
+description and evaluation of our algorithm \DIFaddbegin \DIFadd{and show that it significantly
+improves performance over a static allocation}\DIFaddend .
 
 \subsubsection{Dynamic Frame Resolution}
 
@@ -736,8 +839,9 @@ segments.
 \subsubsection{Region of Interest}
 
 The region of interest is the screen-space 2D bounding box enclosing the data
-rendered by a single resource. We use an application-provided ROI to optimize
-the \textsf{load\_equalizer} as well as image compositing in our framework. The
+rendered by a single resource. We \DIFdelbegin \DIFdel{have extended the core parallel rendering
+framework to }\DIFdelend use an application-provided ROI to optimize
+the \textsf{load\_equalizer} as well as \DIFdelbegin \DIFdel{the image compositing }\DIFdelend \DIFaddbegin \DIFadd{image compositing in our framework}\DIFaddend . The
 load equalizer uses the ROI to refine its load grid to the regions containing
 data. The compositing code uses the ROI to minimize image readback and network
 transmission. In \cite{MEP:10} and \cite{EBAHMP:12}, we provide the details of
@@ -768,7 +872,9 @@ at scale.
 Different applications have different degrees on how decoupled and thread-safe
 the rendering code is from the application logic. For full decoupling all
 mutable data has to have a copy in each render thread, which is not feasible in
-most applications and large data scenarios. We implement three threading modes:
+most applications and large data scenarios. \DIFdelbegin \DIFdel{To easily customize the
+synchronization of all threads on a single process, \textsf{Equalizer}
+implements }\DIFdelend \DIFaddbegin \DIFadd{We implement }\DIFaddend three threading modes:
 Full synchronization, draw synchronization and asynchronous. Note that the
 execution between node processes is always asynchronous, for up to
 \textsf{latency} frames.
@@ -794,23 +900,25 @@ render thread. It is required for scaling time-multiplex compounds on multi-GPU
 machines.
 
 %------------------------------------------------------------------------------
-\section{Virtual Reality}
+\section{Virtual Reality\DIFdelbegin \DIFdel{Features}\DIFdelend }
 %------------------------------------------------------------------------------
 
-Virtual Reality is an important field for parallel rendering, which requires
-special attention to support it as a first-class citizen in a generic parallel
+Virtual Reality is an important field for parallel rendering\DIFdelbegin \DIFdel{. It does however
+require }\DIFdelend \DIFaddbegin \DIFadd{, which requires
+}\DIFaddend special attention to support it as a first-class citizen in a generic parallel
 rendering framework. \textsf{Equalizer} has been used in many virtual reality
 installations, such as the Cave2 \cite{FNTTL:13}, the high-resolution C6 CAVE
 at the KAUST visualization laboratory, and head-mounted displays
 (\fig{FIG_teaser}). In the following we lay out the features needed to support
-these installations.
+these installations\DIFdelbegin \DIFdel{, motivated by application use cases}\DIFdelend .
 
 %------------------------------------------------------------------------------
 \subsection{Head Tracking}
 
-Head tracking is fundamental to support immersive installations. We support
+Head tracking is \DIFdelbegin \DIFdel{the minimal feature needed }\DIFdelend \DIFaddbegin \DIFadd{fundamental }\DIFaddend to support immersive installations. \DIFdelbegin \DIFdel{\textsf{Equalizer} does }\DIFdelend \DIFaddbegin \DIFadd{We }\DIFaddend support
 multiple, independent tracked views through the observer abstraction
-(\sref{sec:observer}). Built-in VRPN support enables direct,
+(\sref{sec:observer}). Built-in VRPN support enables \DIFdelbegin \DIFdel{the
+}\DIFdelend direct,
 application-transparent configuration of a VRPN tracker device. Alternatively,
 applications can provide a $4\times 4$ tracking matrix. Both CAVE-like tracking
 with fixed projection surfaces and HMD tracking with moving displays are
@@ -864,7 +972,8 @@ parallel rendering framework, and, where applicable, show the steps needed to
 use this functionality in applications.
 
 %------------------------------------------------------------------------------
-\subsection{Physical and Logical Visualization Setup}\label{sView}
+\subsection{Physical and Logical Visualization Setup}\DIFaddbegin \label{sView}
+\DIFaddend 
 
 Real-world visualization setups can be complex. An abstract representation of
 the display system simplifies the configuration process. Applications often have
@@ -929,7 +1038,7 @@ configuration provides multiple, run-time configurable layouts. It is driven
 from the control host on the right, which shows four views, each in their own
 canvas and segment windows with a single-view layout each. One view on the
 control host synchronizes its content (model and camera) with one view on the
-display wall through \textsf{Collage} objects. The control host allows full
+display wall through \DIFdelbegin \DIFdel{Collage }\DIFdelend \DIFaddbegin \DIFadd{\textsf{Collage} }\DIFaddend objects. The control host allows full
 model modifications and all workflows supported within the standalone Deltagen
 application, and all changes are synchronized to the corresponding rendering
 nodes. For this monoscopic setup no head tracking or observers are used.
@@ -1034,10 +1143,11 @@ communication layer between the individual processes. \textsf{Equalizer} relies
 on the \textsf{Collage} network library for its internal operation.
 \textsf{Collage} furthermore provides powerful abstractions for writing
 \textsf{Equalizer} applications, which are introduced in this section.
-\textsf{Collage} is a separate, standalone library heavily influenced by the
+\DIFaddbegin \DIFadd{\textsf{Collage} is a separate, standalone library heavily influenced by the
 requirements of \textsf{Equalizer}. It is used directly when implementing data
 distribution for parallel rendering applications, and independently by a few
 research projects.
+}\DIFaddend 
 
 %------------------------------------------------------------------------------
 \subsection{Architecture}
@@ -1275,7 +1385,7 @@ allows data distribution with minimal application logic. It is used by
 \textsf{Sequel} (\sref{sec:sequel}) and other \textsf{Collage} applications.
 
 %----------------------------------------------------------------------
-\section{Applications} \label{sApplications}
+\section{\DIFdelbegin \DIFdel{Example }\DIFdelend Applications} \label{sApplications}
 %----------------------------------------------------------------------
 
 In this section, we present some major applications built using
@@ -1301,13 +1411,13 @@ for scalability as well as for driving large-scale tiled display walls.
 %------------------------------------------------------------------------------
 \subsection{RTT Deltagen}
 
-RTT Deltagen (\fig{fLayout}, now Dassault 3D Excite) is a commercial
+RTT Deltagen (\DIFaddbegin \DIFadd{\fig{fLayout}, }\DIFaddend now Dassault 3D Excite) is a commercial
 application for interactive, high quality rendering of CAD data. The RTT Scale
 module, delivering multi-GPU and distributed execution, is based on
 \textsf{Equalizer} and \textsf{Collage}, and has driven many of the
 aforementioned features.
 
-RTT Scale uses a master-slave execution mode, where a single running Deltagen
+RTT Scale uses a master-slave execution mode, \DIFdelbegin \DIFdel{were }\DIFdelend \DIFaddbegin \DIFadd{where }\DIFaddend a single running Deltagen
 instance can go into ``Scale mode'' at any time by launching an
 \textsf{Equalizer} configuration. Consequently, the whole internal
 representation needed for rendering is based on a \textsf{Collage}-based data
@@ -1332,8 +1442,8 @@ with a Windows-based application node.
 \subsection{RTNeuron}
 
 RTNeuron \cite{HBBES:13} is a scalable real-time rendering tool for the
-visualisation of neuronal simulations based on cable models (\fig{FIG_teaser}
-(a)). It is based on OpenSceneGraph for data management and Equalizer for
+visualisation of neuronal simulations based on cable models \DIFaddbegin \DIFadd{(\fig{FIG_teaser}
+(a))}\DIFaddend . It is based on OpenSceneGraph for data management and Equalizer for
 parallel rendering, and focuses not only on fast rendering times, but also on
 fast loading times with no offline preprocessing. It provides level of detail
 (LOD) rendering, high quality anti-aliasing based on jittered frusta and
@@ -1428,12 +1538,13 @@ compounds. Sort-first polygon rendering exhibits oscillations in performance as
 nodes are added to the task, due to unfavorable assignment of a tile with a
 high work load on odd node counts. Static sort-last volume rendering has a
 similar oscillation behaviour, as ranges of scene geometry tend to also get
-unfavorably assigned under such conditions. Sort-first performs better for
+unfavorably assigned under such conditions. \DIFaddbegin \DIFadd{Sort-first performs better for
 volume rendering since it is easier to load balance than in our polygonal
 renderer due to the predictable per-fragment cost. The polygonal renderer
 performs better in sort-last rendering, since sort-first is harder to load
 balance and observes inefficencies when geometry is intersected by a load split
 and has to be rendered by both resources.
+}\DIFaddend 
 
 The simpler \textsf{tree\_equalizer} outperforms in almost all cases the
 load-grid-driven \textsf{load\_equalizer}, except for sort-first volume
@@ -1472,10 +1583,11 @@ rendering time in accordance with the (simulated) compute resources.
 \fig{fEqualizers} (right), on the other hand, illustrates how the tested
 decomposition modes perform on a system where compute resources fluctuate
 randomly every frame, as can arguably be the case for shared rendering nodes in
-virtualized enviroments. For this scenario \textsf{tile\_equalizer} seems best
+virtualized enviroments. For this scenario \DIFdelbegin \DIFdel{tile
+equalizer }\DIFdelend \DIFaddbegin \DIFadd{\textsf{tile\_equalizer} }\DIFaddend seems best
 suited, as it performs load balancing implicitly and does not assume coherence
 of available resources between frames. The simpler tree equalizer also
-outperforms the \textsf{load\_equalizer} in this experiment.
+outperforms the \DIFdelbegin \DIFdel{load equalizer }\DIFdelend \DIFaddbegin \DIFadd{\textsf{load\_equalizer} }\DIFaddend in this experiment.
 
 \begin{figure*}[ht]%
 \includegraphics[height=.17\textwidth]{images/benchmark_eVolve}\hfil
@@ -1576,17 +1688,17 @@ and decompress the data.
 
 During data synchronization, the master commits the object data to all mapped
 slave instances simultaneously. This is a ``push'' operation, whereas the
-mapping is a slave-triggered ``pull'' operation. During commit, the buffers
+mapping is a slave-triggered ``pull'' operation. \DIFaddbegin \DIFadd{During commit, the buffers
 only have to be serialized and compressed once, and can then be sent directly
-to all mapped slave nodes. Slave nodes queue this data and consume it during
-synchronization. In contrast, object mapping needs to wait for each slave node
+to all mapped slave nodes. }\DIFaddend Slave nodes queue this data and consume it during
+synchronization. \DIFaddbegin \DIFadd{In contrast, object mapping needs to wait for each slave node
 to request the mapping, and then may need to reserialize and compress the
-object data. We test the time to commit and sync the data using different
+object data. }\DIFaddend We test the time to commit and sync the data using different
 compression engines.
 
 The David statue at 2\,mm resolution is organized in a k-d tree for rendering. Each
 node is a separate distributed object, which has two child node objects. A
-total of $1023$ objects are distributed and synchronized. \fig{fDavidDist} shows
+total of $1023$ objects \DIFdelbegin \DIFdel{is }\DIFdelend \DIFaddbegin \DIFadd{are }\DIFaddend distributed and synchronized. \fig{fDavidDist} shows
 the distribution times for this data set. Due to limited compressibility of the
 data, the results are relatively similar. Compressing the data repeatedly for
 each client leads to decreased performance, since the compression overhead
@@ -1724,12 +1836,15 @@ and Dardo Kleiner.
 
 \begin{IEEEbiography}[{
 \includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{images/stefan}}]{
-Stefan Eilemann} works on large data visualization and parallel rendering. He
+Stefan Eilemann} works \DIFdelbegin \DIFdel{towards large-scale visualization for Exascale
+simulations; interactive integration of simulation, analysis and visualization
+as well as flexible frameworks for data sharing and dynamic allocation of
+heterogenous resources}\DIFdelend \DIFaddbegin \DIFadd{on large data visualization and parallel rendering}\DIFaddend . He
 was the technical manager of the Visualization Team in the Blue Brain Project,
 is the CEO and founder of Eyescale, and the lead developer of the
 \textsf{Equalizer} parallel rendering framework. He received his masters degree
-in Computer Science from EPFL in 2015, and an Engineering Diploma in Computer
-Science in 1998. He is working towards a PhD in Computer Science at the
+in Computer Science from EPFL in 2015, and \DIFdelbegin \DIFdel{his }\DIFdelend \DIFaddbegin \DIFadd{an }\DIFaddend Engineering Diploma in Computer
+Science in 1998. He is \DIFdelbegin \DIFdel{currently }\DIFdelend working towards a PhD in Computer Science at the
 Visualization and MultiMedia Lab at the University of Zurich.
 \end{IEEEbiography}
 
